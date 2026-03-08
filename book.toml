@@ -1,0 +1,11 @@
+[book]
+title = "Move on Sui: 从零到精通"
+authors = ["HOH Community"]
+language = "zh"
+multilingual = false
+src = "src"
+
+[output.html]
+default-theme = "light"
+preferred-dark-theme = "navy"
+git-repository-url = "https://github.com/hoh-zone/learning-sui"

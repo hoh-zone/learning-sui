@@ -1,0 +1,19 @@
+# mdbook 构建输出
+book/
+
+# 系统与编辑器
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# 日志与临时
+*.log
+.cache/
+
+# 可选：若后续使用 Node/TS 示例
+# node_modules/
+
+# 可选：若使用 Rust 工具
+# target/
