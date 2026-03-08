@@ -265,7 +265,6 @@ await plugin.resolve(tx);
 ```bash
 sui client ptb \
   --move-call @mvr/demo::demo::hello \
-  --gas-budget 10000000
 ```
 
 ## 发布你的包到 MVR

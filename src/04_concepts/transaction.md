@@ -248,10 +248,9 @@ Gas 是执行交易所需的费用，以 Sui 的最小单位 **MIST** 计价：
 如果交易执行的实际费用超过了设定的 Gas 预算，交易将失败并回滚所有操作，但 Gas 费用仍会被扣除。因此建议设置合理的 Gas 预算：
 
 ```bash
-# 使用 CLI 时可以通过 --gas-budget 指定
+# CLI 会自动估算 Gas，一般无需写 --gas-budget
 sui client call --package 0xPKG --module shop --function purchase \
-    --args 0xCOIN_ID \
-    --gas-budget 10000000
+    --args 0xCOIN_ID
 ```
 
 ## 可编程交易块（PTB）

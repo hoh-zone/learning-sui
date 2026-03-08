@@ -103,7 +103,7 @@ sui move test --filter test_name
 
 ```bash
 # 发布包
-sui client publish --gas-budget 100000000
+sui client publish
 
 # 发布（指定构建环境）
 sui client publish --build-env testnet
@@ -142,8 +142,7 @@ sui client call \
   --package <PACKAGE_ID> \
   --module <MODULE> \
   --function <FUNCTION> \
-  --args <ARG1> <ARG2> \
-  --gas-budget 10000000
+  --args <ARG1> <ARG2>
 
 # 使用类型参数
 sui client call \
@@ -168,26 +167,22 @@ sui client call \
 sui client transfer-sui \
   --to <RECIPIENT> \
   --sui-coin-object-id <COIN_ID> \
-  --amount 1000000000 \
-  --gas-budget 10000000
+  --amount 1000000000
 
 # 转移对象
 sui client transfer \
   --to <RECIPIENT> \
-  --object-id <OBJECT_ID> \
-  --gas-budget 10000000
+  --object-id <OBJECT_ID>
 
 # 合并 coins
 sui client merge-coin \
   --primary-coin <PRIMARY_COIN_ID> \
-  --coin-to-merge <COIN_ID> \
-  --gas-budget 10000000
+  --coin-to-merge <COIN_ID>
 
 # 拆分 coin
 sui client split-coin \
   --coin-id <COIN_ID> \
-  --amounts 1000000000 \
-  --gas-budget 10000000
+  --amounts 1000000000
 ```
 
 ## 交易查询
@@ -237,10 +232,10 @@ sui client object <PACKAGE_ID>
 
 ```bash
 # 获取 Package ID（从发布输出）
-sui client publish --gas-budget 100000000 --json | jq '.objectChanges[] | select(.type=="published") | .packageId'
+sui client publish --json | jq '.objectChanges[] | select(.type=="published") | .packageId'
 
 # 获取创建的对象
-sui client publish --gas-budget 100000000 --json | jq '.objectChanges[] | select(.type=="created")'
+sui client publish --json | jq '.objectChanges[] | select(.type=="created")'
 ```
 
 ### 环境变量

@@ -399,7 +399,7 @@ public fun finalize<T>(
 
 ```bash
 # 发布包
-sui client publish --gas-budget 100000000
+sui client publish
 
 # 从输出中找到 UpgradeCap 的 ObjectID
 # 类型：0x2::package::UpgradeCap
@@ -426,7 +426,6 @@ sui client call \
   --module package \
   --function only_additive_upgrades \
   --args <UPGRADE_CAP_ID> \
-  --gas-budget 10000000
 
 # 永久冻结
 sui client call \
@@ -434,7 +433,6 @@ sui client call \
   --module package \
   --function make_immutable \
   --args <UPGRADE_CAP_ID> \
-  --gas-budget 10000000
 ```
 
 ### 转移 UpgradeCap 给多签地址
@@ -443,7 +441,6 @@ sui client call \
 sui client transfer \
   --object-id <UPGRADE_CAP_ID> \
   --to <MULTISIG_ADDRESS> \
-  --gas-budget 10000000
 ```
 
 ## 小结

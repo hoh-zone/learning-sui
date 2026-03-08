@@ -121,7 +121,7 @@ public fun level_up(self: &TrainingGround, hero: &mut Hero) {
 ## 第三步：发布 V1
 
 ```bash
-sui client publish --gas-budget 100000000
+sui client publish
 ```
 
 记录输出中的：
@@ -137,7 +137,6 @@ sui client call \
   --package 0xV1_PACKAGE \
   --module hero \
   --function mint_hero \
-  --gas-budget 10000000
 # 记录 Hero ID（例如 0xHERO）
 
 # 训练英雄（+50 XP）
@@ -146,7 +145,6 @@ sui client call \
   --module training_ground \
   --function train \
   --args 0xTRAINING_GROUND 0xHERO \
-  --gas-budget 10000000
 
 # 再训练一次（累计 100 XP）
 sui client call \
@@ -154,7 +152,6 @@ sui client call \
   --module training_ground \
   --function train \
   --args 0xTRAINING_GROUND 0xHERO \
-  --gas-budget 10000000
 
 # 升级英雄（100 XP → Level 2）
 sui client call \
@@ -162,7 +159,6 @@ sui client call \
   --module training_ground \
   --function level_up \
   --args 0xTRAINING_GROUND 0xHERO \
-  --gas-budget 10000000
 ```
 
 ## 第五步：修改为 V2
@@ -232,7 +228,7 @@ public fun level_up(self: &TrainingGround, hero: &mut Hero) {
 
 ```bash
 sui move build
-sui client upgrade --upgrade-capability 0xUPGRADE_CAP --gas-budget 100000000
+sui client upgrade --upgrade-capability 0xUPGRADE_CAP
 ```
 
 记录新的 **Package ID**（例如 `0xV2_PACKAGE`）。
@@ -267,7 +263,6 @@ sui client call \
   --module training_ground \
   --function migrate \
   --args 0xTRAINING_GROUND \
-  --gas-budget 10000000
 ```
 
 ## 第九步：验证升级效果
@@ -279,7 +274,6 @@ sui client call \
   --module training_ground \
   --function train \
   --args 0xTRAINING_GROUND 0xHERO \
-  --gas-budget 10000000
 # 预期：MoveAbort EUseTrainV2Instead
 
 # 验证 2：train_v2 正常
@@ -288,7 +282,6 @@ sui client call \
   --module training_ground \
   --function train_v2 \
   --args 0xTRAINING_GROUND 0xHERO \
-  --gas-budget 10000000
 # 预期：成功，+30 XP
 
 # 验证 3：旧包被拒绝
@@ -297,7 +290,6 @@ sui client call \
   --module training_ground \
   --function train \
   --args 0xTRAINING_GROUND 0xHERO \
-  --gas-budget 10000000
 # 预期：MoveAbort EInvalidPackageVersion
 ```
 

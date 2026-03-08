@@ -110,10 +110,10 @@ sui move build
 使用以下命令将合约发布到链上：
 
 ```bash
-sui client publish --gas-budget 100000000
+sui client publish
 ```
 
-`--gas-budget` 指定本次交易愿意支付的最大 Gas 费用（单位为 MIST）。100000000 MIST = 0.1 SUI，对于发布操作来说通常足够。
+CLI 会自动估算 Gas，一般无需指定 `--gas-budget`；仅在需要覆盖默认值时再添加该参数。
 
 ## 解读发布交易输出
 
@@ -193,14 +193,14 @@ Transaction Digest: 5JxQpNBk4r5F2UaGRe4Vb9DF7hLZqijU3aTvN8H7kQ2W
 添加 `--json` 标志可以获取 JSON 格式的输出，方便程序化解析：
 
 ```bash
-sui client publish --gas-budget 100000000 --json
+sui client publish --json
 ```
 
 JSON 输出更适合脚本自动化处理，你可以用 `jq` 提取关键信息：
 
 ```bash
 # 发布并提取 PackageID
-sui client publish --gas-budget 100000000 --json | jq -r '.objectChanges[] | select(.type == "published") | .packageId'
+sui client publish --json | jq -r '.objectChanges[] | select(.type == "published") | .packageId'
 ```
 
 ## 理解 UpgradeCap
@@ -251,7 +251,7 @@ sui move test
 sui client faucet
 
 # 6. 发布
-sui client publish --gas-budget 100000000
+sui client publish
 
 # 7. 记录 PackageID
 export PACKAGE_ID=0x<your-package-id>

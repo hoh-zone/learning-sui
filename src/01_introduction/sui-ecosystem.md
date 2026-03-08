@@ -310,7 +310,7 @@ sui move build
 sui move test
 
 # 发布到测试网
-sui client publish --gas-budget 100000000
+sui client publish
 ```
 
 ### TypeScript SDK 与 dApp Kit

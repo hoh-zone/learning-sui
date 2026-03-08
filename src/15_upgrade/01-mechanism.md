@@ -135,7 +135,7 @@ entry fun set_price(item: &mut Item, price: u64) {
 
 ```bash
 cd my_package
-sui client publish --gas-budget 100000000
+sui client publish
 ```
 
 发布成功后，记录输出中的关键信息：
@@ -163,7 +163,7 @@ sui client publish --gas-budget 100000000
 sui move build
 
 # 3. 升级
-sui client upgrade --upgrade-capability <UPGRADE_CAP_ID> --gas-budget 100000000
+sui client upgrade --upgrade-capability <UPGRADE_CAP_ID>
 ```
 
 升级成功后会输出新的 Package ID。

@@ -275,7 +275,7 @@ Test result: OK. Total tests: 3; passed: 3; failed: 0
 
 ```bash
 # 发布到 testnet
-sui client publish --gas-budget 100000000
+sui client publish
 
 # 从输出中记录：
 # - Package ID

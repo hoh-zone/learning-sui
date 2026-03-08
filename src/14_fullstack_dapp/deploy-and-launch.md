@@ -32,7 +32,7 @@ sui move build
 sui move test
 
 # 发布（localnet）
-sui client publish --gas-budget 100000000
+sui client publish
 ```
 
 ## Testnet 部署
@@ -57,7 +57,7 @@ sui client faucet
 
 ```bash
 cd move/hero
-sui client publish --gas-budget 100000000
+sui client publish
 ```
 
 从发布输出中记录关键信息：
@@ -173,7 +173,7 @@ sui move build
 sui move test
 
 # 4. 发布
-sui client publish --gas-budget 200000000
+sui client publish
 
 # 5. 记录所有创建的对象 ID
 sui client objects
@@ -226,7 +226,7 @@ sui client upgrade --upgrade-capability <UPGRADE_CAP_ID>
 
 | 问题 | 可能原因 | 解决方案 |
 |------|---------|---------|
-| 交易失败 `InsufficientGas` | gas 预算不足 | 增加 `--gas-budget` |
+| 交易失败 `InsufficientGas` | gas 预算不足 | 可尝试显式增加 `--gas-budget`（多数情况 CLI 自动估算即可） |
 | 对象未找到 | ID 错误或网络不匹配 | 确认网络和对象 ID |
 | 钱包连接失败 | 网络配置不一致 | 检查前端和钱包的网络设置 |
 | RPC 超时 | 全节点压力大 | 使用多个 RPC 端点做负载均衡 |
