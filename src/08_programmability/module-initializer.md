@@ -98,29 +98,29 @@ fun init(otw: SHOP_OTW, ctx: &mut TxContext) {
 
 ### OTW 的典型应用
 
-OTW 最常见的用途是配合 `sui::package::claim()` 创建 `Publisher` 对象，或配合 `sui::coin::create_currency()` 创建自定义代币：
+OTW 最常见的用途是配合 `sui::package::claim()` 创建 `Publisher` 对象，或配合 **`sui::coin_registry::new_currency_with_otw` + `finalize`** 创建自定义代币（`coin::create_currency` 已废弃）：
 
 ```move
 module examples::my_token;
 
-use sui::coin;
-use sui::url;
+use std::string;
+use sui::coin_registry;
 
 public struct MY_TOKEN has drop {}
 
 fun init(otw: MY_TOKEN, ctx: &mut TxContext) {
-    let (treasury_cap, metadata) = coin::create_currency(
+    let (initializer, treasury_cap) = coin_registry::new_currency_with_otw<MY_TOKEN>(
         otw,                                    // OTW 证明唯一性
         9,                                      // 精度
-        b"MYT",                                 // 符号
-        b"My Token",                            // 名称
-        b"A demo token",                        // 描述
-        option::some(url::new_unsafe_from_bytes(b"https://example.com/icon.png")),
+        string::utf8(b"MYT"),                   // 符号
+        string::utf8(b"My Token"),              // 名称
+        string::utf8(b"A demo token"),          // 描述
+        string::utf8(b"https://example.com/icon.png"), // 图标 URL
         ctx,
     );
-
+    let metadata_cap = coin_registry::finalize(initializer, ctx);
     transfer::public_transfer(treasury_cap, ctx.sender());
-    transfer::public_freeze_object(metadata);
+    transfer::public_transfer(metadata_cap, ctx.sender());
 }
 ```
 

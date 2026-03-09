@@ -49,145 +49,123 @@ public struct CoinMetadata<phantom T> has key, store {
 
 ## 创建元数据
 
-元数据由 `coin::create_currency` 自动创建并返回：
+**`coin::create_currency` 已废弃**。应使用 **`coin_registry::new_currency_with_otw`** 与 **`coin_registry::finalize`**：元数据会写入链上 `CoinRegistry` 的 `Currency<T>`，并返回 **`MetadataCap<T>`** 用于后续更新。
 
 ```move
+use std::string;
+use sui::coin_registry;
+
 fun init(otw: MY_TOKEN, ctx: &mut TxContext) {
-    let (treasury_cap, metadata) = coin::create_currency<MY_TOKEN>(
+    let (initializer, treasury_cap) = coin_registry::new_currency_with_otw<MY_TOKEN>(
         otw,
-        9,                          // 精度
-        b"MYT",                     // 符号
-        b"My Token",                // 名称
-        b"A demo token on Sui",     // 描述
-        option::some(url::new_unsafe_from_bytes(
-            b"https://example.com/icon.png"
-        )),
+        9,                                  // 精度
+        string::utf8(b"MYT"),               // 符号
+        string::utf8(b"My Token"),          // 名称
+        string::utf8(b"A demo token on Sui"), // 描述
+        string::utf8(b"https://example.com/icon.png"), // 图标 URL
         ctx,
     );
-
+    let metadata_cap = coin_registry::finalize(initializer, ctx);
     transfer::public_transfer(treasury_cap, ctx.sender());
-    transfer::public_freeze_object(metadata);
+    transfer::public_transfer(metadata_cap, ctx.sender());
 }
 ```
 
 ## 读取元数据
 
-`CoinMetadata` 提供了读取各字段的方法：
+使用新 API 时，元数据存储在 `CoinRegistry` 的 **`Currency<T>`** 中。需要通过 `CoinRegistry` 按类型 `T` 取到对应 `Currency` 后，用 **`coin_registry::decimals` / `name` / `symbol` / `description` / `icon_url`** 读取：
 
 ```move
-use sui::coin::CoinMetadata;
+use sui::coin_registry;
 
-public fun display_info<T>(metadata: &CoinMetadata<T>) {
-    let decimals = metadata.get_decimals();
-    let name = metadata.get_name();
-    let symbol = metadata.get_symbol();
-    let description = metadata.get_description();
-    let icon_url = metadata.get_icon_url();
+public fun display_info<T>(registry: &CoinRegistry, currency: &Currency<T>) {
+    let decimals = coin_registry::decimals(currency);
+    let name = coin_registry::name(currency);
+    let symbol = coin_registry::symbol(currency);
+    let description = coin_registry::description(currency);
+    let icon_url = coin_registry::icon_url(currency);
 }
 ```
+
+（旧版 **`CoinMetadata<T>`** 仍可用于已用 `create_currency` 创建的老代币，通过 `get_decimals()`、`get_name()` 等读取。）
 
 ## 更新元数据
 
-在冻结之前，持有 `TreasuryCap` 的人可以更新元数据：
+使用新 API 时，持有 **`MetadataCap<T>`** 的人可通过 **`coin_registry::set_*`** 更新链上 `Currency<T>` 的元数据：
 
 ```move
-use sui::coin;
+use sui::coin_registry;
 
 public fun update_description<T>(
-    treasury_cap: &TreasuryCap<T>,
-    metadata: &mut CoinMetadata<T>,
-    new_description: string::String,
+    currency: &mut Currency<T>,
+    metadata_cap: &MetadataCap<T>,
+    new_description: std::string::String,
 ) {
-    coin::update_description(treasury_cap, metadata, new_description);
+    coin_registry::set_description(currency, metadata_cap, new_description);
 }
 
 public fun update_name<T>(
-    treasury_cap: &TreasuryCap<T>,
-    metadata: &mut CoinMetadata<T>,
-    new_name: string::String,
+    currency: &mut Currency<T>,
+    metadata_cap: &MetadataCap<T>,
+    new_name: std::string::String,
 ) {
-    coin::update_name(treasury_cap, metadata, new_name);
-}
-
-public fun update_symbol<T>(
-    treasury_cap: &TreasuryCap<T>,
-    metadata: &mut CoinMetadata<T>,
-    new_symbol: ascii::String,
-) {
-    coin::update_symbol(treasury_cap, metadata, new_symbol);
+    coin_registry::set_name(currency, metadata_cap, new_name);
 }
 
 public fun update_icon_url<T>(
-    treasury_cap: &TreasuryCap<T>,
-    metadata: &mut CoinMetadata<T>,
-    new_url: ascii::String,
+    currency: &mut Currency<T>,
+    metadata_cap: &MetadataCap<T>,
+    new_url: std::string::String,
 ) {
-    coin::update_icon_url(treasury_cap, metadata, new_url);
+    coin_registry::set_icon_url(currency, metadata_cap, new_url);
 }
 ```
 
-> 一旦 `CoinMetadata` 被 `freeze_object` 冻结，就无法再更新。因此在冻结前务必确认所有信息正确。
+> `Currency` 由 `CoinRegistry` 管理；若调用 **`coin_registry::delete_metadata_cap`** 删除 `MetadataCap`，则之后无法再更新该代币元数据。
 
-## 元数据的处理策略
+## 元数据的处理策略（新 API）
 
-### 方案一：冻结（推荐）
+使用 **coin_registry** 时，元数据在链上 `Currency<T>` 中，由 `CoinRegistry` 管理：
 
-将元数据冻结为不可变对象，任何人都可以引用但无人可修改：
+- **MetadataCap** 转移给发行方，持有者可调用 `coin_registry::set_name` 等更新元数据。
+- 若不再需要更新，可调用 **`coin_registry::delete_metadata_cap`** 永久删除 `MetadataCap`，此后该代币元数据不可再改。
 
-```move
-transfer::public_freeze_object(metadata);
-```
-
-### 方案二：保持可变
-
-不冻结元数据，保留由 `TreasuryCap` 持有者更新的能力：
-
-```move
-transfer::public_transfer(metadata, ctx.sender());
-```
-
-### 方案三：共享
-
-将元数据设为共享对象（不太常见）：
-
-```move
-transfer::public_share_object(metadata);
-```
+（旧 API 下可将 `CoinMetadata` 冻结或转移，新 API 下不再单独冻结元数据对象。）
 
 ## 测试元数据
+
+使用 **coin_registry** 时，测试中可用 **`coin_registry::create_coin_data_registry_for_testing`** 创建测试用 Registry，用 **`finalize_for_testing`** 得到 `(Currency, MetadataCap)`，再通过 **`coin_registry::decimals(currency)`** 等读取：
 
 ```move
 #[test]
 fun metadata_fields() {
+    use std::string;
     use std::unit_test::assert_eq;
-    use sui::test_utils::destroy;
+    use std::unit_test::destroy;
+    use sui::coin_registry;
 
     let mut ctx = tx_context::dummy();
-    let (treasury_cap, metadata) = coin::create_currency<MY_TOKEN>(
-        MY_TOKEN(),
-        6,
-        b"MYT",
-        b"My Token",
-        b"A demo token",
-        option::none(),
+    let (initializer, _treasury_cap) = coin_registry::new_currency_with_otw<MY_TOKEN>(
+        MY_TOKEN(), 6,
+        string::utf8(b"MYT"),
+        string::utf8(b"My Token"),
+        string::utf8(b"A demo token"),
+        string::utf8(b""),
         &mut ctx,
     );
+    let (currency, metadata_cap) = coin_registry::finalize_for_testing(initializer, &mut ctx);
 
-    assert_eq!(metadata.get_decimals(), 6);
-    assert_eq!(metadata.get_symbol(), b"MYT".to_ascii_string());
-    assert_eq!(metadata.get_name(), b"My Token".to_string());
-    assert_eq!(metadata.get_description(), b"A demo token".to_string());
-    assert!(metadata.get_icon_url().is_none());
-
-    destroy(treasury_cap);
-    destroy(metadata);
+    assert_eq!(coin_registry::decimals(&currency), 6);
+    assert_eq!(coin_registry::symbol(&currency), string::utf8(b"MYT"));
+    assert_eq!(coin_registry::name(&currency), string::utf8(b"My Token"));
+    assert_eq!(coin_registry::description(&currency), string::utf8(b"A demo token"));
+    assert_eq!(coin_registry::icon_url(&currency), string::utf8(b""));
 }
 ```
 
 ## 小结
 
-- `CoinMetadata` 存储代币的名称、符号、精度、描述和图标 URL
+- 新代币应使用 **`coin_registry::new_currency_with_otw` + `finalize`** 创建；元数据存储在链上 **`Currency<T>`** 中，由 `CoinRegistry` 管理
+- **`MetadataCap<T>`** 用于更新元数据（`set_name`、`set_description`、`set_icon_url`）；删除后不可再更新
 - 精度（decimals）决定代币的最小可分割单位，最常见值为 9 和 6
-- 元数据由 `create_currency` 自动创建，通常冻结为不可变对象
-- 持有 `TreasuryCap` 可在冻结前更新元数据字段
-- 冻结后的元数据不可修改，确保代币信息的永久一致性
+- 旧版 **`coin::create_currency`** 与 **`CoinMetadata<T>`** 已废弃，仅适用于历史代币

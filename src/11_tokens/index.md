@@ -1,4 +1,4 @@
-# 第十一章 · 代币经济
+# 第十三章 · 代币经济
 
 本章讲解如何在 Sui 上创建和管理各种类型的代币，从标准 Coin 到受监管代币再到闭环 Token。
 
@@ -6,7 +6,7 @@
 
 | 节 | 主题 | 你将学到 |
 |---|------|---------|
-| 11.1 | 创建自定义 Coin | OTW + create_currency、铸造与销毁 |
+| 11.1 | 创建自定义 Coin | OTW + coin_registry（new_currency_with_otw / finalize）、铸造与销毁 |
 | 11.2 | Coin 元数据 | 名称、符号、精度、图标 |
 | 11.3 | Treasury Cap 管理 | 固定供应 vs 无限供应、锁定策略 |
 | 11.4 | 受监管代币 | DenyCap、黑名单、合规设计 |

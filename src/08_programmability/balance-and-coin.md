@@ -126,28 +126,31 @@ public struct TreasuryCap<phantom T> has key, store {
 
 ## 创建新代币
 
-使用 `coin::create_currency` 创建一种新代币，该函数利用一次性见证（One-Time Witness）确保每种代币只能被创建一次：
+`coin::create_currency` 已废弃，应使用 **`coin_registry::new_currency_with_otw`** 配合 **`coin_registry::finalize`** 创建新代币。一次性见证（OTW）确保每种代币只能被创建一次；元数据会注册到链上 `CoinRegistry`，并返回 `MetadataCap` 用于后续更新。
 
 ```move
 module examples::my_coin;
 
+use std::string;
 use sui::coin::{Self, TreasuryCap, Coin};
+use sui::coin_registry;
 use sui::balance::{Self, Balance};
 
 public struct MY_COIN has drop {}
 
 fun init(witness: MY_COIN, ctx: &mut TxContext) {
-    let (treasury_cap, metadata) = coin::create_currency(
+    let (initializer, treasury_cap) = coin_registry::new_currency_with_otw<MY_COIN>(
         witness,
-        9, // decimals
-        b"MYC",
-        b"My Coin",
-        b"An example coin",
-        option::none(),
+        9,                              // decimals
+        string::utf8(b"MYC"),           // symbol
+        string::utf8(b"My Coin"),       // name
+        string::utf8(b"An example coin"), // description
+        string::utf8(b""),               // icon_url（空表示无图标）
         ctx,
     );
-    transfer::public_freeze_object(metadata);
+    let metadata_cap = coin_registry::finalize(initializer, ctx);
     transfer::public_transfer(treasury_cap, ctx.sender());
+    transfer::public_transfer(metadata_cap, ctx.sender());
 }
 
 public fun mint(
@@ -168,19 +171,19 @@ public fun burn(
 }
 ```
 
-### create_currency 参数详解
+### new_currency_with_otw 参数说明
 
 | 参数 | 类型 | 说明 |
 |------|------|------|
-| `witness` | `T` | 一次性见证，确保唯一性 |
+| `otw` | `T` | 一次性见证，确保唯一性 |
 | `decimals` | `u8` | 小数位数（如 9 表示最小单位是十亿分之一） |
-| `symbol` | `vector<u8>` | 代币符号（如 "SUI"） |
-| `name` | `vector<u8>` | 代币全名 |
-| `description` | `vector<u8>` | 代币描述 |
-| `icon_url` | `Option<Url>` | 可选的图标 URL |
+| `symbol` | `String` | 代币符号（如 `string::utf8(b"SUI")`） |
+| `name` | `String` | 代币全名 |
+| `description` | `String` | 代币描述 |
+| `icon_url` | `String` | 图标 URL，无图标可传 `string::utf8(b"")` |
 | `ctx` | `&mut TxContext` | 交易上下文 |
 
-返回值是一个元组 `(TreasuryCap<T>, CoinMetadata<T>)`。通常将 `CoinMetadata` 冻结（freeze）以确保元数据不可篡改。
+返回 `(CurrencyInitializer<T>, TreasuryCap<T>)`；再调用 **`coin_registry::finalize(initializer, ctx)`** 得到 **`MetadataCap<T>`**。代币元数据存储在链上 `CoinRegistry` 的 `Currency<T>` 中，可通过 `MetadataCap` 使用 `coin_registry::set_name` 等更新。
 
 ## 铸造与销毁
 

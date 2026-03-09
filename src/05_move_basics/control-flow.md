@@ -290,6 +290,63 @@ fun safe_loop_ok() {
 
 > **最佳实践**：始终确保循环有明确的退出条件。使用 `while` 时检查边界条件，使用 `loop` 时确保有 `break` 或 `return`。
 
+## 带标签的控制流
+
+在嵌套循环或块中，可以用 **标签** 精确指定 `break`、`continue` 或 `return` 的目标。标签写在 `loop`、`while` 或块前，格式为 `'label:`。
+
+### 循环标签
+
+给 `loop` 或 `while` 加上标签后，`break 'label value` 会直接跳出到该标签对应的循环，并携带返回值；`continue 'label` 会跳到该循环的下一次迭代：
+
+```move
+module book::labeled_loop;
+
+public fun sum_until_threshold(input: &vector<vector<u64>>, threshold: u64): u64 {
+    let mut sum = 0u64;
+    let mut i = 0u64;
+    let len = input.length();
+
+    'outer: loop {
+        if (i >= len) break sum;
+
+        let vec = &input[i];
+        let size = vec.length();
+        let mut j = 0u64;
+
+        while (j < size) {
+            let v_entry = vec[j];
+            if (sum + v_entry < threshold) {
+                sum = sum + v_entry;
+            } else {
+                break 'outer sum
+            };
+            j = j + 1;
+        };
+        i = i + 1;
+    }
+}
+```
+
+这样可以从内层循环直接跳出外层，无需额外标志变量。
+
+### 块标签与 return
+
+给**块**加标签后，可以在块内使用 `return 'label value` 从该块“返回”一个值，作为整个块表达式的值：
+
+```move
+public fun named_block(n: u64): vector<u8> {
+    let x = 'a: {
+        if (n % 2 == 0) {
+            return 'a b"even"
+        };
+        b"odd"
+    };
+    x
+}
+```
+
+`return` 只能用于块标签，不能用于循环标签；`break`/`continue` 只能用于循环标签，不能用于块标签。
+
 ## 综合示例
 
 下面的例子综合展示了各种控制流语句的配合使用：

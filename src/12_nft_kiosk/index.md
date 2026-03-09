@@ -1,4 +1,4 @@
-# 第十二章 · NFT 与 Kiosk
+# 第十四章 · NFT 与 Kiosk
 
 本章讲解在 Sui 上创建 NFT 和构建 NFT 交易市场的完整流程，包括 Kiosk 标准和自定义转移策略。
 

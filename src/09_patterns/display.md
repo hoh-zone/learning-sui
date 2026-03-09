@@ -369,7 +369,7 @@ fun init(otw: EQUIPMENT, ctx: &mut TxContext) {
 
 ## Display 与 CoinMetadata
 
-值得注意的是，`Coin<T>` 类型不使用 Display 标准来展示元数据。代币的元数据（名称、符号、图标等）存储在 `CoinMetadata<T>` 对象中，这是在 `coin::create_currency` 时创建的。这是因为代币的元数据需求与普通对象不同，需要标准化的字段格式。
+值得注意的是，`Coin<T>` 类型不使用 Display 标准来展示元数据。代币的元数据（名称、符号、图标等）由 **coin_registry** 管理，存储在链上 **`Currency<T>`** 中（通过 **`coin_registry::new_currency_with_otw` + `finalize`** 创建，而非已废弃的 `coin::create_currency`）。这是因为代币的元数据需求与普通对象不同，需要标准化的字段格式。
 
 ## 小结
 

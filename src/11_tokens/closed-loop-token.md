@@ -55,25 +55,25 @@ public struct Config has store {
 ```move
 module king_credits::king_credits;
 
+use std::string;
 use sui::coin;
+use sui::coin_registry;
 use sui::token;
-use sui::url;
 use king_credits::crown_council_rule::{Self, CrownCouncilRule};
 
 public struct KING_CREDITS() has drop;
 
 fun init(otw: KING_CREDITS, ctx: &mut TxContext) {
-    let (treasury_cap, metadata) = coin::create_currency(
-        otw,
-        9,
-        b"KING_CREDITS",
-        b"King's Credits",
-        b"Awarded to citizens for heroic actions.",
-        option::some(url::new_unsafe_from_bytes(b"https://example.com/icon")),
+    let (initializer, treasury_cap) = coin_registry::new_currency_with_otw<KING_CREDITS>(
+        otw, 9,
+        string::utf8(b"KING_CREDITS"),
+        string::utf8(b"King's Credits"),
+        string::utf8(b"Awarded to citizens for heroic actions."),
+        string::utf8(b"https://example.com/icon"),
         ctx,
     );
-
-    transfer::public_freeze_object(metadata);
+    let metadata_cap = coin_registry::finalize(initializer, ctx);
+    transfer::public_transfer(metadata_cap, ctx.sender());
 
     // 创建 Token Policy
     let (mut policy, policy_cap) = token::new_policy(&treasury_cap, ctx);

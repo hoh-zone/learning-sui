@@ -282,7 +282,7 @@ public fun mint(
 │
 ├── 是否需要一次性初始化？
 │   ├── 是 → 使用 OTW
-│   │   ├── 创建代币 → coin::create_currency
+│   │   ├── 创建代币 → coin_registry::new_currency_with_otw + finalize
 │   │   ├── 声明 Publisher → package::claim
 │   │   └── 全局配置 → 在 init 中创建共享对象
 │   │

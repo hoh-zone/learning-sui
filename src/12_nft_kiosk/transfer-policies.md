@@ -28,69 +28,74 @@ fun create_transfer_policy<T>(
 }
 ```
 
-## 内置规则
+## 规则机制说明
 
-Sui Framework 提供了几种常用的内置规则：
+Sui Framework 只提供 TransferPolicy 原语（`add_rule`、`get_rule`、`add_receipt`、`add_to_balance` 等），**不提供**现成的 `sui::royalty_rule`、`sui::kiosk_lock_rule` 等模块。版税、锁定、个人 Kiosk 等规则需要：
 
-### 版税规则（Royalty Rule）
+- 在 Move 中自行基于 `transfer_policy::add_rule` 实现，或  
+- 使用生态包（如 [MystenLabs Kiosk 包](https://github.com/MystenLabs/apps/tree/testnet/kiosk)）中提供的规则。
 
-每次交易自动收取版税：
+下面以「版税规则」为例说明如何在 Move 中实现并满足规则；TS SDK 的用法仍可与 Kiosk 包或自定义规则配合使用。
 
-```typescript
-import { percentageToBasisPoints } from "@mysten/kiosk";
-import { RoyaltyRule } from "@mysten/kiosk/rules";
+### 版税规则（Royalty Rule）示例
 
-// 在 TransferPolicy 上添加版税规则
-RoyaltyRule.add(tx, {
-  policy: policyId,
-  policyCap: policyCapId,
-  percentageBps: percentageToBasisPoints(5), // 5% 版税
-  minAmount: 1_000_000, // 最低版税
-});
-```
+每次交易按比例收取版税。前端可使用 `@mysten/kiosk` 的 `RoyaltyRule`（依赖 Kiosk 包）与已有 Policy 交互；在 Move 中需自行实现规则逻辑。
 
-在 Move 中：
+在 Move 中（自定义规则，仅用 framework）：
 
 ```move
-use sui::royalty_rule;
+// 自定义 Rule 与 Config，使用 transfer_policy::add_rule
+module game::royalty_rule;
 
-public fun add_royalty(
-    policy: &mut TransferPolicy<Sword>,
-    cap: &TransferPolicyCap<Sword>,
+use sui::coin::{Self, Coin};
+use sui::sui::SUI;
+use sui::transfer_policy::{Self as policy, TransferPolicy, TransferPolicyCap, TransferRequest};
+
+const MAX_BP: u16 = 10_000;
+
+public struct Rule has drop {}
+public struct Config has store, drop { amount_bp: u16 }
+
+public fun add<T: key + store>(
+    policy: &mut TransferPolicy<T>,
+    cap: &TransferPolicyCap<T>,
+    amount_bp: u16,
 ) {
-    // 添加 5% 版税规则，最低 100 MIST
-    royalty_rule::add(policy, cap, 500, 100);
+    assert!(amount_bp <= MAX_BP, 0);
+    policy::add_rule(Rule {}, policy, cap, Config { amount_bp })
 }
-```
 
-购买时满足版税规则：
-
-```move
-use sui::royalty_rule;
-
-public fun purchase_with_royalty(
-    kiosk: &mut Kiosk,
-    item_id: ID,
-    payment: Coin<SUI>,
-    policy: &mut TransferPolicy<Sword>,
+public fun pay<T: key + store>(
+    policy: &mut TransferPolicy<T>,
+    request: &mut TransferRequest<T>,
+    payment: &mut Coin<SUI>,
     ctx: &mut TxContext,
 ) {
-    let (item, mut request) = kiosk::purchase<Sword>(kiosk, item_id, payment);
-
-    // 支付版税
-    let royalty_payment = coin::mint_for_testing<SUI>(
-        royalty_rule::fee_amount(&request, 500, 100), ctx,
-    );
-    royalty_rule::pay(policy, &mut request, royalty_payment);
-
-    transfer_policy::confirm_request(policy, request);
-    transfer::public_transfer(item, ctx.sender());
+    let paid = policy::paid(request);
+    let config = policy::get_rule(Rule {}, policy);
+    let amount = ((paid as u128) * (config.amount_bp as u128) / (MAX_BP as u128)) as u64;
+    assert!(coin::value(payment) >= amount, 1);
+    let fee = coin::split(payment, amount, ctx);
+    policy::add_to_balance(Rule {}, policy, fee);
+    policy::add_receipt(Rule {}, request)
 }
+```
+
+添加 5% 版税并创建 Policy 后，购买时需先调用该规则的 `pay` 再 `confirm_request`：
+
+```move
+// 购买时：先 pay 版税，再 confirm
+let (item, mut request) = kiosk::purchase<Sword>(kiosk, item_id, payment);
+royalty_rule::pay(policy, &mut request, &mut royalty_payment, ctx);
+transfer_policy::confirm_request(policy, request);
+transfer::public_transfer(item, ctx.sender());
 ```
 
 ### 锁定规则（Kiosk Lock Rule）
 
-要求买家将 NFT 锁定在自己的 Kiosk 中，不能直接取出：
+要求买家将 NFT 锁定在自己的 Kiosk 中，不能直接取出。锁定规则的实现不在 Sui Framework 内，而是由 [Kiosk 包](https://github.com/MystenLabs/apps/tree/testnet/kiosk) 提供（如 `kiosk::kiosk_lock_rule`）。
+
+前端可用 TypeScript 添加规则：
 
 ```typescript
 import { KioskLockRule } from "@mysten/kiosk/rules";
@@ -101,17 +106,15 @@ KioskLockRule.add(tx, {
 });
 ```
 
-```move
-use sui::kiosk_lock_rule;
+若在 Move 中依赖 Kiosk 包，则添加与满足规则的方式类似：
 
-// 添加锁定规则
+```move
+// 依赖 Kiosk 包时
+use kiosk::kiosk_lock_rule;
+
 kiosk_lock_rule::add(policy, cap);
-```
 
-满足锁定规则：
-
-```move
-// 购买后将 NFT 锁入买家的 Kiosk
+// 购买后锁入买家 Kiosk 并证明
 let (item, mut request) = kiosk::purchase<Sword>(seller_kiosk, item_id, payment);
 kiosk::lock(buyer_kiosk, buyer_cap, policy, item);
 kiosk_lock_rule::prove(&mut request, buyer_kiosk);
@@ -119,7 +122,7 @@ kiosk_lock_rule::prove(&mut request, buyer_kiosk);
 
 ### 个人 Kiosk 规则（Personal Kiosk Rule）
 
-要求买家使用个人 Kiosk（不可转让 KioskOwnerCap 的 Kiosk）：
+要求买家使用个人 Kiosk（不可转让 KioskOwnerCap 的 Kiosk）。该规则同样由 Kiosk 生态包提供，Framework 中无对应模块。
 
 ```typescript
 import { PersonalKioskRule } from "@mysten/kiosk/rules";
@@ -144,23 +147,21 @@ kioskTx.finalize();
 
 ## 组合多个规则
 
-可以同时添加多个规则，所有规则都必须满足：
+可以同时添加多个规则，所有规则都必须满足。版税类规则可在本包内用 `transfer_policy::add_rule` 实现；锁定、个人 Kiosk 等需依赖 Kiosk 包：
 
 ```move
-use sui::royalty_rule;
-use sui::kiosk_lock_rule;
-use sui::personal_kiosk_rule;
+// 假设本包有 game::royalty_rule，并依赖 Kiosk 包
+use game::royalty_rule;
+use kiosk::kiosk_lock_rule;
+use kiosk::personal_kiosk_rule;
 
 public fun setup_strict_policy(
     policy: &mut TransferPolicy<Sword>,
     cap: &TransferPolicyCap<Sword>,
 ) {
-    // 5% 版税
-    royalty_rule::add(policy, cap, 500, 100);
-    // 必须锁定在 Kiosk 中
-    kiosk_lock_rule::add(policy, cap);
-    // 必须使用个人 Kiosk
-    personal_kiosk_rule::add(policy, cap);
+    royalty_rule::add(policy, cap, 500);      // 5% 版税（自定义规则）
+    kiosk_lock_rule::add(policy, cap);       // 必须锁定在 Kiosk（Kiosk 包）
+    personal_kiosk_rule::add(policy, cap);   // 必须使用个人 Kiosk（Kiosk 包）
 }
 ```
 
@@ -237,7 +238,7 @@ transfer::public_transfer(profits, ctx.sender());
 ## 小结
 
 - TransferPolicy 控制 NFT 通过 Kiosk 交易时的转移行为
-- 内置规则包括版税（Royalty）、锁定（Lock）、个人 Kiosk 等
+- Framework 只提供 `add_rule` / `get_rule` / `add_receipt` 等原语，无现成「内置」版税/锁定/个人 Kiosk 模块；版税等需自行实现或使用 [Kiosk 包](https://github.com/MystenLabs/apps/tree/testnet/kiosk) 中的规则
 - 多个规则可组合使用，所有规则都必须满足后转移才能完成
 - 可创建自定义规则实现特定业务逻辑
 - TypeScript SDK 的 KioskClient 可自动解析 Policy 规则并生成满足逻辑

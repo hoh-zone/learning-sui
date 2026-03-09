@@ -166,7 +166,18 @@ fun not_found() {
 }
 ```
 
-使用 `#[error]` 属性后，当交易失败时，错误信息会包含在执行结果中，方便开发者和用户理解失败原因。
+使用 `#[error]` 属性后，当交易失败时，Sui CLI 与 GraphQL 等工具会将 abort 码解码为可读信息（如 `Error from '0x...::module::fun' (line N), abort 'EConstName': "message"`）。**不写错误码**的 `assert!(cond)` 或 `abort` 也会自动从源码行号派生一个“clever error”码，便于定位；但若需稳定错误码（如测试中按码断言），应使用具名错误常量。
+
+### Clever Errors 的编码与解码
+
+带 `#[error]` 的常量在运行时会被编码为一个 `u64` 的 clever 码，其高位包含：**标记位**（表示是 clever 码）、**中止发生的行号**、**常量名在模块标识表中的索引**、**常量值在模块常量表中的索引**。例如某次中止得到的十六进制码可能形如 `0x8000_0007_0001_0000`，解码后可得到行号、常量名（如 `EIsThree`）和常量值（如 `b"The value is three"`），工具会渲染为类似：
+
+`Error from '0x...::module::fun' (line 7), abort 'EIsThree': "The value is three"`
+
+**未提供错误码**的 `assert!(cond)` 或 `abort` 也会生成 clever 码，其中“常量名索引”和“常量值索引”用哨兵值 `0xffff` 填充，仅行号有效，便于在源码中定位。  
+**宏**中的 `assert!`/`abort` 的行号取**宏调用处**，而不是宏定义内部，这样错误信息会指向调用方代码。
+
+如需从 `u64` 手工解码 clever 码，可参考 Sui 文档或 CLI/GraphQL 的解码流程；日常开发中直接依赖 Sui CLI 与 GraphQL 的自动解码即可。
 
 ## 错误处理的最佳实践
 

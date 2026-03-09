@@ -88,25 +88,63 @@ public fun damage(self: &Sword): u64 { self.damage }
 
 ### TransferPolicy 配置
 
+Sui Framework 只提供 `transfer_policy::add_rule` 等原语，不包含现成的 `sui::royalty_rule` 或 `sui::kiosk_lock_rule`。版税等规则需要自行实现（或依赖 [Kiosk 生态包](https://github.com/MystenLabs/apps/tree/testnet/kiosk)）。下面示例在包内实现一个简单的版税规则并创建 Policy：
+
+```move
+// 包内自定义版税规则（基于 transfer_policy::add_rule）
+module marketplace::royalty_rule;
+
+use sui::coin::{Self, Coin};
+use sui::sui::SUI;
+use sui::transfer_policy::{Self as policy, TransferPolicy, TransferPolicyCap, TransferRequest};
+
+const MAX_BP: u16 = 10_000;
+
+public struct Rule has drop {}
+public struct Config has store, drop { amount_bp: u16 }
+
+public fun add<T: key + store>(
+    policy: &mut TransferPolicy<T>,
+    cap: &TransferPolicyCap<T>,
+    amount_bp: u16,
+) {
+    assert!(amount_bp <= MAX_BP, 0);
+    policy::add_rule(Rule {}, policy, cap, Config { amount_bp })
+}
+
+public fun pay<T: key + store>(
+    policy: &mut TransferPolicy<T>,
+    request: &mut TransferRequest<T>,
+    payment: &mut Coin<SUI>,
+    ctx: &mut TxContext,
+) {
+    let paid = policy::paid(request);
+    let config = policy::get_rule(Rule {}, policy);
+    let amount = ((paid as u128) * (config.amount_bp as u128) / (MAX_BP as u128)) as u64;
+    assert!(coin::value(payment) >= amount, 1);
+    let fee = coin::split(payment, amount, ctx);
+    policy::add_to_balance(Rule {}, policy, fee);
+    policy::add_receipt(Rule {}, request)
+}
+```
+
 ```move
 module marketplace::policy_setup;
 
 use sui::transfer_policy::{Self, TransferPolicy, TransferPolicyCap};
 use sui::package::Publisher;
-use sui::royalty_rule;
-use sui::kiosk_lock_rule;
 use marketplace::sword::Sword;
+use marketplace::royalty_rule;
 
 public fun create_policy_with_royalty(
     publisher: &Publisher,
     royalty_bps: u16,
-    min_royalty: u64,
+    _min_royalty: u64,
     ctx: &mut TxContext,
 ) {
     let (mut policy, cap) = transfer_policy::new<Sword>(publisher, ctx);
 
-    // 添加版税规则
-    royalty_rule::add(&mut policy, &cap, royalty_bps, min_royalty);
+    royalty_rule::add(&mut policy, &cap, royalty_bps);
 
     transfer::public_share_object(policy);
     transfer::public_transfer(cap, ctx.sender());

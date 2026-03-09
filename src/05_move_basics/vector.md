@@ -118,6 +118,12 @@ fun modify() {
 }
 ```
 
+### 下标语法
+
+`v[i]` 是 Move 的**下标语法**：编译器会将其转换为对 `vector::borrow`（只读）或 `vector::borrow_mut`（可写）的调用。标准库中的 `vector` 通过 `#[syntax(index)]` 标记了 `borrow` 与 `borrow_mut`，因此支持 `v[i]` 和 `&v[i]`、`&mut v[i]`。
+
+自定义类型也可以为“索引访问”定义类似语法：在同一模块中为类型定义带有 `#[syntax(index)]` 的 `public fun borrow(...)` 和 `public fun borrow_mut(...)`，第一个参数为 `&Self` / `&mut Self`，返回 `&T` / `&mut T`，即可对该类型的值使用 `obj[index_expr]` 形式的读写。详见语言参考中的 Index Syntax。
+
 ## 查询操作
 
 ```move

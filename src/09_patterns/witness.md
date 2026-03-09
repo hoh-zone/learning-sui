@@ -207,7 +207,7 @@ public fun increase_supply<T>(supply: &mut Supply<T>, value: u64): Balance<T> {
 }
 ```
 
-`coin::create_currency` 内部就是调用了 `balance::create_supply`，通过 OTW（一次性见证者）来确保每种货币的 Supply 只被创建一次。
+（已废弃的）`coin::create_currency` 以及当前推荐的 **`coin_registry::new_currency_with_otw`** 内部都会用到 `balance::create_supply`（通过 **`coin::new_treasury_cap`** 等），OTW 用于确保每种货币的 Supply 只被创建一次。
 
 ## phantom 类型参数
 

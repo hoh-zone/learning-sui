@@ -16,7 +16,7 @@ public struct TreasuryCap<phantom T> has key, store {
 - **铸造**：通过 `coin::mint` 创建新代币
 - **销毁**：通过 `coin::burn` 销毁代币
 - **查询总供应量**：通过 `total_supply()` 获取当前总供应量
-- **更新元数据**：在 `CoinMetadata` 未冻结时可更新
+- **更新元数据**：持有 `MetadataCap` 时可通过 `coin_registry::set_name` 等更新链上 `Currency` 元数据
 
 ## 无限供应模型
 
@@ -25,16 +25,24 @@ public struct TreasuryCap<phantom T> has key, store {
 ```move
 module game::gold;
 
+use std::string;
 use sui::coin::{Self, TreasuryCap};
+use sui::coin_registry;
 
 public struct GOLD() has drop;
 
 fun init(otw: GOLD, ctx: &mut TxContext) {
-    let (treasury_cap, metadata) = coin::create_currency<GOLD>(
-        otw, 9, b"GOLD", b"Gold", b"Game currency", option::none(), ctx,
+    let (initializer, treasury_cap) = coin_registry::new_currency_with_otw<GOLD>(
+        otw, 9,
+        string::utf8(b"GOLD"),
+        string::utf8(b"Gold"),
+        string::utf8(b"Game currency"),
+        string::utf8(b""),
+        ctx,
     );
+    let metadata_cap = coin_registry::finalize(initializer, ctx);
     transfer::public_transfer(treasury_cap, ctx.sender());
-    transfer::public_freeze_object(metadata);
+    transfer::public_transfer(metadata_cap, ctx.sender());
 }
 
 public fun mint(
@@ -62,7 +70,9 @@ public fun burn(
 ```move
 module fixed_supply::silver;
 
-use sui::coin::{Self, TreasuryCap, CoinMetadata};
+use std::string;
+use sui::coin::{Self, TreasuryCap};
+use sui::coin_registry;
 use sui::dynamic_object_field as dof;
 
 public struct SILVER() has drop;
@@ -76,12 +86,16 @@ public struct TreasuryCapKey() has copy, drop, store;
 const TOTAL_SUPPLY: u64 = 10_000_000_000_000_000_000;
 
 fun init(otw: SILVER, ctx: &mut TxContext) {
-    let (mut treasury_cap, metadata) = coin::create_currency<SILVER>(
-        otw, 9, b"SILVER", b"Silver",
-        b"Fixed supply token", option::none(), ctx,
+    let (initializer, mut treasury_cap) = coin_registry::new_currency_with_otw<SILVER>(
+        otw, 9,
+        string::utf8(b"SILVER"),
+        string::utf8(b"Silver"),
+        string::utf8(b"Fixed supply token"),
+        string::utf8(b""),
+        ctx,
     );
-
-    transfer::public_freeze_object(metadata);
+    let metadata_cap = coin_registry::finalize(initializer, ctx);
+    transfer::public_transfer(metadata_cap, ctx.sender());
 
     // 铸造全部供应量
     let coin = coin::mint(&mut treasury_cap, TOTAL_SUPPLY, ctx);
@@ -111,7 +125,9 @@ fun init(otw: SILVER, ctx: &mut TxContext) {
 ```move
 module game::reward_token;
 
+use std::string;
 use sui::coin::{Self, TreasuryCap};
+use sui::coin_registry;
 
 public struct REWARD_TOKEN() has drop;
 
@@ -126,13 +142,19 @@ const EExceedsMaxPerMint: u64 = 1;
 const EExceedsMaxSupply: u64 = 2;
 
 fun init(otw: REWARD_TOKEN, ctx: &mut TxContext) {
-    let (treasury_cap, metadata) = coin::create_currency<REWARD_TOKEN>(
-        otw, 9, b"RWD", b"Reward Token", b"Reward", option::none(), ctx,
+    let (initializer, treasury_cap) = coin_registry::new_currency_with_otw<REWARD_TOKEN>(
+        otw, 9,
+        string::utf8(b"RWD"),
+        string::utf8(b"Reward Token"),
+        string::utf8(b"Reward"),
+        string::utf8(b""),
+        ctx,
     );
+    let metadata_cap = coin_registry::finalize(initializer, ctx);
 
     // TreasuryCap 共享，通过 MintCap 控制访问
     transfer::public_share_object(treasury_cap);
-    transfer::public_freeze_object(metadata);
+    transfer::public_transfer(metadata_cap, ctx.sender());
 
     transfer::transfer(MintCap {
         id: object::new(ctx),

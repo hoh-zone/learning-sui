@@ -9,7 +9,9 @@
 ```move
 module game::loyalty_points;
 
+use std::string;
 use sui::coin;
+use sui::coin_registry;
 use sui::token::{Self, Token, ActionRequest, TokenPolicy, TokenPolicyCap};
 
 public struct LOYALTY_POINTS() has drop;
@@ -21,19 +23,21 @@ public struct ShopConfig has store {
 }
 
 fun init(otw: LOYALTY_POINTS, ctx: &mut TxContext) {
-    let (treasury_cap, metadata) = coin::create_currency(
-        otw, 0, b"LP", b"Loyalty Points",
-        b"Earn points, redeem rewards", option::none(), ctx,
+    let (initializer, treasury_cap) = coin_registry::new_currency_with_otw<LOYALTY_POINTS>(
+        otw, 0,
+        string::utf8(b"LP"),
+        string::utf8(b"Loyalty Points"),
+        string::utf8(b"Earn points, redeem rewards"),
+        string::utf8(b""),
+        ctx,
     );
+    let metadata_cap = coin_registry::finalize(initializer, ctx);
 
     let (mut policy, policy_cap) = token::new_policy(&treasury_cap, ctx);
 
-    // spend 操作需要 ShopOwnerRule 验证
     token::add_rule_for_action<LOYALTY_POINTS, ShopOwnerRule>(
         &mut policy, &policy_cap, token::spend_action(), ctx,
     );
-
-    // 配置规则
     token::add_rule_config(
         ShopOwnerRule(), &mut policy, &policy_cap,
         ShopConfig { shop_owner: ctx.sender() }, ctx,
@@ -42,7 +46,7 @@ fun init(otw: LOYALTY_POINTS, ctx: &mut TxContext) {
     token::share_policy(policy);
     transfer::public_transfer(policy_cap, ctx.sender());
     transfer::public_transfer(treasury_cap, ctx.sender());
-    transfer::public_freeze_object(metadata);
+    transfer::public_transfer(metadata_cap, ctx.sender());
 }
 
 /// 玩家完成任务后获得积分
@@ -79,7 +83,9 @@ public fun spend_points(
 ```move
 module game::currencies;
 
+use std::string;
 use sui::coin::{Self, Coin, TreasuryCap};
+use sui::coin_registry;
 
 /// 软币：通过游戏获取，可自由转移
 public struct GOLD() has drop;
@@ -97,12 +103,16 @@ public struct GameShop has key {
 
 /// 初始化游戏货币
 public fun init_gold(otw: GOLD, ctx: &mut TxContext): TreasuryCap<GOLD> {
-    let (treasury_cap, metadata) = coin::create_currency<GOLD>(
-        otw, 0, b"GOLD", b"Gold",
-        b"In-game currency earned by playing",
-        option::none(), ctx,
+    let (initializer, treasury_cap) = coin_registry::new_currency_with_otw<GOLD>(
+        otw, 0,
+        string::utf8(b"GOLD"),
+        string::utf8(b"Gold"),
+        string::utf8(b"In-game currency earned by playing"),
+        string::utf8(b""),
+        ctx,
     );
-    transfer::public_freeze_object(metadata);
+    let metadata_cap = coin_registry::finalize(initializer, ctx);
+    transfer::public_transfer(metadata_cap, ctx.sender());
     treasury_cap
 }
 

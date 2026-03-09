@@ -1,6 +1,6 @@
 # 一次性见证（One Time Witness）
 
-一次性见证（One Time Witness，简称 OTW）是 Witness 模式的特殊变体，它由系统保证**在整个合约生命周期中只被创建一次**。OTW 是 Sui 框架中许多核心功能的基础，包括代币创建（`coin::create_currency`）和发布者声明（`package::claim`）。
+一次性见证（One Time Witness，简称 OTW）是 Witness 模式的特殊变体，它由系统保证**在整个合约生命周期中只被创建一次**。OTW 是 Sui 框架中许多核心功能的基础，包括代币创建（**`coin_registry::new_currency_with_otw`**）和发布者声明（`package::claim`）。
 
 本章将详细介绍 OTW 的定义规则、系统行为以及典型应用场景。
 
@@ -77,21 +77,19 @@ module examples::my_token;
 public struct MY_TOKEN has drop {}
 
 fun init(otw: MY_TOKEN, ctx: &mut TxContext) {
-    // 验证 OTW 的合法性
     assert!(sui::types::is_one_time_witness(&otw), 0);
 
-    let (treasury_cap, metadata) = sui::coin::create_currency(
-        otw,
-        6,
-        b"MTK",
-        b"My Token",
-        b"Example token using OTW",
-        option::none(),
+    let (initializer, treasury_cap) = sui::coin_registry::new_currency_with_otw<MY_TOKEN>(
+        otw, 6,
+        std::string::utf8(b"MTK"),
+        std::string::utf8(b"My Token"),
+        std::string::utf8(b"Example token using OTW"),
+        std::string::utf8(b""),
         ctx,
     );
-
-    transfer::public_freeze_object(metadata);
+    let metadata_cap = sui::coin_registry::finalize(initializer, ctx);
     transfer::public_transfer(treasury_cap, ctx.sender());
+    transfer::public_transfer(metadata_cap, ctx.sender());
 }
 ```
 
@@ -101,40 +99,38 @@ fun init(otw: MY_TOKEN, ctx: &mut TxContext) {
 2. 该类型是否没有字段
 3. 该类型名称是否与模块名大写匹配
 
-许多 Sui 框架函数（如 `coin::create_currency`）内部都会调用此检查，确保传入的确实是 OTW。
+许多 Sui 框架函数（如 **`coin_registry::new_currency_with_otw`**）内部都会调用此检查，确保传入的确实是 OTW。
 
 ## OTW 的典型应用
 
-### 1. 创建代币（coin::create_currency）
+### 1. 创建代币（coin_registry::new_currency_with_otw）
 
-这是 OTW 最常见的用途。`create_currency` 要求传入 OTW 以确保每种代币只能被创建一次：
+这是 OTW 最常见的用途。**`coin_registry::new_currency_with_otw`** 要求传入 OTW 以确保每种代币只能被创建一次（旧 API `coin::create_currency` 已废弃）：
 
 ```move
 module examples::usdc;
 
-use sui::coin;
+use std::string;
+use sui::coin_registry;
 
 public struct USDC has drop {}
 
 fun init(otw: USDC, ctx: &mut TxContext) {
-    let (treasury_cap, metadata) = coin::create_currency(
-        otw,
-        6,                          // 精度：6 位小数
-        b"USDC",                    // 符号
-        b"USD Coin",                // 名称
-        b"Stablecoin pegged to USD", // 描述
-        option::none(),             // 图标 URL
+    let (initializer, treasury_cap) = coin_registry::new_currency_with_otw<USDC>(
+        otw, 6,
+        string::utf8(b"USDC"),
+        string::utf8(b"USD Coin"),
+        string::utf8(b"Stablecoin pegged to USD"),
+        string::utf8(b""),
         ctx,
     );
-
-    // 冻结 metadata，使其不可修改
-    transfer::public_freeze_object(metadata);
-    // 将铸造权转给部署者
+    let metadata_cap = coin_registry::finalize(initializer, ctx);
     transfer::public_transfer(treasury_cap, ctx.sender());
+    transfer::public_transfer(metadata_cap, ctx.sender());
 }
 ```
 
-为什么需要 OTW？因为 `create_currency` 内部会创建该代币的 `Supply`，如果允许多次调用，就会产生多个 `Supply`，破坏代币的经济模型。
+为什么需要 OTW？因为 `new_currency_with_otw` 内部会创建该代币的 `TreasuryCap` 与链上 `Currency`，若允许多次调用会产生重复注册，破坏代币唯一性。
 
 ### 2. 声明 Publisher（package::claim）
 
