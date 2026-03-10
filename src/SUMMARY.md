@@ -204,6 +204,15 @@
   - [20.8 Gas Pool — 赞助交易服务](17_advanced_topics/gas-pool.md)
   - [20.9 Sui Dev Skills — AI 辅助开发技能包](17_advanced_topics/dev-skills.md)
 
+- [第二十一章 · 许可资产标准（PAS）](18_pas/index.md)
+  - [21.1 PAS 概述与方案对比](18_pas/01-overview.md)
+  - [21.2 核心抽象：Namespace、Chest、Policy](18_pas/02-core-abstractions.md)
+  - [21.3 请求与解析](18_pas/03-requests-and-resolution.md)
+  - [21.4 Templates 与 Command](18_pas/04-templates-and-command.md)
+  - [21.5 版本控制与 Clawback](18_pas/05-versioning-and-clawback.md)
+  - [21.6 实战一：简单合规代币](18_pas/06-practice-simple.md)
+  - [21.7 实战二：KYC 合规代币](18_pas/07-practice-kyc.md)
+
 ---
 
 - [附录](appendix/index.md)
