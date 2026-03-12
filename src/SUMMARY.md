@@ -85,6 +85,7 @@
     - [8.3.2 不可变对象](06_object_model/ownership-immutable.md)
     - [8.3.3 共享对象](06_object_model/ownership-shared.md)
     - [8.3.4 包装对象](06_object_model/ownership-wrapped.md)
+    - [8.3.5 Party 对象](06_object_model/ownership-party.md)
   - [8.4 快速路径与共识](06_object_model/fast-path-and-consensus.md)
 
 - [第九章 · 使用对象](07_using_objects/index.md)
