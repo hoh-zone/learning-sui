@@ -60,7 +60,7 @@ public fun burn(token: PreciousToken): u64 {
 
 ### Ability 系统
 
-Move 使用**四种 Ability（能力）**来精确控制类型的行为：
+Move 使用<b>四种 Ability（能力）</b>来精确控制类型的行为：
 
 | Ability | 含义 | 作用 |
 |---------|------|------|
