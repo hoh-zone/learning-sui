@@ -47,11 +47,13 @@
 module hello::hello_world;
 
 use std::string::String;
-use std::unit_test::assert_eq;
 
 public fun greeting(): String {
     b"Hello, Move on Sui!".to_string()
 }
+
+#[test_only]
+use std::unit_test::assert_eq;
 
 #[test]
 fun greeting_returns_hello() {
