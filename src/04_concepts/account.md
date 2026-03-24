@@ -103,7 +103,7 @@ zkLogin 的核心价值在于：
 ```move
 module my_project::wallet;
 
-use sui::coin::{Self, Coin};
+use sui::coin::Coin;
 use sui::sui::SUI;
 
 public fun send_coin(

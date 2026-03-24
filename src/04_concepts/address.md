@@ -39,10 +39,11 @@
 ```move
 module example::demo;
 
-use std::debug;
+#[test_only]
+use std::unit_test::assert_eq;
 
 #[test]
-fun address() {
+fun addr() {
     let addr1 = @0x1;
     let addr2 = @0x0000000000000000000000000000000000000000000000000000000000000001;
     assert_eq!(addr1, addr2);
@@ -134,7 +135,8 @@ use std::string::String;
 use sui::address;
 
 public fun addr_to_string(addr: address): String {
-    address::to_string(addr)
+    // address::to_string(addr)
+    addr.to_string()
 }
 
 public fun addr_length(): u64 {
