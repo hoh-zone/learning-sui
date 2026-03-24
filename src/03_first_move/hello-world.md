@@ -120,6 +120,7 @@ public fun hello_world(): String {
 #[test_only]
 module hello_world::hello_world_tests;
 
+use std::unit_test::assert_eq;
 use hello_world::hello_world;
 
 #[test]
@@ -147,7 +148,7 @@ fun hello_world() {
 ```
 
 - `#[test]`：标记该函数为测试函数
-- `assert!`：断言宏，条件为 `false` 时测试失败
+- `assert_eq!`：断言宏，条件为 `false` 时测试失败
 - 测试函数不需要 `public` 修饰符
 
 ## 构建项目
