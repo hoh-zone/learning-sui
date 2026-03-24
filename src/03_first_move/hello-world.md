@@ -120,8 +120,8 @@ public fun hello_world(): String {
 #[test_only]
 module hello_world::hello_world_tests;
 
-use std::unit_test::assert_eq;
 use hello_world::hello_world;
+use std::unit_test::assert_eq;
 
 #[test]
 fun hello_world() {
