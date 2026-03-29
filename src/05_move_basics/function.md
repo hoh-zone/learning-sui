@@ -15,6 +15,9 @@ fun add(a: u64, b: u64): u64 {
     a + b  // 最后一个表达式作为返回值，不加分号
 }
 
+#[test_only]
+use std::unit_test::assert_eq;
+
 #[test]
 fun add_returns_sum() {
     assert_eq!(add(2, 3), 5);
@@ -68,6 +71,9 @@ public fun max(a: u64, b: u64): u64 {
     b  // 最后表达式返回
 }
 
+#[test_only]
+use std::unit_test::assert_eq;
+
 #[test]
 fun max_returns_larger() {
     assert_eq!(max(10, 20), 20);
@@ -94,6 +100,9 @@ public fun min_max(a: u64, b: u64): (u64, u64) {
     }
 }
 
+#[test_only]
+use std::unit_test::assert_eq;
+
 #[test]
 fun swap_returns_reversed() {
     let (x, y) = swap(1, 2);
@@ -119,6 +128,9 @@ module book::function_ignore;
 fun get_pair(): (u64, bool) {
     (42, true)
 }
+
+#[test_only]
+use std::unit_test::assert_eq;
 
 #[test]
 fun ignore_return() {
@@ -161,6 +173,9 @@ entry fun create_greeting(name: String, ctx: &mut TxContext) {
     let _ = name;
     let _ = ctx;
 }
+
+#[test_only]
+use std::unit_test::assert_eq;
 
 #[test]
 fun visibility_and_swap() {

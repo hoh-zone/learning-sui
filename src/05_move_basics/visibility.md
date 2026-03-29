@@ -21,6 +21,9 @@ fun another_helper(): u64 {
     internal_helper() + 8
 }
 
+#[test_only]
+use std::unit_test::assert_eq;
+
 #[test]
 fun private_only_in_module() {
     assert_eq!(internal_helper(), 42);
@@ -52,6 +55,9 @@ fun validate(a: u64, b: u64) {
     assert!(a > 0 && b > 0, EInvalid);
 }
 
+#[test_only]
+use std::unit_test::assert_eq;
+
 #[test]
 fun public_calculate() {
     assert_eq!(calculate(3, 7), 10);
@@ -78,6 +84,9 @@ public(package) fun package_helper(): u64 {
 public fun public_api(): u64 {
     package_helper() * 2
 }
+
+#[test_only]
+use std::unit_test::assert_eq;
 
 #[test]
 fun package_visibility() {
@@ -189,6 +198,9 @@ public fun age(user: &User): u64 {
 public fun set_age(user: &mut User, new_age: u64) {
     user.age = new_age;
 }
+
+#[test_only]
+use std::unit_test::assert_eq;
 
 #[test]
 fun field_access() {

@@ -51,6 +51,9 @@ public fun describe(n: u64): vector<u8> {
     }
 }
 
+#[test_only]
+use std::unit_test::assert_eq;
+
 #[test]
 fun expression_if() {
     assert_eq!(abs_diff(10, 3), 7);
@@ -68,6 +71,9 @@ fun expression_if() {
 
 ```move
 module book::if_no_else;
+
+#[test_only]
+use std::unit_test::assert_eq;
 
 #[test]
 fun no_else() {

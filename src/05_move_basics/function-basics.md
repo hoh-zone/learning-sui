@@ -13,6 +13,9 @@ fun add(a: u64, b: u64): u64 {
     a + b  // 最后一个表达式作为返回值，不加分号
 }
 
+#[test_only]
+use std::unit_test::assert_eq;
+
 #[test]
 fun add_returns_sum() {
     assert_eq!(add(2, 3), 5);
@@ -79,6 +82,9 @@ public fun swap(a: u64, b: u64): (u64, u64) {
 public fun min_max(a: u64, b: u64): (u64, u64) {
     if (a < b) { (a, b) } else { (b, a) }
 }
+
+#[test_only]
+use std::unit_test::assert_eq;
 
 #[test]
 fun swap_returns_reversed() {

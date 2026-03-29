@@ -85,6 +85,9 @@ public fun max_supply(): u64 { MAX_SUPPLY }
 public fun default_price(): u64 { DEFAULT_PRICE }
 public fun min_stake(): u64 { MIN_STAKE }
 
+#[test_only]
+use std::unit_test::assert_eq;
+
 #[test]
 fun config_getters() {
     assert_eq!(max_supply(), 1_000_000);
@@ -104,8 +107,7 @@ module book::const_errors;
 
 const ENotOwner: u64 = 0;
 const EInsufficientFunds: u64 = 1;
-const EAlreadyInitialized: u64 = 2;
-const EInvalidAmount: u64 = 3;
+const EInvalidAmount: u64 = 2;
 
 public struct Wallet has drop {
     owner: address,
@@ -120,6 +122,9 @@ public fun withdraw(wallet: &mut Wallet, amount: u64, caller: address): u64 {
     wallet.balance = wallet.balance - amount;
     amount
 }
+
+#[test_only]
+use std::unit_test::assert_eq;
 
 #[test]
 fun withdraw_ok() {
@@ -159,6 +164,9 @@ fun not_owner() {
 module book::const_storage;
 
 const LARGE_BYTES: vector<u8> = b"This is a relatively long constant string value";
+
+#[test_only]
+use std::unit_test::assert_eq;
 
 #[test]
 fun constant_copy() {
@@ -206,6 +214,9 @@ public fun default_price(): u64 { DEFAULT_PRICE }
 public fun check_authorized(addr: address) {
     assert!(addr == ADMIN_ADDRESS, ENotAuthorized);
 }
+
+#[test_only]
+use std::unit_test::assert_eq;
 
 #[test]
 fun constants_example() {

@@ -47,9 +47,8 @@ public fun complex_logic(x: u64): u64 {
 文档注释以 `///` 开头，用于为模块、结构体、函数等生成文档。文档注释必须放在被注释项的 **正上方**：
 
 ```move
-module book::comments_example;
-
 /// This is a doc comment for the module
+module book::comments_example;
 
 /// A simple counter struct
 public struct Counter has key {

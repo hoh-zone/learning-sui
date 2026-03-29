@@ -64,6 +64,9 @@ fun operators() {
 ```move
 module book::block_expr;
 
+#[test_only]
+use std::unit_test::assert_eq;
+
 #[test]
 fun block_returns_value() {
     let x = {
@@ -105,6 +108,9 @@ fun empty_block() {
 ```move
 module book::semicolons;
 
+#[test_only]
+use std::unit_test::assert_eq;
+
 #[test]
 fun semicolons() {
     // 带分号：值被丢弃，块返回 ()
@@ -137,6 +143,9 @@ fun add(a: u64, b: u64): u64 {
     a + b
 }
 
+#[test_only]
+use std::unit_test::assert_eq;
+
 #[test]
 fun func_as_expr() {
     // 函数调用的结果可以直接参与运算
@@ -151,6 +160,9 @@ fun func_as_expr() {
 
 ```move
 module book::expression_examples;
+
+#[test_only]
+use std::unit_test::assert_eq;
 
 #[test]
 fun expressions_mixed() {
@@ -184,6 +196,9 @@ fun expressions_mixed() {
 ```move
 module book::if_expr;
 
+#[test_only]
+use std::unit_test::assert_eq;
+
 #[test]
 fun if_expr_grade() {
     let score = 85u64;
@@ -216,9 +231,12 @@ fun compute(input: u64): u64 {
     result // 最后一个表达式的值作为函数返回值
 }
 
+#[test_only]
+use std::unit_test::assert_eq;
+
 #[test]
 fun sequence() {
-    assert_eq!(compute(10), 10); // (10*2 + 10) / 3 = 10
+    assert_eq!(compute(10), 10); // (10 * 2 + 10) / 3 = 10
 }
 ```
 

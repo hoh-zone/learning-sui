@@ -37,6 +37,9 @@ Move 使用 `as` 关键字在不同整数类型之间进行显式转换：
 ```move
 module book::casting;
 
+#[test_only]
+use std::unit_test::assert_eq;
+
 #[test]
 fun casting() {
     let x: u8 = 42;
@@ -44,16 +47,20 @@ fun casting() {
     let z: u128 = (y as u128);
     let w: u256 = (z as u256);
 
-    // 也可以从大类型转到小类型（会截断）
-    let big: u64 = 300;
-    let small: u8 = (big as u8); // 300 % 256 = 44
+    // 未超出小类型数据范围时，可以从大类型转到小类型
+    let big: u64 = 44;
+    let small: u8 = (big as u8);
     assert_eq!(small, 44);
+    
+    // 超出小类型数据范围时，将在运行过程中 abort
+    // let big: u64 = 300;
+    // let small: u8 = (big as u8); // abort with arithmetic error
 }
 ```
 
-> **注意**：从大类型向小类型转换时会发生截断，高位被丢弃。
+> **注意**：从大类型向小类型转换时，若未超出小类型数据范围，则成功，否则将因算术错误而中止。
 
 ## 小结
 
 - **布尔类型**：`true`/`false`，支持 `&&`、`||`、`!`，短路求值
-- **类型转换**：使用 `as` 关键字进行显式转换，大转小会截断
+- **类型转换**：使用 `as` 关键字进行显式转换

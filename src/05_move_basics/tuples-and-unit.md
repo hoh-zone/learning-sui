@@ -48,7 +48,7 @@ public fun returns_three(): (u64, u8, address) {
 #[test]
 fun destructure() {
     let () = ();
-    let (x, y): (u64, u64) = (0, 1);
+    let (mut x, mut y): (u64, u64) = (0, 1);
     let (a, b, c) = (@0x0, 0u8, true);
 
     (x, y) = (2, 3);
