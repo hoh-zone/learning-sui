@@ -13,6 +13,9 @@ macro fun add_three($x: u64, $y: u64, $z: u64): u64 {
     $x + $y + $z
 }
 
+#[test_only]
+use std::unit_test::assert_eq;
+
 #[test]
 fun use_macro() {
     let sum = add_three!(1, 2, 3);
@@ -62,6 +65,9 @@ Move 标准库为 `vector` 提供了一批宏，替代手写 `while` 循环，�
 
 ```move
 module book::vector_macros;
+
+#[test_only]
+use std::unit_test::assert_eq;
 
 #[test]
 fun do_and_fold() {

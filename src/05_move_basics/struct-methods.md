@@ -24,6 +24,9 @@ public fun value(self: &Counter): u64 {
     self.value
 }
 
+#[test_only]
+use std::unit_test::assert_eq;
+
 #[test]
 fun method_call() {
     let counter = new();
@@ -67,6 +70,9 @@ public fun destroy(self: Counter): u64 {
     let Counter { value } = self;
     value
 }
+
+#[test_only]
+use std::unit_test::assert_eq;
 
 #[test]
 fun methods() {
@@ -119,6 +125,9 @@ public fun set_value(self: &mut Builder, value: u64) {
 public fun value(self: &Builder): u64 {
     self.value
 }
+
+#[test_only]
+use std::unit_test::assert_eq;
 
 #[test]
 fun builder() {
@@ -178,17 +187,20 @@ public fun new(amount: u64): Token {
     Token { amount }
 }
 
-fun token_amount(t: &Token): u64 {
+public fun token_amount(t: &Token): u64 {
     t.amount
 }
 
-fun token_is_zero(t: &Token): bool {
+public fun token_is_zero(t: &Token): bool {
     t.amount == 0
 }
 
 // 导出别名，其他模块导入 Token 后也能使用这些方法
 public use fun token_amount as Token.amount;
 public use fun token_is_zero as Token.is_zero;
+
+#[test_only]
+use std::unit_test::assert_eq;
 
 #[test]
 fun public_alias() {
@@ -229,7 +241,7 @@ use book::auto_method::{Self, Circle};
 fun calculate() {
     let circle: Circle = auto_method::new(10);
     let area = circle.area_approx();  // 自动关联，直接使用点号语法
-    assert_eq!(area, 300);
+    assert!(area == 300);
 }
 ```
 

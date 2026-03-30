@@ -33,6 +33,9 @@ fun scope() {
 ```move
 module book::block_scope;
 
+#[test_only]
+use std::unit_test::assert_eq;
+
 #[test]
 fun block_scope() {
     let x = {
@@ -57,6 +60,9 @@ fun block_scope() {
 
 ```move
 module book::nested_scope;
+
+#[test_only]
+use std::unit_test::assert_eq;
 
 #[test]
 fun nested() {
@@ -118,12 +124,15 @@ public struct Token has drop {
     value: u64,
 }
 
+#[test_only]
+use std::unit_test::assert_eq;
+
 #[test]
 fun assignment_move() {
     let token_a = Token { value: 100 };
-    let _token_b = token_a;  // 所有权从 token_a 转移到 token_b
-    // assert!(token_a.value == 100);  // 错误！token_a 已经被移动
-    assert_eq!(_token_b.value, 100);    // token_b 是有效的所有者
+    let token_b = token_a;  // 所有权从 token_a 转移到 token_b
+    // assert_eq!(token_a.value, 100);  // 错误！token_a 已经被移动
+    assert_eq!(token_b.value, 100);    // token_b 是有效的所有者
 }
 ```
 
@@ -143,6 +152,9 @@ fun make_wrapper(): Wrapper {
     // 所有权转移给调用者，不会在函数结束时被丢弃
 }
 
+#[test_only]
+use std::unit_test::assert_eq;
+
 #[test]
 fun return_ownership() {
     let wrapper = make_wrapper();  // 接收所有权
@@ -159,6 +171,9 @@ fun return_ownership() {
 
 ```move
 module book::copy_example;
+
+#[test_only]
+use std::unit_test::assert_eq;
 
 #[test]
 fun copy_vs_move() {
@@ -187,11 +202,14 @@ public struct UniqueItem has drop {
     value: u64,
 }
 
+#[test_only]
+use std::unit_test::assert_eq;
+
 #[test]
 fun unique_move() {
     let item = UniqueItem { value: 1 };
     let item2 = item;  // item 被移动到 item2
-    // assert!(item.value == 1);  // 错误！item 已被移动
+    // assert_eq!(item.value, 1);  // 错误！item 已被移动
     assert_eq!(item2.value, 1);
 }
 ```
@@ -245,6 +263,9 @@ public fun verify_and_consume(receipt: Receipt): u64 {
     assert!(paid, ENotPaid);
     amount
 }
+
+#[test_only]
+use std::unit_test::assert_eq;
 
 #[test]
 fun destruct() {
