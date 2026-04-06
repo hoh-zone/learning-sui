@@ -6,7 +6,7 @@ Move 提供有限的运行时类型反射能力，主要通过 `std::type_name` 
 
 ### 获取类型名称
 
-`type_name::get<T>()` 函数返回一个 `TypeName` 结构体，包含类型 `T` 的元数据信息：
+`type_name::with_defining_ids<T>()` 函数返回一个 `TypeName` 结构体，包含类型 `T` 的元数据信息：
 
 ```move
 module book::reflection_basic;
@@ -17,9 +17,9 @@ public struct MyType has drop {}
 
 #[test]
 fun get_type_name() {
-    let my_type_name = type_name::get<MyType>();
-    let u64_type_name = type_name::get<u64>();
-    let bool_type_name = type_name::get<bool>();
+    let my_type_name = type_name::with_defining_ids<MyType>();
+    let u64_type_name = type_name::with_defining_ids<u64>();
+    let bool_type_name = type_name::with_defining_ids<bool>();
 
     // 不同类型的 TypeName 不相等
     assert!(u64_type_name != bool_type_name);
@@ -42,7 +42,7 @@ public struct Token has drop {}
 
 #[test]
 fun type_string() {
-    let type_name = type_name::get<Token>();
+    let type_name = type_name::with_defining_ids<Token>();
     let name_str: String = type_name.into_string();
 
     // name_str 包含完整的类型路径，如 "0x...::reflection_string::Token"
@@ -66,20 +66,20 @@ public struct MyType has drop {}
 
 #[test]
 fun type_reflection() {
-    let type_name = type_name::get<MyType>();
+    let type_name = type_name::with_defining_ids<MyType>();
 
     // 获取完整的类型名称字符串
     let name_str: String = type_name.into_string();
 
     // 获取模块名称
-    let module_name = type_name.get_module();
+    let module_name = type_name.module_string();
 
     // 获取包地址
-    let address = type_name.get_address();
+    let address = type_name.address_string();
 
     // 类型比较
-    let u64_name = type_name::get<u64>();
-    let bool_name = type_name::get<bool>();
+    let u64_name = type_name::with_defining_ids<u64>();
+    let bool_name = type_name::with_defining_ids<bool>();
     assert!(u64_name != bool_name);
 
     let _ = name_str;
@@ -101,9 +101,9 @@ public struct CustomType has drop {}
 
 #[test]
 fun is_primitive() {
-    let u64_name = type_name::get<u64>();
-    let bool_name = type_name::get<bool>();
-    let custom_name = type_name::get<CustomType>();
+    let u64_name = type_name::with_defining_ids<u64>();
+    let bool_name = type_name::with_defining_ids<bool>();
+    let custom_name = type_name::with_defining_ids<CustomType>();
 
     assert!(u64_name.is_primitive());
     assert!(bool_name.is_primitive());
@@ -131,11 +131,11 @@ public struct VersionedType has drop {}
 
 #[test]
 fun type_ids() {
-    // get 方法使用 defining ID
-    let with_defining = type_name::get<VersionedType>();
+    // with_defining_ids 方法使用 defining ID
+    let with_defining = type_name::with_defining_ids<VersionedType>();
 
-    // get_with_original_ids 使用 original ID
-    let with_original = type_name::get_with_original_ids<VersionedType>();
+    // with_original_ids 使用 original ID
+    let with_original = type_name::with_original_ids<VersionedType>();
 
     // 未升级时两者相同
     let _ = with_defining;
@@ -153,7 +153,6 @@ fun type_ids() {
 module book::reflection_usage;
 
 use std::type_name::{Self, TypeName};
-use std::ascii::String;
 
 public struct TypeRegistry has drop {
     registered: vector<TypeName>,
@@ -164,20 +163,13 @@ public fun new_registry(): TypeRegistry {
 }
 
 public fun register<T>(registry: &mut TypeRegistry) {
-    let type_name = type_name::get<T>();
+    let type_name = type_name::with_defining_ids<T>();
     registry.registered.push_back(type_name);
 }
 
 public fun is_registered<T>(registry: &TypeRegistry): bool {
-    let type_name = type_name::get<T>();
-    let mut i = 0;
-    while (i < registry.registered.length()) {
-        if (registry.registered[i] == type_name) {
-            return true
-        };
-        i = i + 1;
-    };
-    false
+    let type_name = type_name::with_defining_ids<T>();
+    registry.registered.contains(&type_name)
 }
 
 public struct TokenA has drop {}
@@ -208,7 +200,7 @@ use std::type_name;
 use std::ascii::String;
 
 public fun type_info<T>(): String {
-    let type_name = type_name::get<T>();
+    let type_name = type_name::with_defining_ids<T>();
     type_name.into_string()
 }
 
@@ -224,4 +216,4 @@ fun debug_info() {
 
 ## 小结
 
-Move 通过 `std::type_name` 模块提供有限但实用的运行时类型反射能力。`type_name::get<T>()` 返回 `TypeName` 结构体，可以获取类型的完整名称、模块名、包地址等元数据。`is_primitive()` 用于判断是否为原始类型。Move 还区分 Defining ID 和 Original ID 来处理包升级后的类型标识问题。类型反射在动态集合的类型键、类型注册表和调试等场景中非常有用。
+Move 通过 `std::type_name` 模块提供有限但实用的运行时类型反射能力。`type_name::with_defining_ids<T>()` 返回 `TypeName` 结构体，可以获取类型的完整名称、模块名、包地址等元数据。`is_primitive()` 用于判断是否为原始类型。Move 还区分 Defining ID 和 Original ID 来处理包升级后的类型标识问题。类型反射在动态集合的类型键、类型注册表和调试等场景中非常有用。
