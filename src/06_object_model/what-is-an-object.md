@@ -173,7 +173,7 @@ public fun create_notebook(
     Notebook {
         id: object::new(ctx),
         title,
-        entries: vector::empty(),
+        entries: vector[],
     }
 }
 
@@ -184,12 +184,12 @@ public fun add_entry(
     timestamp: u64,
 ) {
     let entry = Entry { content, timestamp };
-    vector::push_back(&mut notebook.entries, entry);
+    notebook.entries.push_back(entry);
 }
 
 /// 读取条目数量
 public fun entry_count(notebook: &Notebook): u64 {
-    vector::length(&notebook.entries)
+    notebook.entries.length()
 }
 ```
 
@@ -279,14 +279,14 @@ public fun bad_destroy(obj: MyObject) {
 ### 给资产对象添加 copy/drop
 
 ```move
-// 不推荐！数字资产不应该可复制或可丢弃
+// 数字资产不可被复制或丢弃
 public struct BadToken has key, copy, drop {
     id: UID,
     value: u64,
 }
 ```
 
-虽然编译器允许，但这违反了数字资产的核心原则，会导致资产可以被随意复制和丢弃。
+`UID` 没有 `copy` 和 `drop` 的能力，上述做法会发生编译错误。
 
 ## 小结
 

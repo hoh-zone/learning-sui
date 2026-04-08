@@ -48,13 +48,12 @@ public fun public_party_transfer<T: key + store>(obj: T, party: sui::party::Part
 ```
 
 - 若类型有 **store**，可从任意模块调用 **public_party_transfer**。
-- 若类型无 store、且需支持「转给 Party」，则需在定义该类型的模块内使用 **party_transfer**，或通过[自定义转移策略](https://docs.sui.io/guides/developer/objects/transfers/custom-rules.md)控制。
+- 若类型无 store、且需支持「转给 Party」，则需在定义该类型的模块内使用 **party_transfer**，或通过[自定义转移策略](https://docs.sui.io/concepts/transfers/custom-rules)控制。
 
 **示例**：铸造一个 NFT 并转为单所有者 Party 对象
 
 ```move
 use sui::party;
-use sui::transfer;
 
 public fun mint_and_party_transfer(
     nft: NFT,

@@ -107,13 +107,13 @@ public fun write_note(content: vector<u8>, ctx: &mut TxContext) {
 public fun create_bulletin(ctx: &mut TxContext) {
     let bulletin = Bulletin {
         id: object::new(ctx),
-        messages: vector::empty(),
+        messages: vector[],
     };
     transfer::share_object(bulletin);
 }
 
 public fun post_message(bulletin: &mut Bulletin, msg: vector<u8>) {
-    vector::push_back(&mut bulletin.messages, msg);
+    bulletin.messages.push_back(msg);
 }
 ```
 
@@ -172,11 +172,11 @@ public struct SharedNPC has key {
 }
 
 public fun equip_owned(character: &mut OwnedCharacter, weapon: Weapon) {
-    option::fill(&mut character.weapon, weapon);
+    character.weapon.fill(weapon);
 }
 
 public fun equip_shared(npc: &mut SharedNPC, weapon: Weapon) {
-    option::fill(&mut npc.weapon, weapon);
+    npc.weapon.fill(weapon);
 }
 ```
 
@@ -283,7 +283,7 @@ public fun create_price_table(
 
 /// 任何人都可以高效地读取价格，走快速路径
 public fun price_at(table: &PriceTable, index: u64): u64 {
-    *vector::borrow(&table.prices, index)
+    table.prices[index]
 }
 ```
 

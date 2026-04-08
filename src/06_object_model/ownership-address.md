@@ -10,7 +10,7 @@
 
 ### 使用 `transfer::transfer`
 
-`transfer::transfer` 是模块内部使用的转移函数。它可以转移**任何具有 `key` 能力**的对象，即使该对象没有 `store` 能力：
+`transfer::transfer` 是模块内部使用的转移函数。它可以转移**任何具有 `key` 能力**的对象，即使该对象同时拥有 `store` 能力：
 
 ```move
 module examples::basic_transfer;
