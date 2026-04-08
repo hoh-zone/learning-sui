@@ -11,7 +11,7 @@ Sui Framework 本身依赖于 Move 标准库（`std`），因此当你在 `Move.
 Sui = { git = "https://github.com/MystenLabs/sui.git", subdir = "crates/sui-framework/packages/sui-framework", rev = "framework/mainnet" }
 ```
 
-> 默认 `rev` 约定见[第二章 · Move 2024](../02_getting_started/move-2024.md)中的「Sui Framework 依赖：`rev` 与网络」；在 testnet 开发时可改用 `framework/testnet`。
+> 默认 `rev` 约定见[第二章 · Move 2024](../02_getting_started/04-move-2024.md)中的「Sui Framework 依赖：`rev` 与网络」；在 testnet 开发时可改用 `framework/testnet`。
 
 Sui Framework 导出了两个命名地址：
 

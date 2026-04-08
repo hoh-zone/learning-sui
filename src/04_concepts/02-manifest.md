@@ -2,7 +2,7 @@
 
 `Move.toml` 是每个 Move 包的清单文件（Manifest），位于包的根目录下。它定义了包的基本信息、依赖关系和地址别名等配置。可以说，`Move.toml` 之于 Move 包，就像 `package.json` 之于 Node.js 项目、或清单文件之于其他语言的包管理器。
 
-> **全书约定**：正文默认可复制片段使用 `rev = "framework/mainnet"`；下文出现 `framework/testnet` 时多用于**对照**（如 `[dev-dependencies]`）或与测试网环境匹配——详见[第二章 · Move 2024 · Sui Framework 依赖](../02_getting_started/move-2024.md)中的表格说明。
+> **全书约定**：正文默认可复制片段使用 `rev = "framework/mainnet"`；下文出现 `framework/testnet` 时多用于**对照**（如 `[dev-dependencies]`）或与测试网环境匹配——详见[第二章 · Move 2024 · Sui Framework 依赖](../02_getting_started/04-move-2024.md)中的表格说明。
 
 ## 完整示例
 

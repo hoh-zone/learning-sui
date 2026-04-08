@@ -2,7 +2,7 @@
 
 Object Display 是 Sui 提供的一套标准化机制，用于定义对象在链下客户端（钱包、浏览器、市场）中的**展示方式**。通过 `Display<T>` 对象，开发者可以为类型设置模板化的展示字段，而无需在每个对象实例中存储元数据。
 
-本章介绍 **Display V1**（`sui::display`）的设计背景、创建方式、模板语法以及最佳实践。新一代 **Display V2** 基于 Display Registry（系统对象 `0xd`），支持每类型一个 Display、固定查询点与迁移路径，详见 [11.8 Display V2 与 Display Registry](display-v2.md)。
+本章介绍 **Display V1**（`sui::display`）的设计背景、创建方式、模板语法以及最佳实践。新一代 **Display V2** 基于 Display Registry（系统对象 `0xd`），支持每类型一个 Display、固定查询点与迁移路径，详见 [11.8 Display V2 与 Display Registry](08-display-v2.md)。
 
 ## 设计背景
 

@@ -160,7 +160,7 @@ Sui = { git = "https://github.com/MystenLabs/sui.git", subdir = "crates/sui-fram
 book = "0x0"
 ```
 
-与[第二章 · Move 2024](../02_getting_started/move-2024.md)一致，本书示例统一使用 `edition = "2024"` 与 `rev = "framework/mainnet"`。若在 **testnet** 上开发，可将 `rev` 改为 `framework/testnet`。若本地 CLI 仍生成 `2024.beta`，可改为 `"2024"`（与迁移期别名等价，见第二章说明）。
+与[第二章 · Move 2024](../02_getting_started/04-move-2024.md)一致，本书示例统一使用 `edition = "2024"` 与 `rev = "framework/mainnet"`。若在 **testnet** 上开发，可将 `rev` 改为 `framework/testnet`。若本地 CLI 仍生成 `2024.beta`，可改为 `"2024"`（与迁移期别名等价，见第二章说明）。
 
 定义好依赖后，就可以在代码中导入该依赖包提供的模块。
 

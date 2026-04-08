@@ -47,7 +47,7 @@ Sui = { git = "https://github.com/MystenLabs/sui.git", subdir = "crates/sui-fram
 hello_world = "0x0"
 ```
 
-> **`rev` 说明**：与[第二章 · Move 2024](../02_getting_started/move-2024.md)一致，默认使用 `framework/mainnet`。若你仅用 **testnet/devnet** 且希望与 CLI 模板习惯一致，可改为 `framework/testnet`，并与当前 `sui client` 环境匹配。
+> **`rev` 说明**：与[第二章 · Move 2024](../02_getting_started/04-move-2024.md)一致，默认使用 `framework/mainnet`。若你仅用 **testnet/devnet** 且希望与 CLI 模板习惯一致，可改为 `framework/testnet`，并与当前 `sui client` 环境匹配。
 
 各字段含义：
 
@@ -254,4 +254,4 @@ my_project/
 
 本节我们完成了第一个 Move 程序的完整开发流程：使用 `sui move new` 创建项目，理解 `Move.toml` 配置文件，编写模块和测试代码，最后通过 `sui move build` 构建和 `sui move test` 测试。虽然 "Hello, World!" 很简单，但它涵盖了 Move 开发的核心工作流。下一节我们将编写一个更有实际意义的合约，并将其部署到 Sui 网络上。
 
-若你希望先了解**全书章节如何递进、哪些章可以跳读**，可穿插阅读[导读 — 本书结构与阅读方式](../introduction.md)。
+若你希望先了解**全书章节如何递进、哪些章可以跳读**，可穿插阅读[导读 — 本书结构与阅读方式](../01-introduction.md)。

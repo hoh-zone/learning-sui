@@ -24,7 +24,7 @@ public native fun emit<T: copy + drop>(event: T);
 | `drop` 能力 | 事件值在 emit 后被丢弃 |
 | 模块内部定义 | 事件类型必须在调用 `emit` 的模块内定义 |
 
-注意：事件类型**不能**使用从其他模块导入的类型作为事件 emit。你只能 emit 当前模块中定义的结构体。该要求来自 Sui 验证器的**内部约束**规则，原理与更多示例见[内部约束](../07_using_objects/internal-constraint.md)。
+注意：事件类型**不能**使用从其他模块导入的类型作为事件 emit。你只能 emit 当前模块中定义的结构体。该要求来自 Sui 验证器的**内部约束**规则，原理与更多示例见[内部约束](../07_using_objects/05-internal-constraint.md)。
 
 ### 事件的元数据
 

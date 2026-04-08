@@ -74,7 +74,7 @@ public fun generate_order_id(ctx: &mut TxContext): address {
 - `ctx.epoch()` — 返回当前 epoch 编号，`u64` 类型
 - `ctx.epoch_timestamp_ms()` — 返回当前 epoch 开始时的 Unix 时间戳（毫秒），`u64` 类型
 
-注意 `epoch_timestamp_ms` 返回的是 **epoch 开始时的时间戳**，而非交易执行时的精确时间。如果需要更高精度的时间，应使用 `sui::clock::Clock`（参见 [Epoch 与时间](./epoch-and-time.md) 一章）。
+注意 `epoch_timestamp_ms` 返回的是 **epoch 开始时的时间戳**，而非交易执行时的精确时间。如果需要更高精度的时间，应使用 `sui::clock::Clock`（参见 [Epoch 与时间](05-epoch-and-time.md) 一章）。
 
 ```move
 module examples::epoch_check;

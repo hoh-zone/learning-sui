@@ -14,7 +14,7 @@
 
 ## 典型例子：`sui::event::emit`
 
-[`sui::event`](../08_programmability/events.md) 中的 `emit` 在链上事件流里会标注**完全限定类型名**；若允许任意模块对任意类型调用 `emit`，语义与安全模型都会变得模糊。因此验证器要求 `T` 对调用模块为内部类型：
+[`sui::event`](../08_programmability/04-events.md) 中的 `emit` 在链上事件流里会标注**完全限定类型名**；若允许任意模块对任意类型调用 `emit`，语义与安全模型都会变得模糊。因此验证器要求 `T` 对调用模块为内部类型：
 
 ```move
 module sui::event;
@@ -72,6 +72,6 @@ public fun call_foreign_fail() {
 | 与 Move 语言 | 规则由 **Sui 验证器** 施加，而非一般 Move 语义中的可见性 |
 | 排查 | 将事件类型、相关结构体挪到**发出调用的同一模块**内定义，或改用允许的设计模式 |
 
-更多关于事件与类型的实践说明，见[事件系统](../08_programmability/events.md)。
+更多关于事件与类型的实践说明，见[事件系统](../08_programmability/04-events.md)。
 
-关于**仅定义类型所在模块**可调用的 `transfer` / `public_transfer` 等与存储相关的规则，见[转移限制](transfer-restrictions.md)（与 `emit` 的约束相关但检查点不同）。
+关于**仅定义类型所在模块**可调用的 `transfer` / `public_transfer` 等与存储相关的规则，见[转移限制](06-transfer-restrictions.md)（与 `emit` 的约束相关但检查点不同）。

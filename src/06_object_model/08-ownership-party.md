@@ -103,4 +103,4 @@ public fun mint_and_party_transfer(
 
 - **Party 对象** = 单一 Party 所有 + 共识版本化，通过 **party_transfer / public_party_transfer** 创建，通过 **sui::party::Party**（如 **single_owner**）指定所有者与权限。
 - 适合「要共识版本、又要单方控制」或「同一对象多笔交易排队」的场景；**不能**在创建后再改为共享对象。
-- 使用前请查阅本书 [Transfer 函数参考](../appendix/transfer-functions.md) 中的 `party_transfer` / `public_party_transfer` 说明，以及 [sui::party](https://docs.sui.io/references/framework/sui/party) 的权限常量与 `single_owner` 等 API。
+- 使用前请查阅本书 [Transfer 函数参考](../appendix/03-transfer-functions.md) 中的 `party_transfer` / `public_party_transfer` 说明，以及 [sui::party](https://docs.sui.io/references/framework/sui/party) 的权限常量与 `single_owner` 等 API。
