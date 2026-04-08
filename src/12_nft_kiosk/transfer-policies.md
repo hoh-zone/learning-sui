@@ -33,7 +33,7 @@ fun create_transfer_policy<T>(
 Sui Framework 只提供 TransferPolicy 原语（`add_rule`、`get_rule`、`add_receipt`、`add_to_balance` 等），**不提供**现成的 `sui::royalty_rule`、`sui::kiosk_lock_rule` 等模块。版税、锁定、个人 Kiosk 等规则需要：
 
 - 在 Move 中自行基于 `transfer_policy::add_rule` 实现，或  
-- 使用生态包（如 [MystenLabs Kiosk 包](https://github.com/MystenLabs/apps/tree/testnet/kiosk)）中提供的规则。
+- 使用生态包（如 [MystenLabs Kiosk 包](https://github.com/MystenLabs/apps/tree/main/kiosk)）中提供的规则。
 
 下面以「版税规则」为例说明如何在 Move 中实现并满足规则；TS SDK 的用法仍可与 Kiosk 包或自定义规则配合使用。
 
@@ -93,7 +93,7 @@ transfer::public_transfer(item, ctx.sender());
 
 ### 锁定规则（Kiosk Lock Rule）
 
-要求买家将 NFT 锁定在自己的 Kiosk 中，不能直接取出。锁定规则的实现不在 Sui Framework 内，而是由 [Kiosk 包](https://github.com/MystenLabs/apps/tree/testnet/kiosk) 提供（如 `kiosk::kiosk_lock_rule`）。
+要求买家将 NFT 锁定在自己的 Kiosk 中，不能直接取出。锁定规则的实现不在 Sui Framework 内，而是由 [Kiosk 包](https://github.com/MystenLabs/apps/tree/main/kiosk) 提供（如 `kiosk::kiosk_lock_rule`）。
 
 前端可用 TypeScript 添加规则：
 
@@ -238,7 +238,7 @@ transfer::public_transfer(profits, ctx.sender());
 ## 小结
 
 - TransferPolicy 控制 NFT 通过 Kiosk 交易时的转移行为
-- Framework 只提供 `add_rule` / `get_rule` / `add_receipt` 等原语，无现成「内置」版税/锁定/个人 Kiosk 模块；版税等需自行实现或使用 [Kiosk 包](https://github.com/MystenLabs/apps/tree/testnet/kiosk) 中的规则
+- Framework 只提供 `add_rule` / `get_rule` / `add_receipt` 等原语，无现成「内置」版税/锁定/个人 Kiosk 模块；版税等需自行实现或使用 [Kiosk 包](https://github.com/MystenLabs/apps/tree/main/kiosk) 中的规则
 - 多个规则可组合使用，所有规则都必须满足后转移才能完成
 - 可创建自定义规则实现特定业务逻辑
 - TypeScript SDK 的 KioskClient 可自动解析 Policy 规则并生成满足逻辑

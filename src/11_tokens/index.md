@@ -6,12 +6,12 @@
 
 | 节 | 主题 | 你将学到 |
 |---|------|---------|
-| 11.1 | 创建自定义 Coin | OTW + coin_registry（new_currency_with_otw / finalize）、铸造与销毁 |
-| 11.2 | Coin 元数据 | 名称、符号、精度、图标 |
-| 11.3 | Treasury Cap 管理 | 固定供应 vs 无限供应、锁定策略 |
-| 11.4 | 受监管代币 | DenyCap、黑名单、合规设计 |
-| 11.5 | 闭环代币 | Token vs Coin、TokenPolicy、消费规则 |
-| 11.6 | 游戏内代币实战 | 积分系统、双币经济、代币兑换 |
+| 13.1 | 创建自定义 Coin | OTW + coin_registry（new_currency_with_otw / finalize）、铸造与销毁 |
+| 13.2 | Coin 元数据 | 名称、符号、精度、图标 |
+| 13.3 | Treasury Cap 管理 | 固定供应 vs 无限供应、锁定策略 |
+| 13.4 | 受监管代币 | DenyCap、黑名单、合规设计 |
+| 13.5 | 闭环代币 | Token vs Coin、TokenPolicy、消费规则 |
+| 13.6 | 游戏内代币实战 | 积分系统、双币经济、代币兑换 |
 
 ## 学习目标
 

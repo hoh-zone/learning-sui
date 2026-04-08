@@ -9,7 +9,7 @@
 ```toml
 [package]
 name = "your_coin"
-edition = "2024.beta"
+edition = "2024"
 
 [dependencies]
 pas = { local = "../pas" }   # 或 git = "https://github.com/MystenLabs/pas" }

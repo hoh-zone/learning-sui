@@ -1,5 +1,7 @@
 # Hello, World!
 
+> **与侧边栏目录对应**：3.1 Hello World — 编写、编译与测试
+
 每位开发者学习新语言的第一步，几乎都是编写一个 "Hello, World!" 程序。在 Move 中，我们将创建一个完整的 Move 包，编写模块和测试，并通过 Sui CLI 完成构建与测试。本节将带你体验从零开始创建 Move 项目的完整流程。
 
 ## 创建 Move 包
@@ -36,14 +38,16 @@ hello_world/
 ```toml
 [package]
 name = "hello_world"
-edition = "2024.beta"
+edition = "2024"
 
 [dependencies]
-Sui = { git = "https://github.com/MystenLabs/sui.git", subdir = "crates/sui-framework/packages/sui-framework", rev = "framework/testnet" }
+Sui = { git = "https://github.com/MystenLabs/sui.git", subdir = "crates/sui-framework/packages/sui-framework", rev = "framework/mainnet" }
 
 [addresses]
 hello_world = "0x0"
 ```
+
+> **`rev` 说明**：与[第二章 · Move 2024](../02_getting_started/move-2024.md)一致，默认使用 `framework/mainnet`。若你仅用 **testnet/devnet** 且希望与 CLI 模板习惯一致，可改为 `framework/testnet`，并与当前 `sui client` 环境匹配。
 
 各字段含义：
 
@@ -250,3 +254,5 @@ my_project/
 ## 小结
 
 本节我们完成了第一个 Move 程序的完整开发流程：使用 `sui move new` 创建项目，理解 `Move.toml` 配置文件，编写模块和测试代码，最后通过 `sui move build` 构建和 `sui move test` 测试。虽然 "Hello, World!" 很简单，但它涵盖了 Move 开发的核心工作流。下一节我们将编写一个更有实际意义的合约，并将其部署到 Sui 网络上。
+
+若你希望先了解**全书章节如何递进、哪些章可以跳读**，可穿插阅读[导读 — 本书结构与阅读方式](../introduction.md)。
