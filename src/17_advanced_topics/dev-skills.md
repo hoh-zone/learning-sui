@@ -78,7 +78,7 @@ git clone https://github.com/MystenLabs/sui-dev-skills .claude/skills/sui-dev-sk
 
 ### sui-move
 
-- **包与模块**：`edition = "2024.beta"`，Sui 1.45+ 不显式写框架依赖，命名地址带项目前缀
+- **包与模块**：`edition = "2024"`（与本书正文一致），Sui 1.45+ 不显式写框架依赖，命名地址带项目前缀
 - **语法**：单行 `module pkg::mod;`，`public struct`，`let mut`，方法语法，枚举与 `match`
 - **对象**：带 `key` 的结构体必须有 `id: UID`，只用 `transfer`/`share_object`/`freeze_object` 的非 `public_` 版本在定义该类型的模块内调用
 - **可见性**：用 `public(package)` 替代 `public(friend)`，不要写 `public entry`

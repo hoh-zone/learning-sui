@@ -2,6 +2,8 @@
 
 [前言](foreword.md)
 
+[导读 — 本书结构与阅读方式](introduction.md)
+
 ---
 
 # 入门篇
@@ -92,9 +94,10 @@
   - [9.1 key 能力](07_using_objects/ability-key.md)
   - [9.2 store 能力](07_using_objects/ability-store.md)
   - [9.3 UID 与 ID](07_using_objects/uid-and-id.md)
-  - [9.4 存储函数 — transfer / share / freeze](07_using_objects/storage-functions.md)
-  - [9.5 转移限制](07_using_objects/transfer-restrictions.md)
-  - [9.6 接收对象（Transfer to Object）](07_using_objects/transfer-to-object.md)
+  - [9.4 存储函数 — transfer / public_transfer / share / freeze](07_using_objects/storage-functions.md)
+  - [9.5 内部约束（Internal Constraint）](07_using_objects/internal-constraint.md)
+  - [9.6 转移限制](07_using_objects/transfer-restrictions.md)
+  - [9.7 接收对象（Transfer to Object）](07_using_objects/transfer-to-object.md)
 
 # 进阶篇
 
@@ -181,7 +184,7 @@
   - [17.4 数据迁移与向前兼容](15_upgrade/04-migration.md)
   - [17.5 实战：Hero 游戏完整升级](15_upgrade/05-hero-walkthrough.md)
 
-- [第十八章 · 安全与升级](15_security/index.md)
+- [第十八章 · 安全与工程约束](15_security/index.md)
   - [18.1 安全最佳实践](15_security/security-best-practices.md)
   - [18.2 常见漏洞模式](15_security/common-vulnerabilities.md)
   - [18.3 错误处理最佳实践](15_security/error-handling.md)
@@ -223,3 +226,4 @@
   - [D. CLI 速查表](appendix/cli-cheatsheet.md)
   - [E. 编码规范](appendix/coding-conventions.md)
   - [F. 代码质量检查清单](appendix/code-quality-checklist.md)
+  - [G. 延伸阅读](appendix/further-reading.md)

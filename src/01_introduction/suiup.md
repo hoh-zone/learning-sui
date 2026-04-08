@@ -1,6 +1,6 @@
 # Suiup — Sui 生态工具链管理器
 
-Suiup 是 Mysten Labs 官方推出的 Sui 生态 CLI 安装与版本管理工具，类似于 Rust 生态中的 `rustup`。通过 suiup，你可以一键安装、升级和切换 Sui CLI 及其他生态工具，无需手动下载二进制文件或从源码编译。
+Suiup 是 Mysten Labs 官方推出的 Sui 生态 CLI 安装与版本管理工具。通过 suiup，你可以一键安装、升级和切换 Sui CLI 及其他生态工具，无需手动下载二进制文件或从源码编译。
 
 ## 为什么使用 Suiup
 

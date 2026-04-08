@@ -88,7 +88,7 @@ public fun damage(self: &Sword): u64 { self.damage }
 
 ### TransferPolicy 配置
 
-Sui Framework 只提供 `transfer_policy::add_rule` 等原语，不包含现成的 `sui::royalty_rule` 或 `sui::kiosk_lock_rule`。版税等规则需要自行实现（或依赖 [Kiosk 生态包](https://github.com/MystenLabs/apps/tree/testnet/kiosk)）。下面示例在包内实现一个简单的版税规则并创建 Policy：
+Sui Framework 只提供 `transfer_policy::add_rule` 等原语，不包含现成的 `sui::royalty_rule` 或 `sui::kiosk_lock_rule`。版税等规则需要自行实现（或依赖 [Kiosk 生态包](https://github.com/MystenLabs/apps/tree/main/kiosk)）。下面示例在包内实现一个简单的版税规则并创建 Policy：
 
 ```move
 // 包内自定义版税规则（基于 transfer_policy::add_rule）
