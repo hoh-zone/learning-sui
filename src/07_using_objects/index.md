@@ -6,17 +6,19 @@
 
 | 节 | 主题 | 你将学到 |
 |---|------|---------|
-| 7.1 | key 能力 | 使结构体成为对象、UID 的作用 |
-| 7.2 | store 能力 | 嵌套存储、与 key 的区别 |
-| 7.3 | UID 与 ID | object::new()、id() 方法、UID 销毁 |
-| 7.4 | 存储函数 | transfer / public_transfer / share / freeze |
-| 7.5 | 转移限制 | 有 store 与无 store 的区别 |
-| 7.6 | 接收对象 | transfer::receive、对象邮箱模式 |
+| 9.1 | key 能力 | 使结构体成为对象、UID 的作用 |
+| 9.2 | store 能力 | 嵌套存储、与 key 的区别 |
+| 9.3 | UID 与 ID | object::new()、id() 方法、UID 销毁 |
+| 9.4 | 存储函数 | transfer / public_transfer / share / freeze |
+| 9.5 | 内部约束 | 验证器对泛型 `T`「须由本模块定义」的规则（如 `emit`） |
+| 9.6 | 转移限制 | 有 store 与无 store 的区别 |
+| 9.7 | 接收对象 | transfer::receive、对象邮箱模式 |
 
 ## 学习目标
 
 读完本章后，你将能够：
 
 - 正确使用 key 和 store 能力定义对象
+- 理解内部约束与转移限制在验证器层面的区别
 - 选择合适的存储函数管理对象
 - 实现对象间的转移和接收

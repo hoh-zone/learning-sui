@@ -2,7 +2,7 @@
 
 Display V2 是 Sui 基于 **Display Registry**（系统对象 `0xd`）的新一代对象展示机制，用于解决 V1 依赖事件索引、难以维护以及仅支持 `key` 类型等问题。本节将介绍 V2 的设计动机、与 V1 的对比、核心 API 及迁移方式。
 
-参考：[MystenLabs/sui#23710](https://github.com/MystenLabs/sui/pull/23710)（Display Registry 框架）、[MystenLabs/sui#25753](https://github.com/MystenLabs/sui/pull/25753)（Display V2 文档）。
+参考：[MystenLabs/sui#23710](https://github.com/MystenLabs/sui/pull/23710)（Display Registry 框架）、[MystenLabs/sui#25753](https://github.com/MystenLabs/sui/pull/25753)（Display V2 文档）。**若 PR 已合并**，请以当前 `main` 分支上的 `sui::display_registry` 与[官方文档](https://docs.sui.io/)为准，PR 链接仅作设计背景。
 
 ---
 

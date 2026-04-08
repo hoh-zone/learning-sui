@@ -6,9 +6,10 @@
 
 | 附录 | 主题 | 说明 |
 |------|------|------|
-| A | 术语表 | Move / Sui 核心术语中英文对照 |
-| B | 保留地址 | 0x1 / 0x2 / 0x6 等系统地址 |
-| C | Transfer 函数参考 | transfer 模块所有函数签名 |
-| D | CLI 速查表 | sui move / sui client 常用命令 |
-| E | 编码规范 | 命名、文件组织、代码风格 |
-| F | 代码质量检查清单 | 发布前检查项目 |
+| A | [术语表](glossary.md) | Move / Sui 核心术语中英文对照 |
+| B | [保留地址](reserved-addresses.md) | 0x1 / 0x2 / 0x6 等系统地址 |
+| C | [Transfer 函数参考](transfer-functions.md) | transfer 模块所有函数签名 |
+| D | [CLI 速查表](cli-cheatsheet.md) | sui move / sui client 常用命令 |
+| E | [编码规范](coding-conventions.md) | 命名、文件组织、代码风格 |
+| F | [代码质量检查清单](code-quality-checklist.md) | 发布前检查项目 |
+| G | [延伸阅读](further-reading.md) | 官方文档、Move Book、论文与资源入口 |

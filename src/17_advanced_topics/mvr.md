@@ -1,6 +1,6 @@
 # MVR — Move 包注册中心
 
-MVR（Move Registry）是 Sui 生态的包注册中心，为 Move 包提供人类可读的命名系统。它的作用类似于 JavaScript 生态中的 NPM 或 Rust 生态中的 crates.io，让开发者可以用 `@org/package` 的形式引用链上包，而不必记忆 64 位的十六进制地址。
+MVR（Move Registry）是 Sui 生态的包注册中心，为 Move 包提供人类可读的命名系统。它的作用类似于 NPM 等包注册中心，让开发者可以用 `@org/package` 的形式引用链上包，而不必记忆 64 位的十六进制地址。
 
 ## 为什么需要 MVR
 
@@ -398,10 +398,10 @@ mvr add @mvr/core
 ```toml
 [package]
 name = "my_defi_app"
-edition = "2024.beta"
+edition = "2024"
 
 [dependencies]
-Sui = { git = "https://github.com/MystenLabs/sui.git", subdir = "crates/sui-framework/packages/sui-framework", rev = "framework/testnet" }
+Sui = { git = "https://github.com/MystenLabs/sui.git", subdir = "crates/sui-framework/packages/sui-framework", rev = "framework/mainnet" }
 mvr_core = { r.mvr = "@mvr/core" }
 
 [addresses]

@@ -70,4 +70,4 @@ public fun approve_kyc_transfer<C>(
 ## 小结
 
 - KYC 合规代币在 PAS 中的实现方式：**在 resolve 前的 approve 函数里校验「发送方 + 接收方」的 KYC 状态**，通过则 approve 对应类型，由 PAS 完成 resolve。
-- 参考 [PR #25](https://github.com/MystenLabs/pas/pull/25) 的 KYC-compliant coin 示例可获得完整 Move 与 setup 细节；本章给出的是通用思路与与实战一的对比，便于你在自己的包中实现类似逻辑。
+- 参考 [PR #25](https://github.com/MystenLabs/pas/pull/25) 的 KYC-compliant coin 示例可获得完整 Move 与 setup 细节；本章给出的是通用思路与实战一的对比，便于你在自己的包中实现类似逻辑。
