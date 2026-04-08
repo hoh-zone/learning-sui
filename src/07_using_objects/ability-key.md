@@ -16,7 +16,7 @@ Sui Move 对 `key` 的语义进行了重新定义：
 
 ## 对象定义规则
 
-### 第一字段必须是 `id: UID`
+### 第一个字段必须是 `id: UID`
 
 这是 Sui Move 的硬性规则：任何拥有 `key` 能力的结构体，**第一个字段必须是 `id: UID`**。这由 Sui 字节码验证器（Sui Verifier）在编译和发布时强制检查。
 
@@ -141,7 +141,7 @@ public struct CopyObj has key, copy, drop {
 public fun must_handle_object(ctx: &mut TxContext) {
     let user = User {
         id: object::new(ctx),
-        name: std::string::utf8(b"Alice"),
+        name: b"Alice".to_string(),
         age: 25,
     };
 
@@ -182,7 +182,7 @@ module examples::game_character;
 
 use std::string::String;
 
-public struct Weapon has store {
+public struct Weapon has store, drop {
     name: String,
     damage: u64,
 }
@@ -200,7 +200,7 @@ public fun create_character(
     ctx: &mut TxContext,
 ) {
     let starter_weapon = Weapon {
-        name: std::string::utf8(b"Wooden Sword"),
+        name: b"Wooden Sword".to_string(),
         damage: 10,
     };
 

@@ -200,7 +200,7 @@ public fun setup_and_freeze(
     };
 
     // 在冻结前可以修改
-    config.message = std::string::utf8(b"Final config");
+    config.message = b"Final config".to_string();
 
     // 冻结后不可再修改
     transfer::freeze_object(config);

@@ -165,7 +165,7 @@ public struct TransferRecord has key {
 ```move
 /// 生成唯一的订单 ID，不创建对象
 public fun unique_order_id(ctx: &mut TxContext): address {
-    tx_context::fresh_object_address(ctx)
+    ctx.fresh_object_address()
 }
 ```
 
