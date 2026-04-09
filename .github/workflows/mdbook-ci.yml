@@ -1,0 +1,25 @@
+# 任意 PR 与主分支推送时校验本书可构建（与 deploy 中的 build 步骤一致）
+name: mdBook build
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: peaceiris/actions-mdbook@v1
+        with:
+          mdbook-version: "latest"
+
+      - name: mdbook build
+        run: mdbook build
+
+      - name: Move syntax highlight (hljs 10)
+        run: node scripts/test-move-highlight.js

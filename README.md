@@ -43,14 +43,14 @@ learning-sui/
 ├── book.toml          # mdBook 配置
 ├── src/
 │   ├── SUMMARY.md     # 目录（侧边栏结构）
-│   ├── foreword.md    # 前言
-│   └── 01_introduction/ ... 18 章 + appendix  # 正文
+│   ├── 00-foreword.md # 前言
+│   └── 01_introduction/ …  # 各章目录内正文为 NN-标题.md（NN 为 00–99，顺序见 SUMMARY）
 ├── book/              # 构建输出（已加入 .gitignore）
 └── README.md
 ```
 
 - **修改目录**：编辑 `src/SUMMARY.md` 可增删章节与顺序。
-- **正文内容**：所有章节为 Markdown，位于 `src/` 各子目录。
+- **正文内容**：所有章节为 Markdown，位于 `src/` 各子目录；文件名含章节内顺序号，可用 `scripts/renumber_mdbook_sources.py` 按 SUMMARY 批量重排。
 
 ## 贡献
 
