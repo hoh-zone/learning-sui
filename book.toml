@@ -8,3 +8,5 @@ src = "src"
 default-theme = "light"
 preferred-dark-theme = "navy"
 git-repository-url = "https://github.com/hoh-zone/learning-sui"
+# Move 代码块（```move）语法高亮，见 theme/move-hljs.js
+additional-js = ["theme/move-hljs.js"]

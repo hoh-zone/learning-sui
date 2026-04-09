@@ -6,7 +6,7 @@
 
 ## 准备工作
 
-在部署之前，确保你已完成以下准备（详见[钱包与测试币](../02_getting_started/wallet-and-faucet.md)章节）：
+在部署之前，确保你已完成以下准备（详见[钱包与测试币](../02_getting_started/03-wallet-and-faucet.md)章节）：
 
 ```bash
 # 1. 确认当前网络为 devnet 或 testnet

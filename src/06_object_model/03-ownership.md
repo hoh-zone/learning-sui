@@ -14,7 +14,7 @@ Sui 中的每个对象都处于以下五种所有权状态之一：
 | Object-owned | 对象所有 | 父对象的所有者 | 继承父对象 |
 | Party | Party 对象 | Party 内配置的权限 | 共识路径 |
 
-此外，**Party 对象**结合了「单一所有者」与「共识版本化」：通过 `party_transfer` / `public_party_transfer` 创建，适合多笔交易排队、与共享对象配合等场景，详见 [8.3.5 Party 对象](ownership-party.md)。
+此外，**Party 对象**结合了「单一所有者」与「共识版本化」：通过 `party_transfer` / `public_party_transfer` 创建，适合多笔交易排队、与共享对象配合等场景，详见 [8.3.5 Party 对象](08-ownership-party.md)。
 
 接下来我们逐一介绍每种所有权类型。
 
@@ -211,7 +211,7 @@ Immutable     ──→ ×（不可转换，不可销毁）
 - 需要共识版本化，但对象仍由单方（或有限成员）控制
 - 同一对象上希望多笔交易并行排队（pipeline）
 - 与共享对象或其它 Party 对象一起使用，且不想把对象设为完全共享  
-详见 [8.3.5 Party 对象](ownership-party.md)。
+详见 [8.3.5 Party 对象](08-ownership-party.md)。
 
 ## 小结
 
