@@ -1,5 +1,14 @@
 # 动态字段
 
+## 导读
+
+本节对应 [§11.1](01-sui-framework.md) 中的 **`sui::dynamic_field`**：在 **`UID`** 上按运行时键挂载额外数据，**突破编译期固定字段**。它是 [§11.8](08-dynamic-object-fields.md)、[§11.10](10-dynamic-collections.md) 的**底层机制**——`Table`/`Bag` 等都在此之上封装。
+
+- **前置**：[§11.1](01-sui-framework.md)、[第九章 · UID](../09_using_objects/03-uid-and-id.md)  
+- **后续**：[§11.8](08-dynamic-object-fields.md)、[§11.10](10-dynamic-collections.md)  
+
+---
+
 动态字段（Dynamic Fields）是 Sui Move 中最强大的存储机制之一。它允许你在运行时为对象添加、修改和删除任意键值对数据，突破了结构体字段在编译时固定的限制。动态字段没有数量上限，可以存储异构数据类型，是构建灵活、可扩展合约的核心工具。
 
 ## 基本概念

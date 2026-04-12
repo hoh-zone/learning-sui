@@ -1,5 +1,14 @@
 # 模块初始化器 init
 
+## 导读
+
+本节对应 [§11.1](01-sui-framework.md) 中 **`sui::package`** 与发布流程：`init` 在**包首次发布**时执行**一次**，升级**不会**再次执行。常与 **OTW**、`package::claim`、`transfer` 配合，是模块「冷启动」的正规入口。
+
+- **前置**：[§11.2](02-transaction-context.md)（`ctx` 参数规则）、[§11.1](01-sui-framework.md)（`package` / `types`）  
+- **后续**：[§11.4](04-events.md)（可在 `init` 里发事件）、[第十二章 · OTW](../12_patterns/03-one-time-witness.md)（模式详解）  
+
+---
+
 `init` 函数是 Sui Move 中特殊的模块初始化器，它在模块发布（publish）时被自动调用且仅调用一次。`init` 函数是设置模块初始状态、创建管理员权限对象、初始化共享资源的标准方式。理解 `init` 函数的规则和限制，对于正确设计合约的启动流程至关重要。
 
 ## 基本规则
@@ -337,3 +346,5 @@ public fun init_for_testing(ctx: &mut TxContext) {
 ## 小结
 
 `init` 函数是 Sui Move 的模块初始化器，在模块发布时自动调用且仅调用一次。它必须命名为 `init`、保持私有、没有返回值，参数为可选的 OTW 加上 TxContext。最常见的用途包括创建管理员权限对象（AdminCap 模式）、初始化共享状态、以及配合 OTW 创建 Publisher 和代币类型。需要注意的是，包升级时 `init` 不会重新执行，因此对于可升级合约需要设计额外的迁移机制。安全敏感的初始化操作应结合 OTW 机制来提供更强的保证。
+
+在 [§11.1](01-sui-framework.md) 中，**`package`** 与 **`types`（OTW）** 与 `init` 同属「发布期」概念，可与本章导读对照记忆。

@@ -1,8 +1,8 @@
-# 第十三章 · 示例代码（代币）
+# 第十四章 · 示例代码（代币）
 
 ## `silver_coin/`
 
-与 **「创建自定义 Coin」** 一致的 **`coin_registry::new_currency_with_otw` + `finalize`** 流程（需 OTW 结构体 `SILVER`）。
+与 **[§14.2 · 注册与 OTW](../02-registry-otw.md)** 一致的 **`coin_registry::new_currency_with_otw` + `finalize`** 流程（需 OTW 结构体 `SILVER`）。
 
 ```bash
 cd silver_coin

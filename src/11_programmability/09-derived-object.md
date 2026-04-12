@@ -1,5 +1,14 @@
 # 派生对象（Derived Object）
 
+## 导读
+
+本节对应 [§11.1](01-sui-framework.md) 中的 **`sui::derived_object`**：在父对象与键上推导**确定性**子对象地址，适合注册表、命名空间与「可预测 ID」。与 [§11.7](07-dynamic-fields.md) / [§11.8](08-dynamic-object-fields.md) 的「运行时挂载」互补——这里强调**地址可事先算出**。
+
+- **前置**：[§11.7](07-dynamic-fields.md)、[§11.8](08-dynamic-object-fields.md)、[§11.1](01-sui-framework.md)  
+- **后续**：与 [§11.10](10-dynamic-collections.md) 中的表结构可组合使用（按业务选型）  
+
+---
+
 派生对象（Derived Object）是 Sui Framework 中用于**按父对象与键生成确定性地址**的机制。通过 `sui::derived_object`，你可以让某个对象的 ID 完全由「父对象 UID + 键」推导而出，从而实现可预测的地址、注册表去重以及按类型或键命名空间管理子对象。本节将详细介绍其 API、典型场景与注意事项。
 
 ## 为什么需要确定性地址

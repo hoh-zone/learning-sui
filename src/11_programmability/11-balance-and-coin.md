@@ -1,5 +1,14 @@
 # Balance 与 Coin
 
+## 导读
+
+本节对应 [§11.1](01-sui-framework.md) 中的 **`sui::balance`、`sui::coin`** 与原生 **`SUI`**：描述余额如何在对象间拆分、封装与销毁，是 [§11.12](12-bcs.md)（链下构造参数）、[第十四章 · 代币](../14_tokens/00-index.md)（自定义 Coin）的**共同基础**。
+
+- **前置**：[§11.1](01-sui-framework.md)、[第十章 · 存储函数](../10_using_objects/04-storage-functions.md)（对象与 `store` 语境）  
+- **后续**：[第十四章](14_tokens/00-index.md)（Treasury、元数据）  
+
+---
+
 `Balance<T>` 和 `Coin<T>` 是 Sui 代币经济体系的两大基石。`Balance<T>` 是一个轻量级的数值余额表示，而 `Coin<T>` 则是将 `Balance<T>` 包装为可独立流转的对象。理解这两者的关系及其配套的 `Supply<T>` 和 `TreasuryCap<T>` 机制，是构建任何涉及代币逻辑的 Sui 应用的基础。
 
 ## Balance — 原始数值余额

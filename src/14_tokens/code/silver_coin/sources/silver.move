@@ -1,4 +1,4 @@
-/// 第十三章：自定义 Coin（与正文「创建自定义 Coin」对齐的精简可编译版）。
+/// 第十四章：自定义 Coin（`coin_registry::new_currency_with_otw` + `finalize` 精简可编译版）。
 module silver_coin::silver;
 
 use std::string;

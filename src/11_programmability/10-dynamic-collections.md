@@ -1,5 +1,14 @@
 # 动态集合
 
+## 导读
+
+本节对应 [§11.1](01-sui-framework.md) **集合选型表**中基于**动态（对象）字段**的类型：`Table`、`Bag`、`ObjectTable`、`ObjectBag`、`LinkedTable`、`TableVec` 等。数据**不**再挤在宿主对象的 `vector` 里，而是按条目分散存储，适合**大规模**与复杂键值语义。请与 [§11.6](06-collections.md) 的 `VecMap`/`VecSet` 对照阅读。
+
+- **前置**：[§11.7](07-dynamic-fields.md)、[§11.8](08-dynamic-object-fields.md)、[§11.1](01-sui-framework.md)  
+- **后续**：[第十四章 · 代币](../14_tokens/00-index.md)（大量 Coin 与用户索引时常用 `Table` 系）  
+
+---
+
 Sui 框架在动态字段之上构建了一系列开箱即用的集合类型，包括 `Table`、`Bag`、`ObjectTable`、`ObjectBag` 和 `LinkedTable`。这些集合封装了底层动态字段的操作细节，提供了类似传统编程语言中 Map、Dictionary 等数据结构的使用体验。合理选择集合类型是编写高效 Move 合约的关键技能。
 
 ## Table — 同构键值映射
@@ -309,3 +318,5 @@ Sui 提供的五种集合类型覆盖了链上数据存储的常见需求：
 - **LinkedTable**：唯一支持有序遍历的集合，适合排行榜、队列等需要顺序的场景
 
 所有集合都支持 `add`、`remove`、`borrow`、`borrow_mut`、`contains`、`length`、`is_empty` 等标准操作，且 `Table` 和 `Bag` 支持方括号索引语法。根据实际需求在类型安全性、灵活性、可发现性和性能之间做出权衡，选择最合适的集合类型。
+
+与 [§11.1](01-sui-framework.md) 的**集合选型总表**、[§11.6](06-collections.md) 的 **VecMap/VecSet** 对照阅读，可形成「小到对象内、大到动态字段」的完整选型链。

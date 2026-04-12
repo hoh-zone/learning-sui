@@ -1,5 +1,14 @@
 # BCS 序列化
 
+## 导读
+
+本节对应 [§11.1](01-sui-framework.md) 中的 **`sui::bcs`**，并与 **`std::bcs`**（见 [§11.1 · 第二节「Move 标准库」](01-sui-framework.md)）分工：`std` 提供语言级布局；**`sui::bcs`** 常在合约里做 **BCS 流解析**（`new` / `peel_*` / `peel_vec!`）。链下与链上字节布局必须一致。
+
+- **前置**：[§11.1](01-sui-framework.md)、[第八章 · 类型与布局](../08_move_advanced/04-type-reflection.md)（可选）  
+- **后续**：[第十五章 · 客户端](../15_client/00-index.md)（链下组 PTB 参数）  
+
+---
+
 BCS（Binary Canonical Serialization）是 Move 生态系统中使用的标准二进制序列化格式，最初由 Diem（前 Libra）项目设计。它提供了一种确定性的、紧凑的二进制编码方式，用于在链上进行数据的序列化和反序列化。Sui 在 `sui::bcs` 模块中提供了完整的 BCS 编解码支持，使得智能合约可以处理跨模块、跨链的数据交换。
 
 ## BCS 格式概述
