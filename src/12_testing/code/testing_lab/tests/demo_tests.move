@@ -10,6 +10,11 @@ fun test_double_pure() {
 }
 
 #[test]
+fun test_double_zero() {
+    assert!(demo::double(0) == 0);
+}
+
+#[test]
 fun test_shared_counter_scenario() {
     let mut s = test_scenario::begin(@0xA);
     {
@@ -22,6 +27,8 @@ fun test_shared_counter_scenario() {
         let mut c = test_scenario::take_shared<Counter>(&s);
         demo::bump(&mut c);
         assert!(demo::read(&c) == 1);
+        demo::bump(&mut c);
+        assert!(demo::read(&c) == 2);
         test_scenario::return_shared(c);
     };
     test_scenario::end(s);

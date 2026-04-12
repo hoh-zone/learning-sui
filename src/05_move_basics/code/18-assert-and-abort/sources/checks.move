@@ -1,6 +1,7 @@
 module ch05_18_assert::checks;
 
-const E_OOPS: u64 = 1;
+#[error]
+const E_OOPS: vector<u8> = b"Value must be strictly positive";
 
 public fun check_positive(x: u64) {
     assert!(x > 0, E_OOPS);

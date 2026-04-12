@@ -39,3 +39,12 @@ public fun mint(
 public fun burn(treasury_cap: &mut TreasuryCap<SILVER>, c: Coin<SILVER>) {
     coin::burn(treasury_cap, c);
 }
+
+/// 实战练习：从 CLI / PTB 铸币到当前发送者（需传入 `TreasuryCap` 对象）。
+entry fun mint_to_sender(
+    treasury_cap: &mut TreasuryCap<SILVER>,
+    amount: u64,
+    ctx: &mut TxContext,
+) {
+    mint(treasury_cap, amount, tx_context::sender(ctx), ctx);
+}

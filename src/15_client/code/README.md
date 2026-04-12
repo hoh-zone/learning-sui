@@ -13,6 +13,9 @@ npm run check
 npm run demo
 # 可选：export SUI_PT_DEMO_ADDRESS=0x...   # 测试网上有余额的地址
 npm run demo
+# 实战配套脚本：
+# npm run owned    # getOwnedObjects（需 SUI_PT_DEMO_ADDRESS）
+# npm run dynamic  # getDynamicFields（需 SUI_DYNAMIC_PARENT_ID）
 ```
 
 推荐工作流：

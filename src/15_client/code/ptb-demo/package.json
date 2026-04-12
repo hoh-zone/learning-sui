@@ -4,7 +4,9 @@
   "type": "module",
   "scripts": {
     "check": "tsc --noEmit",
-    "demo": "tsx src/ptb-demo.ts"
+    "demo": "tsx src/ptb-demo.ts",
+    "owned": "tsx src/owned-objects.ts",
+    "dynamic": "tsx src/dynamic-fields.ts"
   },
   "dependencies": {
     "@mysten/sui": "^2.15.0"

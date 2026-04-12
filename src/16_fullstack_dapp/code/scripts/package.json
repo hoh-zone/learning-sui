@@ -4,7 +4,8 @@
   "type": "module",
   "scripts": {
     "check": "tsc --noEmit",
-    "demo": "tsx ch16-ptb.ts"
+    "demo": "tsx ch16-ptb.ts",
+    "bump-template": "tsx call-bump-template.ts"
   },
   "dependencies": {
     "@mysten/sui": "^2.15.0"

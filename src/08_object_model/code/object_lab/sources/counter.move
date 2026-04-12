@@ -28,3 +28,8 @@ public fun value(self: &Counter): u64 {
 public fun bump(self: &mut Counter) {
     self.value = self.value + 1;
 }
+
+/// 实战练习：将计数归零。
+public fun reset(self: &mut Counter) {
+    self.value = 0;
+}

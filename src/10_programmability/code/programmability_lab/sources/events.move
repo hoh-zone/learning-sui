@@ -5,8 +5,9 @@ use sui::event;
 
 public struct CounterEvent has copy, drop {
     value: u64,
+    tick: u8,
 }
 
-public fun emit_tick(value: u64) {
-    event::emit(CounterEvent { value });
+public fun emit_tick(value: u64, tick: u8) {
+    event::emit(CounterEvent { value, tick });
 }

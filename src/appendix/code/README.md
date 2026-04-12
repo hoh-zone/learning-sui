@@ -9,4 +9,4 @@ cd cli_demo
 ./demo.sh
 ```
 
-语法与项目结构仍以 **`../../03_first_move/code/hello_world/`** 与各章 `code/README.md` 为准。
+语法与项目结构仍以 `**../../03_first_move/code/hello_world/**` 与各章 `code/README.md` 为准。

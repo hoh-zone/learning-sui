@@ -6,7 +6,7 @@ Move 语言中的错误处理机制与大多数编程语言截然不同：它没
 
 ### 基本用法
 
-`abort` 是 Move 的关键字，用于立即停止当前交易的执行。它接受一个 `u64` 类型的错误码作为参数：
+`abort` 是 Move 的关键字，用于立即停止当前交易的执行。它必须传入一个**错误常量**。历史上常用 **`u64` 数值**；**当前 Sui 推荐**使用带 **`#[error]`** 的常量（通常为 **`vector<u8>`** 可读消息，即 Clever Errors，见下文「Move 2024 #[error] 属性」），工具链会自动解码展示。
 
 ```move
 module book::abort_basic;
@@ -114,7 +114,7 @@ fun assert_single_arg() {
 
 ### 命名规范
 
-Move 社区约定使用 `E` 前缀加大驼峰命名法（EPascalCase）来定义错误常量，类型统一为 `u64`：
+错误常量使用 `E` 前缀 + EPascalCase。**新代码请优先使用 `#[error]` + `vector<u8>`**（见下一节）。以下为**早期**仅使用 **`u64` 编号**的约定，存量代码中仍常见：
 
 ```move
 module book::error_conventions;
@@ -160,13 +160,13 @@ public fun validate(value: u64) {
     assert!(value <= 1000, EInvalidInput);
 }
 
-#[test, expected_failure(abort_code = ECustomNotFound)]
+#[test, expected_failure]
 fun not_found() {
     find_item(0);
 }
 ```
 
-使用 `#[error]` 属性后，当交易失败时，Sui CLI 与 GraphQL 等工具会将 abort 码解码为可读信息（如 `Error from '0x...::module::fun' (line N), abort 'EConstName': "message"`）。**不写错误码**的 `assert!(cond)` 或 `abort` 也会自动从源码行号派生一个“clever error”码，便于定位；但若需稳定错误码（如测试中按码断言），应使用具名错误常量。
+使用 `#[error]` 后，Sui CLI 与 GraphQL 会将 abort 解码为可读信息。**单元测试**中断言「会失败」时，优先写 **`#[test, expected_failure]`**（**不填** `abort_code`），避免 Clever Error 的数值随源码行号变化导致测试脆弱。**不写第二参数**的 `assert!(cond)` 也会从行号派生 clever 信息；具名 `#[error]` 常量用于需要在链上/客户端展示稳定语义的场景。
 
 ### Clever Errors 的编码与解码
 

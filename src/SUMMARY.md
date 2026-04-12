@@ -14,17 +14,20 @@
   - [1.3 Sui 生态全景](01_introduction/03-sui-ecosystem.md)
   - [1.4 Move 语言的诞生与演进](01_introduction/04-move-evolution.md)
   - [1.5 Suiup — 工具链管理器](01_introduction/05-suiup.md)
+  - [本章实战练习](01_introduction/hands-on.md)
 
 - [第二章 · 开发环境搭建](02_getting_started/00-index.md)
   - [2.1 安装 Sui CLI](02_getting_started/01-install-sui.md)
   - [2.2 IDE 与编辑器配置](02_getting_started/02-ide-setup.md)
   - [2.3 创建钱包与获取测试币](02_getting_started/03-wallet-and-faucet.md)
   - [2.4 Move 2024 Edition](02_getting_started/04-move-2024.md)
+  - [本章实战练习](02_getting_started/hands-on.md)
 
 - [第三章 · 第一个 Move 程序](03_first_move/00-index.md)
   - [3.1 Hello World — 编写、编译与测试](03_first_move/01-hello-world.md)
   - [3.2 Hello Sui — 部署到链上](03_first_move/02-hello-sui.md)
   - [3.3 与合约交互](03_first_move/03-interact-with-contract.md)
+  - [本章实战练习](03_first_move/hands-on.md)
 
 # 语言篇
 
@@ -34,6 +37,7 @@
   - [4.3 地址（Address）](04_concepts/03-address.md)
   - [4.4 账户（Account）](04_concepts/04-account.md)
   - [4.5 交易（Transaction）](04_concepts/05-transaction.md)
+  - [本章实战练习](04_concepts/hands-on.md)
 
 - [第五章 · Move 语法基础](05_move_basics/00-index.md)
   - [5.1 模块（Module）](05_move_basics/01-module.md)
@@ -57,6 +61,7 @@
   - [5.19 函数定义与调用](05_move_basics/19-function-basics.md)
   - [5.20 entry 与 public 函数](05_move_basics/20-entry-and-public.md)
   - [5.21 可见性修饰符](05_move_basics/21-visibility.md)
+  - [本章实战练习](05_move_basics/hands-on.md)
 
 - [第六章 · Move 语法进阶](06_move_intermediate/00-index.md)
   - [6.1 标准库概览](06_move_intermediate/01-standard-library.md)
@@ -69,6 +74,7 @@
   - [6.8 宏函数](06_move_intermediate/08-macros.md)
   - [6.9 所有权与作用域](06_move_intermediate/09-ownership-and-scope.md)
   - [6.10 引用（& 与 &mut）](06_move_intermediate/10-references.md)
+  - [本章实战练习](06_move_intermediate/hands-on.md)
 
 - [第七章 · Move 语法高级](07_move_advanced/00-index.md)
   - [7.1 泛型基础](07_move_advanced/01-generics-basics.md)
@@ -76,6 +82,7 @@
   - [7.3 类型反射](07_move_advanced/03-type-reflection.md)
   - [7.4 编译模式（Modes）](07_move_advanced/04-compilation-modes.md)
   - [7.5 下标语法（Index Syntax）](07_move_advanced/05-index-syntax.md)
+  - [本章实战练习](07_move_advanced/hands-on.md)
 
 # 对象篇
 
@@ -89,6 +96,7 @@
     - [8.3.4 包装对象](08_object_model/07-ownership-wrapped.md)
     - [8.3.5 Party 对象](08_object_model/08-ownership-party.md)
   - [8.4 快速路径与共识](08_object_model/09-fast-path-and-consensus.md)
+  - [本章实战练习](08_object_model/hands-on.md)
 
 - [第九章 · 使用对象](09_using_objects/00-index.md)
   - [9.1 key 能力](09_using_objects/01-ability-key.md)
@@ -98,6 +106,7 @@
   - [9.5 内部约束（Internal Constraint）](09_using_objects/05-internal-constraint.md)
   - [9.6 转移限制](09_using_objects/06-transfer-restrictions.md)
   - [9.7 接收对象（Transfer to Object）](09_using_objects/07-transfer-to-object.md)
+  - [本章实战练习](09_using_objects/hands-on.md)
 
 # 进阶篇
 
@@ -116,6 +125,7 @@
   - [10.12 BCS 序列化](10_programmability/12-bcs.md)
   - [10.13 密码学与哈希](10_programmability/13-cryptography-and-hashing.md)
   - [10.14 链上随机数](10_programmability/14-randomness.md)
+  - [本章实战练习](10_programmability/hands-on.md)
 
 - [第十一章 · 设计模式](11_patterns/00-index.md)
   - [11.1 Capability 模式](11_patterns/01-capability.md)
@@ -127,6 +137,7 @@
   - [11.7 Object Display](11_patterns/07-display.md)
   - [11.8 Display V2 与 Display Registry](11_patterns/08-display-v2.md)
   - [11.9 授权模式](11_patterns/09-authorization.md)
+  - [本章实战练习](11_patterns/hands-on.md)
 
 - [第十二章 · 测试](12_testing/00-index.md)
   - [12.1 测试基础](12_testing/01-testing-basics.md)
@@ -140,6 +151,7 @@
   - [12.9 扩展外部模块](12_testing/09-extend-foreign-module.md)
   - [12.10 覆盖率报告](12_testing/10-coverage.md)
   - [12.11 Gas Profiling](12_testing/11-gas-profiling.md)
+  - [本章实战练习](12_testing/hands-on.md)
 
 # 应用篇
 
@@ -150,6 +162,7 @@
   - [13.4 受监管代币](13_tokens/04-regulated-coin.md)
   - [13.5 闭环代币（Closed-Loop Token）](13_tokens/05-closed-loop-token.md)
   - [13.6 游戏内代币实战](13_tokens/06-in-game-token.md)
+  - [本章实战练习](13_tokens/hands-on.md)
 
 - [第十四章 · NFT 与 Kiosk](14_nft_kiosk/00-index.md)
   - [14.1 NFT 基础](14_nft_kiosk/01-nft-basics.md)
@@ -158,6 +171,7 @@
   - [14.4 自定义转移策略](14_nft_kiosk/04-transfer-policies.md)
   - [14.5 构建 NFT 市场](14_nft_kiosk/05-build-marketplace.md)
   - [14.6 灵魂绑定 NFT](14_nft_kiosk/06-soulbound-nft.md)
+  - [本章实战练习](14_nft_kiosk/hands-on.md)
 
 - [第十五章 · 客户端与 PTB](15_client/00-index.md)
   - [15.1 Sui Client SDK 概览](15_client/01-client-overview.md)
@@ -167,6 +181,7 @@
   - [15.5 分页读取](15_client/05-paginated-reads.md)
   - [15.6 交易提交与 Gas 管理](15_client/06-transaction-and-gas.md)
   - [15.7 钱包集成](15_client/07-wallet-integration.md)
+  - [本章实战练习](15_client/hands-on.md)
 
 - [第十六章 · 全栈 DApp 实战](16_fullstack_dapp/00-index.md)
   - [16.1 项目规划与架构设计](16_fullstack_dapp/01-project-planning.md)
@@ -174,6 +189,7 @@
   - [16.3 TypeScript SDK 集成](16_fullstack_dapp/03-ts-sdk-integration.md)
   - [16.4 dApp Kit 前端开发](16_fullstack_dapp/04-dapp-kit-frontend.md)
   - [16.5 部署、测试与上线](16_fullstack_dapp/05-deploy-and-launch.md)
+  - [本章实战练习](16_fullstack_dapp/hands-on.md)
 
 # 工程篇
 
@@ -183,12 +199,14 @@
   - [17.3 版本化共享对象](17_upgrade/03-versioning.md)
   - [17.4 数据迁移与向前兼容](17_upgrade/04-migration.md)
   - [17.5 实战：Hero 游戏完整升级](17_upgrade/05-hero-walkthrough.md)
+  - [本章实战练习](17_upgrade/hands-on.md)
 
 - [第十八章 · 安全与工程约束](18_security/00-index.md)
   - [18.1 安全最佳实践](18_security/01-security-best-practices.md)
   - [18.2 常见漏洞模式](18_security/02-common-vulnerabilities.md)
   - [18.3 错误处理最佳实践](18_security/03-error-handling.md)
   - [18.4 协议与网络限制](18_security/04-protocol-limits.md)
+  - [本章实战练习](18_security/hands-on.md)
 
 - [第十九章 · 基础设施与数据](19_infrastructure/00-index.md)
   - [19.1 全节点概述](19_infrastructure/01-fullnode-overview.md)
@@ -196,6 +214,7 @@
   - [19.3 gRPC 事件流](19_infrastructure/03-grpc-event-stream.md)
   - [19.4 GraphQL API](19_infrastructure/04-graphql-api.md)
   - [19.5 Prometheus 与 Grafana 监控](19_infrastructure/05-monitoring.md)
+  - [本章实战练习](19_infrastructure/hands-on.md)
 
 - [第二十章 · 前沿技术](20_advanced_topics/00-index.md)
   - [20.1 ZKLogin — 零知识登录](20_advanced_topics/01-zklogin.md)
@@ -207,6 +226,7 @@
   - [20.7 MVR — Move 包注册中心](20_advanced_topics/07-mvr.md)
   - [20.8 Gas Pool — 赞助交易服务](20_advanced_topics/08-gas-pool.md)
   - [20.9 Sui Dev Skills — AI 辅助开发技能包](20_advanced_topics/09-dev-skills.md)
+  - [本章实战练习](20_advanced_topics/hands-on.md)
 
 - [第二十一章 · 许可资产标准（PAS）](21_pas/00-index.md)
   - [21.1 PAS 概述与方案对比](21_pas/01-overview.md)
@@ -216,6 +236,7 @@
   - [21.5 版本控制与 Clawback](21_pas/05-versioning-and-clawback.md)
   - [21.6 实战一：简单合规代币](21_pas/06-practice-simple.md)
   - [21.7 实战二：KYC 合规代币](21_pas/07-practice-kyc.md)
+  - [本章实战练习](21_pas/hands-on.md)
 
 ---
 
@@ -227,3 +248,4 @@
   - [E. 编码规范](appendix/05-coding-conventions.md)
   - [F. 代码质量检查清单](appendix/06-code-quality-checklist.md)
   - [G. 延伸阅读](appendix/07-further-reading.md)
+  - [附录实战练习](appendix/hands-on.md)

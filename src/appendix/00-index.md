@@ -13,3 +13,7 @@
 | E | [编码规范](05-coding-conventions.md) | 命名、文件组织、代码风格 |
 | F | [代码质量检查清单](06-code-quality-checklist.md) | 发布前检查项目 |
 | G | [延伸阅读](07-further-reading.md) | 官方文档、Move Book、论文与资源入口 |
+
+## 附录实战练习
+
+**1～3 个**动手任务见 **[hands-on.md](hands-on.md)**（目录中亦列为「附录实战练习」）。

@@ -18,5 +18,13 @@ fun test_counter_object() {
         counter::bump(&mut c);
         test_scenario::return_shared(c);
     };
+    test_scenario::next_tx(&mut s, @0xA);
+    {
+        let mut c = test_scenario::take_shared<Counter>(&s);
+        counter::bump(&mut c);
+        counter::reset(&mut c);
+        assert!(counter::value(&c) == 0);
+        test_scenario::return_shared(c);
+    };
     test_scenario::end(s);
 }

@@ -2,7 +2,9 @@
 
 ## `programmability_lab/`
 
-最小 **`event::emit`** 示例（需 `copy + drop` 事件类型），可扩展到 TxContext、时钟等 API。
+- **`events.move`**：`CounterEvent`（含 `tick` 字段）与 `emit_tick`。
+- **`lab_init.move`**：发布时向部署者发放 `LabAdminCap`（`init` 一次）。
+- **`ptb_clock_hint.md`**：Clock + `moveCall` 的 PTB 伪代码（TypeScript）。
 
 ```bash
 cd programmability_lab

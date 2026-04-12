@@ -18,6 +18,11 @@ public fun is_admin(_cap: &AdminCap): bool {
     true
 }
 
+/// 实战练习：链上 `entry`，需传入 `AdminCap` 引用（钱包 PTB 中作为输入对象）。
+entry fun prove_admin(_cap: &AdminCap) {
+    assert!(is_admin(_cap));
+}
+
 #[test_only]
 public fun create_for_test(ctx: &mut TxContext): AdminCap {
     AdminCap { id: object::new(ctx) }
