@@ -1,5 +1,9 @@
 # Accumulator：协议层聚合与 `settled_funds_value`
 
+## 与 §14.7 的关系
+
+[§14.7](07-funds-accumulator.md) 从**用户与产品口径**说明 **`public_transfer` 与 `send_funds` 的两套余额视图**。**本节不重复该辨析**，只补充 **实现层**（**`AccumulatorRoot`**、**u128**、**`settled` 快照**、**`Withdrawal`**），供读源码或做索引/风控时对照。
+
 ## 本节要回答的问题
 
 - **`balance::send_funds` 写入的聚合** 存在哪里、为何需要 **u128**？  
@@ -11,14 +15,14 @@
 
 ---
 
-## 数据流（实现视角）
+## 数据流（实现备忘）
+
+与 §14.7 一致的链路如下（详见 `coin.move` / `balance.move`）：
 
 ```text
-Coin<T>  --into_balance-->  Balance<T>  --balance::send_funds(addr)-->  地址 addr 的聚合槽位
-Withdrawal<Balance<T>>  --balance::redeem_funds-->  Balance<T>  --into_coin-->  Coin<T>
+Coin → into_balance → Balance → balance::send_funds(addr) → 地址聚合
+Withdrawal<Balance<T>> → balance::redeem_funds → Balance → into_coin → Coin
 ```
-
-**`coin::send_funds`** 即 **`into_balance` + `balance::send_funds`**（见 `coin.move` 源码）。
 
 ---
 

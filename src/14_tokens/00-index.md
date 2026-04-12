@@ -2,6 +2,8 @@
 
 本章系统讲解 Sui 上与 **同质化代币** 相关的完整工具链：从 **`coin_registry` 与 OTW** 创建可登记币种，到 **`TreasuryCap` 与总供应**、**`Coin` 与 `Balance` 的分工**、**全局 `CoinRegistry` 与合规 DenyList**、再到 **闭环 `Token` 与 `TokenPolicy`**，以及 **协议层地址资金（accumulator）** 与 **应用层金库模式**。
 
+**与第十一章 §11.11 的分工**：§11.11 讲 **`Balance` / `Coin` / `TreasuryCap` 的 API 与金库模式**；**本章不再重复** 长段 **`new_currency_with_otw` 全例**（已集中在 §14.2 与 `silver_coin`）。两章应 **先后通读**，避免只读其一。
+
 阅读本章后，你应能**在概念上画出一幅「类型—供应—载体—策略」的图**，并能对照 `sui-framework` 模块名定位实现；**具体函数签名与错误码**请以部署目标所依赖的 Framework 版本为准。
 
 ## 本章结构

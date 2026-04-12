@@ -6,7 +6,7 @@
 - **`coin::take` / `put`** 与 **`into_balance` / `from_balance`** 如何选？  
 - **自定义聚合** 与 **全局 accumulator** 各适用于什么信任模型？
 
-**前置**：[§14.5](05-owner-coin.md)、[§11.11](../11_programmability/11-balance-and-coin.md)。
+**前置**：[§14.5](05-owner-coin.md)、[§11.11](../11_programmability/11-balance-and-coin.md)（该节已有 **`Vault` + `SUI`** 的完整示例；本节用泛型 **`T`** 复述同一模式，**不重复** 长代码讲解）。
 
 ---
 

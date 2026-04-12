@@ -2,10 +2,10 @@
 
 ## 导读
 
-本节对应 [§11.1](01-sui-framework.md) 中的 **`sui::balance`、`sui::coin`** 与原生 **`SUI`**：描述余额如何在对象间拆分、封装与销毁，是 [§11.12](12-bcs.md)（链下构造参数）、[第十四章 · 代币](../14_tokens/00-index.md)（自定义 Coin）的**共同基础**。
+本节对应 [§11.1](01-sui-framework.md) 中的 **`sui::balance`、`sui::coin`** 与原生 **`SUI`**：描述余额如何在对象间拆分、封装与销毁，是 [§11.12](12-bcs.md)（链下构造参数）、[第十四章 · 代币](../14_tokens/00-index.md)（**注册、合规、Token**）的**共同基础**。
 
 - **前置**：[§11.1](01-sui-framework.md)、[第十章 · 存储函数](../10_using_objects/04-storage-functions.md)（对象与 `store` 语境）  
-- **后续**：[第十四章](14_tokens/00-index.md)（Treasury、元数据）  
+- **后续**：[第十四章](14_tokens/00-index.md)（**`coin_registry`、元数据、DenyList、闭环 Token**；本章「创建新代币」仅保留与 §14 的分工说明，**完整示例见第十四章**）  
 
 ---
 
@@ -133,66 +133,11 @@ public struct TreasuryCap<phantom T> has key, store {
 
 持有 `TreasuryCap` 的地址拥有铸造和销毁该代币的权限。
 
-## 创建新代币
+## 创建新代币（与第十四章的分工）
 
-`coin::create_currency` 已废弃，应使用 **`coin_registry::new_currency_with_otw`** 配合 **`coin_registry::finalize`** 创建新代币。一次性见证（OTW）确保每种代币只能被创建一次；元数据会注册到链上 `CoinRegistry`，并返回 `MetadataCap` 用于后续更新。
+本节只建立 **`Balance` / `Coin` / `TreasuryCap`** 与 **`mint` / `burn`** 的**语义**；**完整发币流程**（**OTW**、**`coin_registry::new_currency_with_otw`**、**`finalize`**、**`CoinRegistry`**、**`MetadataCap`**、合规与闭环 **Token**）在 **[第十四章 · 代币经济](../14_tokens/00-index.md)** 专章展开，**避免两章重复同一长示例**。
 
-```move
-module examples::my_coin;
-
-use std::string;
-use sui::coin::{Self, TreasuryCap, Coin};
-use sui::coin_registry;
-use sui::balance::{Self, Balance};
-
-public struct MY_COIN has drop {}
-
-fun init(witness: MY_COIN, ctx: &mut TxContext) {
-    let (initializer, treasury_cap) = coin_registry::new_currency_with_otw<MY_COIN>(
-        witness,
-        9,                              // decimals
-        string::utf8(b"MYC"),           // symbol
-        string::utf8(b"My Coin"),       // name
-        string::utf8(b"An example coin"), // description
-        string::utf8(b""),               // icon_url（空表示无图标）
-        ctx,
-    );
-    let metadata_cap = coin_registry::finalize(initializer, ctx);
-    transfer::public_transfer(treasury_cap, ctx.sender());
-    transfer::public_transfer(metadata_cap, ctx.sender());
-}
-
-public fun mint(
-    treasury_cap: &mut TreasuryCap<MY_COIN>,
-    amount: u64,
-    recipient: address,
-    ctx: &mut TxContext,
-) {
-    let coin = coin::mint(treasury_cap, amount, ctx);
-    transfer::public_transfer(coin, recipient);
-}
-
-public fun burn(
-    treasury_cap: &mut TreasuryCap<MY_COIN>,
-    coin: Coin<MY_COIN>,
-) {
-    coin::burn(treasury_cap, coin);
-}
-```
-
-### new_currency_with_otw 参数说明
-
-| 参数 | 类型 | 说明 |
-|------|------|------|
-| `otw` | `T` | 一次性见证，确保唯一性 |
-| `decimals` | `u8` | 小数位数（如 9 表示最小单位是十亿分之一） |
-| `symbol` | `String` | 代币符号（如 `string::utf8(b"SUI")`） |
-| `name` | `String` | 代币全名 |
-| `description` | `String` | 代币描述 |
-| `icon_url` | `String` | 图标 URL，无图标可传 `string::utf8(b"")` |
-| `ctx` | `&mut TxContext` | 交易上下文 |
-
-返回 `(CurrencyInitializer<T>, TreasuryCap<T>)`；再调用 **`coin_registry::finalize(initializer, ctx)`** 得到 **`MetadataCap<T>`**。代币元数据存储在链上 `CoinRegistry` 的 `Currency<T>` 中，可通过 `MetadataCap` 使用 `coin_registry::set_name` 等更新。
+请牢记：**`coin::create_currency` 已废弃**；新币应走 **`coin_registry`** 注册路径。第十四章 §14.2 提供与示例包 `silver_coin` 对齐的 **`init`** 与参数说明；第十一章此处仅保留 **`mint` / `burn`** 接口形态，供下文「铸造与销毁」引用。
 
 ## 铸造与销毁
 
