@@ -1,0 +1,6 @@
+[package]
+name = "ch05_07_tuples"
+edition = "2024.beta"
+
+[addresses]
+ch05_07_tuples = "0x0"

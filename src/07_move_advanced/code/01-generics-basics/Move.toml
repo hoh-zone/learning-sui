@@ -1,0 +1,6 @@
+[package]
+name = "ch07_01_generics"
+edition = "2024.beta"
+
+[addresses]
+ch07_01_generics = "0x0"

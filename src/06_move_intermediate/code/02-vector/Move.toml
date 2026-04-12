@@ -1,0 +1,6 @@
+[package]
+name = "ch06_02_vector"
+edition = "2024.beta"
+
+[addresses]
+ch06_02_vector = "0x0"

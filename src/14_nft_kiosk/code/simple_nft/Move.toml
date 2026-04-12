@@ -1,0 +1,6 @@
+[package]
+name = "simple_nft"
+edition = "2024.beta"
+
+[addresses]
+simple_nft = "0x0"

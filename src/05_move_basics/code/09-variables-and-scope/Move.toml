@@ -1,0 +1,6 @@
+[package]
+name = "ch05_09_variables"
+edition = "2024.beta"
+
+[addresses]
+ch05_09_variables = "0x0"

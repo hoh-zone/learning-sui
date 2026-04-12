@@ -1,0 +1,6 @@
+[package]
+name = "ch05_10_equality"
+edition = "2024.beta"
+
+[addresses]
+ch05_10_equality = "0x0"

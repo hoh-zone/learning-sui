@@ -1,0 +1,6 @@
+[package]
+name = "patterns_lab"
+edition = "2024.beta"
+
+[addresses]
+patterns_lab = "0x0"

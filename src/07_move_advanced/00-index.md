@@ -12,6 +12,16 @@
 | 7.4 | 编译模式（Modes） | #[mode(name)]、--mode 构建、不可发布代码 |
 | 7.5 | 下标语法（Index Syntax） | #[syntax(index)]、自定义类型的索引访问与规则 |
 
+## 节与正文、示例代码
+
+| 节 | 正文 | 配套 `code/` |
+|----|------|----------------|
+| 7.1 | [泛型基础](01-generics-basics.md) | `code/01-generics-basics/` |
+| 7.2 | [类型参数与能力约束](02-type-parameters-and-constraints.md) | `code/02-type-parameters-and-constraints/` |
+| 7.3 | [类型反射](03-type-reflection.md) | `code/03-type-reflection/` |
+| 7.4 | [编译模式（Modes）](04-compilation-modes.md) | `code/04-compilation-modes/` |
+| 7.5 | [下标语法](05-index-syntax.md) | `code/05-index-syntax/` |
+
 ## 学习目标
 
 读完本章后，你将能够：

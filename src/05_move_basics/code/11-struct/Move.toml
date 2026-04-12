@@ -1,0 +1,6 @@
+[package]
+name = "ch05_11_struct"
+edition = "2024.beta"
+
+[addresses]
+ch05_11_struct = "0x0"

@@ -1,0 +1,6 @@
+[package]
+name = "ch16_move_lab"
+edition = "2024.beta"
+
+[addresses]
+ch16_move_lab = "0x0"

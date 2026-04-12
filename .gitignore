@@ -17,3 +17,6 @@ Thumbs.db
 
 # 可选：若使用 Rust 工具
 # target/
+
+# Sui Move 包构建产物（各章 code/ 下）
+**/code/**/build/
