@@ -13,7 +13,7 @@
 | 6.5 | 枚举 | enum 定义、带数据变体、能力、实例化与限制 |
 | 6.6 | 模式匹配 | match 表达式、穷尽性、通配符、解构变体数据 |
 | 6.7 | 结构体方法 | 方法语法、self 参数、链式调用 |
-| 6.8 | 宏函数 | macro fun、lambda、向量/Option 宏 |
+| 6.8 | 宏函数（导读） | 最短上手；系统篇见 **[第 7 章](../07_move_macros/00-index.md)** |
 | 6.9 | 所有权与作用域 | 所有权转移、变量生命周期 |
 | 6.10 | 引用（& 与 &mut） | &T / &mut T、借用规则与使用场景 |
 | 6.11 | Move 2024 Edition 与语法对照 | `edition`、Framework `rev`、新旧语法与迁移工具 |
@@ -29,7 +29,7 @@
 | 6.5 | [枚举](05-enum.md) | `code/05-enum/` |
 | 6.6 | [模式匹配](06-pattern-matching.md) | `code/06-pattern-matching/` |
 | 6.7 | [结构体方法](07-struct-methods.md) | `code/07-struct-methods/` |
-| 6.8 | [宏函数](08-macros.md) | `code/08-macros/` |
+| 6.8 | [宏函数（导读）](08-macros.md) | `code/08-macros/`；详解见 [`../07_move_macros/`](../07_move_macros/00-index.md) |
 | 6.9 | [所有权与作用域](09-ownership-and-scope.md) | `code/09-ownership-and-scope/` |
 | 6.10 | [引用](10-references.md) | `code/10-references/` |
 | 6.11 | [Move 2024 Edition 与语法对照](11-move-2024.md) | （对照篇，沿用全书各章 `code/`） |

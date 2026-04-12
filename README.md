@@ -44,7 +44,7 @@ learning-sui/
 ├── src/
 │   ├── SUMMARY.md     # 目录（侧边栏结构）
 │   ├── 00-foreword.md # 前言
-│   ├── 01_introduction/ … 07_move_advanced/  # 章文件夹名与书中章号对齐（如第 8 章为 08_object_model/）
+│   ├── 01_introduction/ … 22_pas/  # 章文件夹名与书中章号对齐（如第 7 章为 07_move_macros/、第 9 章为 09_object_model/）
 │   │   └── code/       # 部分章含可运行 Move 示例（见各章 code/README.md）
 │   └── …
 ├── book/              # 构建输出（已加入 .gitignore）

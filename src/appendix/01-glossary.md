@@ -58,7 +58,7 @@
 
 | 术语 | 英文 | 解释 |
 |------|------|------|
-| 快速路径 | Fast Path | 不涉及共享对象的交易可以跳过共识，快速执行 |
+| （旧称）快速路径 | Fast Path（deprecated） | 教材不再使用该机制名；见第 8 章 §8.4 与[官方架构说明](https://docs.sui.io/concepts/sui-architecture) |
 | 闪电贷 | Flash Loan | 在同一笔交易内借入和归还的即时贷款，利用 Hot Potato 保证归还 |
 | 冻结对象 | Frozen Object | 不可变对象，只能通过不可变引用访问 |
 | 全节点 | Full Node | 存储完整链状态、提供 RPC 服务但不参与共识的节点 |
@@ -131,7 +131,7 @@
 | 并行执行 | Parallel Execution | Sui 运行时并行执行交易的能力 |
 | PCR | Platform Configuration Register | 标识 enclave 代码和配置的 SHA-384 哈希值 |
 | PTB | Programmable Transaction Block | 可编程交易块，一笔交易中组合多个操作 |
-| 幻影类型参数 | Phantom Type Parameter | 不在结构体字段中使用的类型参数，用于类型标记 |
+| 幻影类型参数（`phantom`） | Phantom Type Parameter | 未出现在结构体字段中的类型参数，须写 `phantom T`；见[第八章 §8.3](../08_move_advanced/03-phantom-type-parameters.md) |
 | Publisher | Publisher | 证明包发布权的对象，通过 OTW 创建 |
 
 ## R

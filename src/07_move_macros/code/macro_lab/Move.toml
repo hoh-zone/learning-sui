@@ -1,0 +1,6 @@
+[package]
+name = "ch07_macro_lab"
+edition = "2024.beta"
+
+[addresses]
+ch07_macro_lab = "0x0"

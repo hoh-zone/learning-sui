@@ -44,4 +44,4 @@ for d in src/05_move_basics/code/[0-2][0-9]-*/; do
 done
 ```
 
-第六、七章正文与示例代码已分别在 **`../06_move_intermediate/`**、**`../07_move_advanced/`**（含各自 `code/` 每节一包）；见两章的 `00-index.md` 与 `code/README.md`。
+第六至八章正文与示例代码已分别在 **`../06_move_intermediate/`**、**`../07_move_macros/`**、**`../08_move_advanced/`**（含各自 `code/` 每节一包或第七章整章一包）；见各章 `00-index.md` 与 `code/README.md`。

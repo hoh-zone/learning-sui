@@ -18,6 +18,7 @@
 1. 打开 `src/06_move_intermediate/code/08-macros/sources/macros.move`。
 2. 在不改坏编译的前提下，为 `add!` 再增加一个调用点（例如 `add!(10u64, 20u64)` 的包装函数）。
 3. **验收**：`sui move build` 成功；能向同伴解释「宏在编译期展开」与函数调用的区别。
+4. （可选）对照 **[第七章](../07_move_macros/00-index.md)** 的 `macro_lab` 示例，尝试为 `vector` 写一个 `fold!` 用例。
 
 ## 实战四：Move.toml 与 Move 2024 对照
 
