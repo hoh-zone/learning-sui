@@ -1,46 +1,63 @@
-# Accumulator 与地址级资金：实现视角
+# Accumulator：协议层聚合与 `settled_funds_value`
 
-## 导读
+## 本节要回答的问题
 
-**`send_funds`** 把 **`Balance<T>`**（或经 **`coin::send_funds`** 把 **`Coin<T>`** 拆成余额后）记入 **按地址聚合的 accumulator**，用于 **共识层可见的「地址资金」视图**；**`redeem_funds`** 则凭 **`Withdrawal<Balance<T>>`** 取回 **`Balance`** 再包成 **`Coin`**。**`sui::accumulator::AccumulatorRoot`** 与 **`funds_accumulator`** 协同工作；应用还可读取 **`settled_funds_value`** 做只读查询。
+- **`balance::send_funds` 写入的聚合** 存在哪里、为何需要 **u128**？  
+- **`AccumulatorRoot`** 与 **`funds_accumulator::redeem`** 如何配合？  
+- **`settled_funds_value`** 的 **「settled」** 指什么时刻的快照？
 
-- **前置**：[§14.7](07-funds-accumulator.md)  
-- **后续**：[§14.13 · 金库模式](13-balance-vault-patterns.md)  
+**前置**：[§14.7](07-funds-accumulator.md)。  
+**后续**：[§14.13](13-balance-vault-patterns.md)。
 
 ---
 
-## 数据流（与 Framework 对齐）
+## 数据流（实现视角）
 
 ```text
-Coin<T> --coin::into_balance--> Balance<T> --balance::send_funds(addr)--> 地址 addr 的 accumulator
-Withdrawal<Balance<T>> --balance::redeem_funds--> Balance<T> --into_coin--> Coin<T>
+Coin<T>  --into_balance-->  Balance<T>  --balance::send_funds(addr)-->  地址 addr 的聚合槽位
+Withdrawal<Balance<T>>  --balance::redeem_funds-->  Balance<T>  --into_coin-->  Coin<T>
 ```
 
-**`coin::send_funds`** 实现为：
+**`coin::send_funds`** 即 **`into_balance` + `balance::send_funds`**（见 `coin.move` 源码）。
 
-```move
-public fun send_funds<T>(coin: Coin<T>, recipient: address) {
-    balance::send_funds(coin.into_balance(), recipient);
-}
-```
+---
 
-**`coin::redeem_funds`** 把 **`Withdrawal<Balance<T>>`** 赎回为 **`Coin<T>`**（内部 **`balance::redeem_funds` + `into_coin`**）。
+## 为何需要 `AccumulatorRoot`
 
-## Withdrawal：拆分与合并
+**`sui::accumulator`** 模块维护 **根对象 `AccumulatorRoot`**，在内部以 **动态字段** 等方式挂载 **按地址、按类型的聚合值**。  
+对 **`Balance<T>`** 的累加可能超过 **`u64` 单次操作语义** 的朴素假设，因此聚合单元使用 **u128** 等更宽类型防止 **累加溢出**（见模块内 **`U128`** 与注释）。
 
-**`sui::funds_accumulator::Withdrawal<T>`** 支持 **`split` / `join`**（`public use fun`），便于在 **PTB** 里把大额赎回拆成多步或合并多笔 **`Withdrawal`**（需 **同一 owner**）。
+**公开只读接口** 例如 **`balance::settled_funds_value<T>(root, address)`**：读取 **当前共识 commit 边界上** 已结算的聚合值（注释说明读取的是 **commit 开始时刻** 的快照语义）。  
+**用途**：索引器、风控、链上定价模块；**必须与产品说明「settled 含义」一致**。
 
-## 只读：settled_funds_value
+---
 
-**`balance::settled_funds_value<T>(root, address)`** 读取 **当前共识 commit 开始时** 某地址上 **`Balance<T>`** 的聚合值（实现依赖 **`AccumulatorRoot`** 的 **u128** 存储，防止累加溢出）。适合 **索引器、仪表盘** 与 **链上模块** 的只读定价/风控——注意与 **对象级 `Coin` 余额** 的展示可能不一致，需产品层说明。
+## `Withdrawal` 的设计意图
 
-## 与 Owner Coin 的边界
+**`Withdrawal<T: store>`** 携带 **`owner`** 与 **`limit`**（**u256**），在 **赎回** 时由 **`funds_accumulator::redeem`** 与内部 **`Permit`** 协作，把价值从聚合中划出。  
+**`split` / `join`** 用于 **拆分额度** 与 **合并多笔**，便于 **PTB 组合**。
 
-| 机制 | 用户感知 |
-|------|-----------|
-| 钱包里的 **`Coin` 对象** | Explorer 上按 **对象** 展示 |
-| **`send_funds` 聚合余额** | 通过 **`settled_funds_value`** 与赎回路径体现 |
+---
+
+## 与 Owner `Coin` 的边界（再强调）
+
+| 视图 | 含义 |
+|------|------|
+| **地址下 `Coin` 对象列表** | **对象模型** 下的持有 |
+| **`settled_funds_value` 等** | **协议层地址资金** 视图 |
+
+**同一地址可以同时存在两种口径**；**禁止**在不经说明的情况下相加或混展示。
+
+---
+
+## 常见误区
+
+1. **把 Accumulator 当成「用户余额表」唯一真相**：业务若只用 **`Coin`**，则 **无** 聚合项；**若混用**，需 **产品定义**。  
+2. **忽略 `settled` 时刻**：用于风控时若需要 **实时**，要另设链下或合约内缓存策略。  
+3. **在 AMM 池里错误调用 `send_funds`**：池子应使用 **自定义 `Balance`**（§14.13）。
+
+---
 
 ## 小结
 
-把 **Accumulator** 理解成 **地址维度的资金账本**；**`Coin`** 仍是 **可点对象**。开发钱包或结算系统时，明确产品展示的是 **对象余额**、**聚合余额** 还是二者之和。下一节 **游戏/双币综合**；再下一节 **金库内 `Balance` 模式**。
+**Accumulator 提供「地址维度的、可结算的聚合读数」**；**`Coin` 提供「可转移的对象证据」**。下一节：**游戏/双币** 综合；再下一节：**嵌入式 `Balance` 金库**。

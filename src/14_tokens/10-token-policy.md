@@ -1,21 +1,23 @@
-# TokenPolicy：动作、规则与确认
+# TokenPolicy：动作表、Rule 与确认函数
 
-## 导读
+## 本节要回答的问题
 
-**`TokenPolicy<T>`** 是 **`key`** 对象，创建后需 **`token::share_policy`** **共享**到链上；**`TokenPolicyCap<T>`** 用于 **管理员** 配置 **允许的动作名** 与 **每种动作要满足的 Rule 类型集合**。用户执行 **`transfer` / `spend` / `to_coin` / `from_coin`** 时得到 **`ActionRequest<T>`**，只有 **`confirm_request`** 或 **`confirm_request_mut`**（用于带 `spent_balance` 的 `spend`）成功，交易才符合协议设计。
+- **`TokenPolicy` 为什么要 `share_object`**？  
+- **`allow` 与「挂载 Rule」** 的差别是什么？  
+- **`confirm_request` 与 `confirm_request_mut`** 分别在什么动作上必须使用？
 
-- **前置**：[§14.9](09-token-intro.md)  
-- **后续**：[§14.12 · 综合经济](12-game-economy.md)  
+**前置**：[§14.9](09-token-intro.md)。  
+**后续**：[§14.12](12-game-economy.md)。
 
 ---
 
-## 创建与共享策略
+## 创建与发布策略
 
 ```move
-use sui::token::{Self, TokenPolicy, TokenPolicyCap};
 use sui::coin::TreasuryCap;
+use sui::token::{Self, TokenPolicy, TokenPolicyCap};
 
-public fun setup_policy<T>(
+public fun setup<T>(
     treasury: &TreasuryCap<T>,
     ctx: &mut TxContext,
 ): TokenPolicyCap<T> {
@@ -25,32 +27,47 @@ public fun setup_policy<T>(
 }
 ```
 
-## 内置动作名（常量）
+**`new_policy` 要求传入 `&TreasuryCap`**：用 **铸币权的唯一性** 证明 **你有权为该类型定义策略**。  
+**`share_policy`** 发出事件并 **共享 `TokenPolicy`**，使任意用户在执行 **`confirm_*`** 时可传入 **`&TokenPolicy`**。
 
-与 Framework 一致（见 `token.move`）：
+---
 
-- **`transfer`** — 已把 `Token` 转给 `recipient`，需策略认可。  
-- **`spend`** — 销毁 `Token`，余额进入 policy 的 **spent** 池。  
-- **`to_coin` / `from_coin`** — 与 `Coin` 互转。
+## 动作表：`rules` 里存什么
 
-自定义动作可用 **`token::new_request`** 构造扩展流程（需在同一模块内与 policy 的 `rules` 对齐）。
+**`TokenPolicy`** 内含 **`VecMap<String, VecSet<TypeName>>`**：**动作名 → 一组 Rule 类型**（以 **`TypeName`** 标识模块里的 **Rule** 实现）。
 
-## 允许动作：allow
+- **`allow(action)`**：对该动作 **关闭 Rule 校验**（测试网或完全开放积分常用）；**主网生产** 往往改为 **显式 Rule**。  
+- **`add_rule_for_action`**：为某动作 **增加** 必须满足的 **Rule 类型**；**`confirm_request`** 时会检查 **`ActionRequest.approvals`** 是否覆盖策略要求。
 
-管理员可对某动作调用 **`allow`**，使该动作 **无需 Rule 盖章**即可确认（适合测试或完全开放的测试网积分）。生产环境通常 **关闭 allow**，改为挂载具体 **Rule**（例如仅某 `Package` 模块可盖章）。
+**精髓**：**策略 = 白名单动作集合 × 每动作一组可接受的 Rule「签章」类型**。
 
-## Rule 与 `add_approval`
+---
 
-每个 **Rule** 是一个 **模块定义的类型**，在 **`confirm_request`** 路径里检查 **`ActionRequest.approvals`** 是否包含策略要求的 **`TypeName` 集合**。典型扩展方式：
+## `ActionRequest` 与 `add_approval`
 
-1. 实现自定义 **`Rule`** 模块，暴露 **`prove`** 或类似函数，在 **`ActionRequest`** 上 **`add_approval`**（API 以 `token.move` 为准）。  
-2. **`TokenPolicyCap`** 持有者在 **`add_rule_for_action`** 中注册 **动作名 → 允许的 Rule 类型集合**。
+自定义 **Rule 模块** 在验证业务条件后，对 **`ActionRequest`** 调用 **`add_approval`**（API 以 `token.move` 为准），填入 **`approvals`**。**`confirm_request`** 再比对 **`TokenPolicy.rules`** 是否全部满足。
 
-## `confirm_request` vs `confirm_request_mut`
+---
 
-- **`confirm_request`**：用于 **没有** `spent_balance` 的请求（如 `transfer`、`to_coin`、`from_coin` 的确认路径）。  
-- **`confirm_request_mut`**：用于 **`spend`** 等会把余额写入 **`TokenPolicy.spent_balance`** 的动作。
+## 两种确认函数
+
+| 函数 | 适用 |
+|------|------|
+| **`confirm_request`** | **`spent_balance` 为空** 的请求（如 **`transfer`**、部分 **`to_coin` / `from_coin`** 路径）。 |
+| **`confirm_request_mut`** | 含 **`spent_balance`** 的 **`spend`** 等，需要 **写入 `TokenPolicy.spent_balance`**。 |
+
+误用会导致 **`EUseImmutableConfirm`** 等错误（见 **`token.move`**）。
+
+---
+
+## 常见误区
+
+1. **只 `transfer` 不 `confirm`**：若你的 **`public` 入口** 把两步拆开，可能留下 **策略未认可** 的中间状态；生产应 **单函数封装** 或 **强制同一 PTB**。  
+2. **以为 `allow` 适合主网默认**：等价于 **关闭 Rule 闸**，需治理明确授权。  
+3. **自定义动作名与 `rules` 不同步**：**`new_request`** 构造的请求名必须在 **`TokenPolicy`** 里 **事先注册** 对应规则。
+
+---
 
 ## 小结
 
-设计闭环经济时，先列出 **允许的业务动作**，再为每个动作选择 **开放（allow）** 或 **Rule 组合**；与开放 **`Coin`** 的互转务必单独审计 **to_coin / from_coin** 路径。下一节回到 **协议层 Accumulator** 与 **`settled_funds_value`**。
+**`TokenPolicy` 是闭环经济的「宪法」**；**`TokenPolicyCap` 是修宪钥匙**。配置完成后，务必审计 **`to_coin` / `from_coin`** 与 **`spend` / `flush`** 全路径。下一节：**Accumulator 与 `settled_funds_value`**。

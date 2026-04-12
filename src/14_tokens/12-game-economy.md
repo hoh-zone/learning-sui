@@ -1,38 +1,51 @@
-# 综合示例：游戏经济与双币
+# 经济模型综合：双币、积分与池子
 
-## 导读
+## 本节要回答的问题
 
-单游戏常同时需要：**链上可交易的主代币（开放环路 `Coin`）**、**不可出游戏圈的积分（闭环 `Token`）**、以及 **金库对象内嵌的 `Balance`**（奖励池、公会仓库）。本节用 **模式组合** 说明设计要点，避免绑定某一版本的业务合约细节。
+- 同一应用里 **多种资产** 如何分工：**可交易主币**、**不可外转积分**、**池内流动性**？  
+- **`Coin` + `Token` + 嵌入式 `Balance`** 如何组合而不互相污染口径？  
+- 上线前 **审计与产品** 应共同过哪些检查项？
 
-- **前置**：[§14.5](05-owner-coin.md)、[§14.9–§14.10](09-token-intro.md)  
+**前置**：[§14.5](05-owner-coin.md)、[§14.9–§14.10](09-token-intro.md)。
 
 ---
 
-## 模式一：主币 + 积分
+## 模式 A：主链上币 + 闭环积分
 
-| 资产 | 类型 | 说明 |
-|------|------|------|
-| **GOLD** | `Coin<GOLD>` | 玩家间交易、上 DEX；`TreasuryCap` 由多签控制铸销 |
-| **PTS** | `Token<PTS>` + `TokenPolicy` | 任务奖励；**仅允许** `spend` 在商城模块消费；禁止随意 `to_coin` |
+| 资产 | 技术形态 | 典型约束 |
+|------|-----------|-----------|
+| **主币 `GOLD`** | **`Coin<GOLD>`** | 开放环路；`TreasuryCap` 多签；可上 DEX |
+| **积分 `PTS`** | **`Token<PTS>` + `TokenPolicy`** | **`transfer` / `spend` 受 Rule 约束**；默认关闭 **`to_coin`** 或仅对白名单开放 |
 
-**衔接方式**：活动期可开放 **`from_coin`** 把少量 **GOLD** 换成 **PTS**（需 Rule 限制额度与地址）；退市时 **`to_coin`** 出口需单独审计。
+**衔接**：活动期若允许 **充积分**，可对 **`from_coin`** 配置 **额度上限 + 时间窗**；**退场**时若开放 **`to_coin`**，必须单独审计 **供应与套利**。
 
-## 模式二：双 Coin 与兑换池
+---
 
-**`Coin<SILVER>`**（书内示例包）与 **`Coin<GOLD>`** 通过 **共享对象 AMM 池** 兑换：池子内部用 **`Balance<SILVER>`** / **`Balance<GOLD>`** 记账（见 [§14.13](13-balance-vault-patterns.md)）。  
-注意：**`send_funds`** 与 **AMM 余额** 是不同层次——AMM 通常 **不** 用地址 accumulator，而用 **自定义共享对象** 内的 **`Balance`**。
+## 模式 B：双 `Coin` 与 AMM
 
-## 模式三：公会金库与权限
+两种 **`Coin`**（如本书 **`SILVER`** 与另一 **`GOLD`**）通过 **共享对象 AMM** 兑换：**池对象内** 两个 **`Balance`** 记账，**价格与手续费** 由 AMM 模块定义。
 
-**`GuildVault`** 内含 **`Balance<GOLD>`**，仅 **`GuildCap`** 可 **`coin::take` / `put`**。与 **Owner Coin** 区分：**玩家钱包** 持 **`Coin`**，**公会** 持 **共享对象里的 Balance**。
+**关键**：这里的 **`Balance`** 在 **池子对象** 内，**不是** §14.7 的 **地址 accumulator**；产品文档应写清 **「池内储备」≠「用户钱包 `Coin` 列表」**。
 
-## 设计检查清单
+---
 
-1. **供应**：无限铸、固定上限、burn-only 是否已在 **`Currency` / Treasury** 层落实？  
-2. **合规**：是否需要 **`make_regulated`** 与 **DenyList**？  
-3. **闭环**：积分是否必须用 **`Token`**，**TokenPolicy** 是否已 **`share_policy`**？  
-4. **资金流**：是否误把 **AMM 余额** 与 **`send_funds` 聚合**混在同一产品口径？
+## 模式 C：公会/赛季金库
+
+**`GuildVault`** 持有 **`Balance<GOLD>`**，仅 **`GuildCap`** 或 **治理多签** 可 **`take`/`put`**。  
+玩家钱包仍持 **`Coin`**；**公会国库** 是 **合约内账本**，转移需 **显式调用**。
+
+---
+
+## 上线检查清单（建议）
+
+1. **供应**：`TreasuryCap` 保管方案；是否 **`make_supply_fixed`** / **burn-only**；**误铸** 应急预案。  
+2. **展示**：`decimals` 与前端换算；**多 `Coin` 合并展示** 是否一致。  
+3. **合规**：是否 **`make_regulated`**；**DenyList** 运营流程与 **epoch** 提示。  
+4. **闭环**：**`TokenPolicy`** 是否已 **`share_policy`**；**`to_coin`/`from_coin`** 是否收窄。  
+5. **口径**：是否使用 **`send_funds`**；若使用，**用户可见余额** 是否包含 **accumulator**。
+
+---
 
 ## 小结
 
-**没有单一标准答案**；用 **Coin / Token / 嵌入式 Balance** 三套工具组合出经济模型。实战编译与发布见 [本章 hands-on](hands-on.md)。
+**没有万能模板**；用 **三层工具**（**`Coin` / `Token` / 嵌入式 `Balance`**）拼出业务故事，并在文档里 **写清每一种余额的定义**。实战步骤见 [hands-on.md](hands-on.md)。

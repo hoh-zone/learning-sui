@@ -1,57 +1,104 @@
-# 本章导论：从 Balance 到代币地图
+# 本章导论：Sui 上的「钱」——从类型到策略
 
-## 导读
+## 本节要回答的问题
 
-本章在 [第十一章 §11.11 · Balance 与 Coin](../11_programmability/11-balance-and-coin.md) 的基础上，把 **`Balance<T>`、`Coin<T>`、`Supply<T>`、`TreasuryCap<T>`** 放进**发币与运营**的完整故事里。建议先确保理解：**`Coin` 是带 `UID` 的可转移包装**，**`Balance` 是嵌入对象的纯数值**，**`TreasuryCap` 持有 `Supply` 才能铸/销**。
+- 自定义代币在链上**究竟是什么**（不是「一个智能合约变量」，而是一套 **类型 + 供应账本 + 可转移对象** 的组合）？  
+- **`Balance`、`Coin`、`TreasuryCap`、`Currency`、`Token`** 各自解决哪一类问题，边界在哪里？  
+- **开放环路（Coin）** 与 **闭环（Token）** 的分工是什么，为什么官方要提供两套？
 
-- **后续**：[§14.2](02-registry-otw.md) 起按「注册 → 元数据 → 金库 → 持有物操作 → 资金流 → 合规 → 闭环 Token → 协议层 Accumulator → 综合实战」阅读。  
-
----
-
-## 三条「钱」的形态
-
-| 形态 | 类型（典型） | 能否单独当对象转移 | 说明 |
-|------|----------------|----------------------|------|
-| 裸余额 | `Balance<T>` | 否（`store`，须包在对象或 `Coin` 里） | 轻量，适合 `Coin` 内部或自定义结构体字段 |
-| 硬币对象 | `Coin<T>` | **能**（`key + store`） | **Owner Coin**：用户钱包里常见的一枚枚 `Coin` |
-| 总供应 | `Supply<T>`（经 `TreasuryCap`） | `TreasuryCap` 为对象 | 铸造/销毁改 `Supply` |
-
-**Open-loop（开放环路）** 指 **`Coin<T>`** 标准路径：有 `store`，可 `public_transfer`，与 DeFi、钱包兼容性好。
-
-**Closed-loop（闭环）** 指 **`Token<T>`**（`sui::token`）：**无 `store`**，转移/消费需 **`TokenPolicy`** 确认——适合积分、游戏币、强合规场景。见 [§14.9](09-token-intro.md)、[§14.10](10-token-policy.md)。
+若你尚未熟悉 **`Balance` 与 `Coin` 的底层定义**，请先阅读 [第十一章 §11.11 · Balance 与 Coin](../11_programmability/11-balance-and-coin.md)，本章在此基础上讨论**发币、注册、合规与策略**。
 
 ---
 
-## 「共享」与「自有」在注册层面的含义
+## 一条主线：四种「层次」
 
-- **自有（Owner）**：用户地址持有的 **`Coin<T>`** 对象；你可 **`split` / `join`** 调整额度（见 [§14.5](05-owner-coin.md)）。  
-- **共享（Shared）**：**`CoinRegistry`** 链上单例里注册的 **`Currency<T>`** 元数据对象——**人人可查**，不是某个人兜里的钱，而是**类型级登记簿**。见 [§14.2](02-registry-otw.md)、[§14.6](06-shared-currency.md)。
+把 Sui 上的 fungible 资产想成四层叠在一起，**上层依赖下层语义**，混淆层次是初学者最常见的错误。
 
-勿把「共享 Coin」误解成「大家分同一枚 `Coin`」——共享的是**注册信息与元数据**，**余额仍在各地址下的 `Coin`/`Balance` 里**。
+| 层次 | 核心抽象 | 回答的问题 |
+|------|-----------|------------|
+| **1. 类型与登记** | 币种类 `T`、**`Currency<T>`**、**`CoinRegistry`** | 「这种币叫什么、多少位小数、是否受监管、供应状态是否在登记簿上可见？」 |
+| **2. 总供应账本** | **`Supply<T>`**（包在 **`TreasuryCap<T>`** 里） | 「全链已发行/已销毁的总量如何单调变化？谁有权 `mint` / `burn`？」 |
+| **3. 用户可持对象（开放环路）** | **`Coin<T>`**（`key + store`） | 「用户钱包里一笔笔可点的余额对象是什么？如何拆分、合并、转账？」 |
+| **4. 嵌入或协议层** | **`Balance<T>`**、**地址资金 accumulator** | 「池子、金库、结算用的**非独立对象**余额在哪里？与 Explorer 里列出的 `Coin` 列表是什么关系？」 |
+
+```mermaid
+flowchart TB
+  subgraph L1["层次 1：类型与登记"]
+    T["代币类型 T"]
+    CR["CoinRegistry"]
+    Cur["Currency"]
+    CR --> Cur
+  end
+  subgraph L2["层次 2：供应"]
+    TC["TreasuryCap"]
+    S["Supply"]
+    TC --> S
+  end
+  subgraph L3["层次 3：Coin"]
+    C["Coin"]
+  end
+  subgraph L4["层次 4：嵌入 / 协议"]
+    B["Balance"]
+    ACC["地址 accumulator"]
+  end
+  T --> TC
+  S -->|"mint 产出"| C
+  C -->|"into_balance"| B
+  C -->|"send_funds"| ACC
+```
+
+**精髓**：**`TreasuryCap` 管「印多少」**；**`Coin` 管「谁手里有多少枚对象」**；**`Currency` 管「这类币在全网目录里长什么样」**；**`Balance` 管「嵌在别处的数额」**。四者通过 Framework API 衔接，而不是互相替代。
 
 ---
 
-## 本章路线图（与模块对应）
+## `Coin<T>`：开放环路（Open Loop）
 
-| 主题 | Framework 模块（节选） | 本书节 |
-|------|------------------------|--------|
-| 注册与 OTW | `coin_registry` | [§14.2](02-registry-otw.md) |
-| 元数据 | `Currency` / `MetadataCap` | [§14.3](03-coin-metadata.md) |
-| 铸造与供应 | `coin::mint` / `burn`，`TreasuryCap` | [§14.4](04-treasury.md) |
-| 持币操作 | `coin::split` / `join`，`pay` | [§14.5](05-owner-coin.md) |
-| 注册表查询 | `CoinRegistry` 共享对象 | [§14.6](06-shared-currency.md) |
-| 地址级资金流 | `send_funds` / `redeem_funds` | [§14.7](07-funds-accumulator.md) |
-| 合规 | `DenyList`，`DenyCapV2` | [§14.8](08-regulated-denylist.md) |
-| 闭环 | `token::Token`，`TokenPolicy` | [§14.9](09-token-intro.md)、[§14.10](10-token-policy.md) |
-| 协议 Accumulator | `accumulator` / `funds_accumulator` | [§14.11](11-accumulator-protocol.md) |
-| 综合 | 双币、积分 | [§14.12](12-game-economy.md) |
-| 嵌入式 Balance | 金库、池 | [§14.13](13-balance-vault-patterns.md) |
-| 运维与说明 | 权限、epoch、CoinLock | [§14.14](14-operations-and-notes.md) |
+**`Coin<T>`** 具备 **`store`**，因此可以：
 
-> API 以当前 Sui Framework 源码为准；本书示例侧重**概念与模式**，升级迁移时请以官方 Release 说明为准。
+- 作为 **`public_transfer`** 的独立对象流动；  
+- 被任意已发布包在 **PTB** 中组合（只要类型匹配、规则满足）；  
+- 与钱包、浏览器、DEX 的「按对象列举余额」模型一致。
+
+这就是通常所说的 **开放环路**：价值以 **`Coin`** 为载体，**可组合性**最强。
+
+## `Token<T>`：闭环（Closed Loop）
+
+**`Token<T>`** **只有 `key`，没有 `store`**。它不能像普通 **`Coin`** 那样被任意模块随意塞进别的结构里当「可长期存放的代币字段」。  
+对 **`Token`** 的 **转账、消费、与 `Coin` 互转** 会生成 **`ActionRequest`**，必须由 **`TokenPolicy<T>`** 声明的规则（及可选 **Rule** 模块）**确认**之后，动作才在语义上闭环。
+
+**精髓**：**Coin = 默认可组合现金**；**Token = 带「策略闸」的余额载体**，适合积分、强许可消费、合规出口可控等场景。二者可共用 **`TreasuryCap`**，供应模型一致，**差异在转移与消费权限**。
 
 ---
 
-## 小结
+## 「自有」与「共享」——不要读错
 
-先建立 **Balance / Coin / TreasuryCap / Token** 的分工，再进入注册与元数据；**Owner Coin** 操作与 **共享 Currency 元数据** 是不同层次的问题。下一节从 **OTW + `coin_registry`** 开始创建类型。
+| 说法 | 含义 |
+|------|------|
+| **地址自有** | 某地址作为 **owner** 持有的 **`Coin<T>`** 对象；可 **`split` / `join`**。 |
+| **共享对象（类型级）** | **`CoinRegistry`**（系统维护的注册中心）及登记在其中的 **`Currency<T>`**：表示**这类币的全局元数据与状态**，不是「多人分同一笔钱」。 |
+
+**误区**：「共享 Coin」≠ 把一枚 `Coin` 变成共享对象。共享的是 **登记簿上的类型信息**；用户余额仍是各自拥有的 **`Coin`** 或合约内的 **`Balance`**。
+
+---
+
+## 与官方模块的对应（便于读源码）
+
+| 主题 | 主要模块 |
+|------|-----------|
+| 余额与供应底层 | `sui::balance` |
+| 硬币对象与 Treasury、Deny 相关 | `sui::coin` |
+| 注册与 `Currency` | `sui::coin_registry` |
+| 全局黑名单基础设施 | `sui::deny_list` |
+| 闭环代币与策略 | `sui::token` |
+| 地址资金与赎回 | `sui::funds_accumulator`（与 `balance::send_funds` 等配合） |
+| 聚合根 | `sui::accumulator` |
+
+API 细节以你目标网络所链接的 **`sui-framework`** 版本为准；升级迁移时务必对照 **Release Notes**。
+
+---
+
+## 本章阅读顺序
+
+建议按节号顺序阅读：**先建立注册与元数据（§14.2–14.3）→ 供应与 Treasury（§14.4）→ 用户侧 Coin 操作（§14.5）→ 再区分注册表与地址资金（§14.6–14.7）→ 合规与 Token（§14.8–14.10）→ 最后 Accumulator 与综合模式（§14.11–14.14）**。
+
+下一节从 **`coin_registry::new_currency_with_otw`** 与 **OTW** 开始，走通「一生成一次」的币种创建路径。
