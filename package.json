@@ -1,0 +1,24 @@
+{
+  "name": "learning-sui",
+  "version": "1.0.0",
+  "description": "一本面向 Sui 与 Move 的入门到进阶教程，由 [HOH Community](https://github.com/hoh-zone) 编写与维护。涵盖 Move 语言基础、Sui 对象模型、代币与 NFT、客户端 SDK、全栈 DApp、包升级与安全、基础设施与前沿技术等内容。",
+  "main": "index.js",
+  "scripts": {
+    "test:move-highlight": "node scripts/test-move-highlight.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hoh-zone/learning-sui.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/hoh-zone/learning-sui/issues"
+  },
+  "homepage": "https://github.com/hoh-zone/learning-sui#readme",
+  "devDependencies": {
+    "highlight.js": "^10.7.3"
+  }
+}

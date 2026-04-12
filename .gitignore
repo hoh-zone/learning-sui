@@ -12,8 +12,8 @@ Thumbs.db
 *.log
 .cache/
 
-# 可选：若后续使用 Node/TS 示例
-# node_modules/
+# 根目录 npm（highlight.js 语法高亮测试等）
+node_modules/
 
 # 可选：若使用 Rust 工具
 # target/
