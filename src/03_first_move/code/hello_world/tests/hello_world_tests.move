@@ -1,11 +1,13 @@
 #[test_only]
 module hello_world::hello_world_tests;
 
-use hello_world::hello_world;
-use std::string::String;
+use hello_world::hello_world::{Self, Hello};
+use std::unit_test::destroy;
 
 #[test]
-fun test_hello_world() {
-    let s: String = hello_world::hello_world();
-    assert!(s == b"Hello, World!".to_string());
+fun test_greeting() {
+    let ctx = &mut tx_context::dummy();
+    let hello: Hello = hello_world::new_hello(ctx);
+    assert!(hello_world::greeting(&hello) == b"Hello, World!".to_string());
+    destroy(hello);
 }

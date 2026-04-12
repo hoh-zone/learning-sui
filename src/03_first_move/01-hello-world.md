@@ -40,14 +40,13 @@ hello_world/
 name = "hello_world"
 edition = "2024"
 
-[dependencies]
-Sui = { git = "https://github.com/MystenLabs/sui.git", subdir = "crates/sui-framework/packages/sui-framework", rev = "framework/mainnet" }
-
 [addresses]
 hello_world = "0x0"
 ```
 
-> **`rev` 说明**：与[第二章 · Move 2024](../02_getting_started/04-move-2024.md)一致，默认使用 `framework/mainnet`。若你仅用 **testnet/devnet** 且希望与 CLI 模板习惯一致，可改为 `framework/testnet`，并与当前 `sui client` 环境匹配。
+> **依赖**：Sui 1.45 起 Framework 为**隐式依赖**，`Move.toml` 中无需再写 `Sui = { git = ... }`。若你使用较旧工具链，可按[第六章 §6.11](../06_move_intermediate/11-move-2024.md)补全 `[dependencies]`。
+
+> **`rev` 说明**：与[第六章 §6.11 · Move 2024 Edition](../06_move_intermediate/11-move-2024.md)中的约定一致，默认使用 `framework/mainnet`。若你仅用 **testnet/devnet** 且希望与 CLI 模板习惯一致，可改为 `framework/testnet`，并与当前 `sui client` 环境匹配。
 
 各字段含义：
 
@@ -58,7 +57,7 @@ hello_world = "0x0"
 
 ### `[dependencies]`
 
-声明项目依赖。默认依赖 Sui Framework，它提供了核心类型和函数（如 `UID`、`TxContext`、`transfer` 等）。
+新版本工具链下 Sui Framework 为隐式依赖；若显式声明，则与[清单文件](../04_concepts/02-manifest.md)一致，指向 Mysten 仓库的 `framework/mainnet` 等分支。Framework 提供 `object::UID`、`TxContext`、`transfer` 等。
 
 ### `[addresses]`
 
@@ -69,52 +68,76 @@ hello_world = "0x0"
 打开 `sources/hello_world.move`，将内容替换为：
 
 ```move
+/// 与本书 3.1「Hello World」对应：创建一个可上链的 `Hello` 对象并转移给交易发送者。
 module hello_world::hello_world;
 
 use std::string::String;
 
-/// 返回 "Hello, World!" 字符串
-public fun hello_world(): String {
-    b"Hello, World!".to_string()
+/// 链上可拥有的问候对象；发布后调用 `mint_hello` 可在钱包或区块浏览器里看到。
+public struct Hello has key, store {
+    id: object::UID,
+    greeting: String,
+}
+
+public fun greeting(hello: &Hello): &String {
+    &hello.greeting
+}
+
+/// 构造 `Hello`（供测试或其它模块组合使用）。
+public fun new_hello(ctx: &mut TxContext): Hello {
+    Hello {
+        id: object::new(ctx),
+        greeting: b"Hello, World!".to_string(),
+    }
+}
+
+/// 铸造 `Hello` 并转移给当前交易发送者（链上会产生新对象 ID）。
+entry fun mint_hello(ctx: &mut TxContext) {
+    let hello = new_hello(ctx);
+    transfer::public_transfer(hello, ctx.sender());
 }
 ```
 
-让我们逐行解析：
-
-### 模块声明
+### 模块声明与导入
 
 ```move
 module hello_world::hello_world;
-```
 
-- `hello_world`（第一个）：对应 `Move.toml` 中 `[addresses]` 下定义的地址别名
-- `hello_world`（第二个）：模块名称
-- 以分号结尾：这是 Move 2024 的文件级模块声明语法
-
-### 导入
-
-```move
 use std::string::String;
 ```
 
-从标准库导入 `String` 类型。`std` 是 Sui 框架隐式包含的 Move 标准库。
+- `hello_world`（地址别名）与 `hello_world`（模块名）与 `Move.toml` 中 `[addresses]` 对应；分号结尾为 Move 2024 **文件级模块**语法。
+- 仅显式导入 `String`；`object`、`transfer`、`TxContext` 等由 Sui 预导入，可直接写 `object::new`、`TxContext` 等。
 
-### 函数定义
+### 对象类型 `Hello`
 
 ```move
-public fun hello_world(): String {
-    b"Hello, World!".to_string()
+public struct Hello has key, store {
+    id: object::UID,
+    greeting: String,
 }
 ```
 
-- `public`：该函数可以被其他模块调用
-- `fun`：函数声明关键字
-- `hello_world()`：函数名和参数（此处无参数）
-- `: String`：返回类型
-- `b"Hello, World!"`：字节串字面量
-- `.to_string()`：Move 2024 的内置方法，将字节串转换为 `String`
+- **`has key`**：表示这是 **Sui 对象**，首字段必须是 `id: UID`。
+- **`has store`**：对象可被转移，也可作为字段嵌入其它类型（后续章节会深入）。
+- **`greeting`**：本例在链上可读的一段 UTF-8 文本，便于在浏览器里看出「这是 Hello 示例」。
 
-> **注意**：Move 函数中最后一个表达式会自动作为返回值，无需 `return` 关键字。
+### 构造函数与 `entry`
+
+```move
+public fun new_hello(ctx: &mut TxContext): Hello { /* ... */ }
+
+entry fun mint_hello(ctx: &mut TxContext) {
+    let hello = new_hello(ctx);
+    transfer::public_transfer(hello, ctx.sender());
+}
+```
+
+- **`new_hello`**：用 `object::new(ctx)` 分配唯一 `id`，在内存 / 测试中也可单独调用。
+- **`entry fun mint_hello`**：**入口函数**，可从钱包或 CLI 作为**一笔交易的唯一调用**直接执行（无需被其它 Move 模块再包装）。内部把新建的 `Hello` **`public_transfer` 给 `ctx.sender()`**，即**当前交易的发送地址**，因此发布后你用自己的地址调用，就会在**自己的名下**出现一个新的 `Hello` 对象。
+- 这样不再只是「返回一个字符串」的纯函数，而是**在链上创建可查询的对象**，与真实 DApp 的「铸造 NFT / 道具」是同一类模式的最小版。
+
+> **注意**：Move 函数中最后一个表达式会自动作为返回值；无返回值的函数体以分号或控制流结束。
 
 ## 编写测试
 
@@ -124,11 +147,15 @@ public fun hello_world(): String {
 #[test_only]
 module hello_world::hello_world_tests;
 
-use hello_world::hello_world;
+use hello_world::hello_world::{Self, Hello};
+use std::unit_test::destroy;
 
 #[test]
-fun hello_world() {
-    assert_eq!(hello_world::hello_world(), b"Hello, World!".to_string());
+fun test_greeting() {
+    let ctx = &mut tx_context::dummy();
+    let hello: Hello = hello_world::new_hello(ctx);
+    assert!(hello_world::greeting(&hello) == b"Hello, World!".to_string());
+    destroy(hello);
 }
 ```
 
@@ -143,16 +170,9 @@ module hello_world::hello_world_tests;
 
 ### 测试函数
 
-```move
-#[test]
-fun hello_world() {
-    assert_eq!(hello_world::hello_world(), b"Hello, World!".to_string());
-}
-```
-
-- `#[test]`：标记该函数为测试函数
-- `assert!`：断言宏，条件为 `false` 时测试失败
-- 测试函数不需要 `public` 修饰符
+- `#[test]`：标记该函数为测试函数。
+- 使用 **`tx_context::dummy()`** 模拟交易上下文，调用 **`new_hello`** 得到带 `key` 的对象；测试结束用 **`std::unit_test::destroy`** 回收对象（仅测试环境可用）。
+- 测试函数不需要 `public` 修饰符。
 
 ## 构建项目
 
@@ -198,7 +218,7 @@ INCLUDING DEPENDENCY Sui
 INCLUDING DEPENDENCY MoveStdlib
 BUILDING hello_world
 Running Move unit tests
-[ PASS    ] hello_world::hello_world_tests::test_hello_world
+[ PASS    ] hello_world::hello_world_tests::test_greeting
 Test result: OK. Total tests: 1; passed: 1; failed: 0
 ```
 
@@ -227,6 +247,20 @@ sui move test --coverage
 sui move coverage summary
 ```
 
+## 链上铸一枚 Hello（可选）
+
+本地 `sui move test` 通过后，若已按[钱包与测试币](../02_getting_started/03-wallet-and-faucet.md)配置好 `sui client`，可将本包**发布**到 devnet/testnet，再**调用入口函数** `mint_hello`，这样浏览器与 CLI 里都会出现**真实对象 ID**（而非仅控制台打印字符串）：
+
+```bash
+# 在 hello_world 包根目录，发布（详见 §3.2）
+sui client publish
+
+# 将输出中的 Package ID 设为环境变量后，一笔交易只调 mint_hello：
+sui client ptb --move-call $PACKAGE_ID::hello_world::mint_hello
+```
+
+成功后在交易回执的 **Created Objects** 中可看到类型为 `...::hello_world::Hello` 的新对象；用 `sui client object <对象ID>` 可查看其中的 `greeting` 字段。**PTB 与更多调用方式**见 §3.3。
+
 ## 项目结构最佳实践
 
 随着项目增长，建议采用以下结构：
@@ -252,6 +286,6 @@ my_project/
 
 ## 小结
 
-本节我们完成了第一个 Move 程序的完整开发流程：使用 `sui move new` 创建项目，理解 `Move.toml` 配置文件，编写模块和测试代码，最后通过 `sui move build` 构建和 `sui move test` 测试。虽然 "Hello, World!" 很简单，但它涵盖了 Move 开发的核心工作流。下一节我们将编写一个更有实际意义的合约，并将其部署到 Sui 网络上。
+本节我们完成了第一个 Move 程序的完整开发流程：使用 `sui move new` 创建项目，理解 `Move.toml`，编写带 **`Hello` 对象**与 **`entry fun mint_hello`** 的模块（**转移给自己**对应 `ctx.sender()`），编写测试，再通过 `sui move build` / `sui move test` 验证。这样你既练习了**纯函数式**的单元测试路径，又具备了**链上可查询输出**（对象 ID 与字段）的最小闭环；下一节将以另一示例深入**发布交易**的细节，§3.3 则系统讲解 PTB 调用。
 
 若你希望先了解**全书章节如何递进、哪些章可以跳读**，可穿插阅读[导读 — 本书结构与阅读方式](../01-introduction.md)。

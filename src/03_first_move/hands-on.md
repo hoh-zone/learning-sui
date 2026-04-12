@@ -14,6 +14,6 @@
 
 ## 实战三：链上读一次对象
 
-1. 用 `sui client object <OBJECT_ID>` 或 Explorer，查看你发布包产生的**任意链上对象**（例如 `UpgradeCap`、或模块创建的对象）。
-2. 指出该对象的 `owner` 类型（地址所有 / 共享 / 不可变等）。
-3. **验收**：截图或文字记录对象 ID + owner 类型。
+1. 在已发布本包的前提下，执行 `sui client ptb --move-call <PACKAGE_ID>::hello_world::mint_hello`（或按 §3.3 组合 PTB），在交易结果里找到 **Created Objects** 中的 `Hello`。
+2. 用 `sui client object <HELLO_OBJECT_ID>` 查看 `greeting` 字段与 `owner`（应为你的活跃地址）。
+3. **验收**：记录 `Hello` 的对象 ID，并确认 `owner` 为 **AddressOwner(你的地址)**。
