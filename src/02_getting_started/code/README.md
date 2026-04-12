@@ -4,4 +4,4 @@
 
 安装 Sui CLI 后可在本目录执行 **`./check-env.sh`**，确认 `sui` 已在 PATH 中。
 
-完成环境安装后，请直接打开 **[第三章 `code/hello_world`](../03_first_move/code/README.md)** 创建第一个可构建的包。
+完成环境安装后，请直接打开 **[第三章 `code/hello_world`](../../03_first_move/code/README.md)** 创建第一个可构建的包。

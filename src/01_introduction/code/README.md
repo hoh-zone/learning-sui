@@ -9,4 +9,4 @@ cd ch01_stub
 sui move build
 ```
 
-动手编写有意义链上逻辑请从 **[第三章 `code/hello_world`](../03_first_move/code/README.md)** 开始。
+动手编写有意义链上逻辑请从 **[第三章 `code/hello_world`](../../03_first_move/code/README.md)** 开始。

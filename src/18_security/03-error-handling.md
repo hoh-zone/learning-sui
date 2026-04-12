@@ -2,6 +2,8 @@
 
 本节讲解 Move 合约中的错误处理策略。良好的错误处理不仅能帮助调试，还能向用户提供有意义的反馈。我们将介绍错误码设计、分类策略和三条核心规则。
 
+**与全书一致**：新代码请优先使用 **`#[error]` + `vector<u8>`**（Clever Errors），见[第五章 · 断言与中止](../05_move_basics/18-assert-and-abort.md)。下文仍保留 **`u64` 数值码**的写法与分类策略，因为存量合约、按**整数**做前端映射、以及「稳定可枚举码」场景仍常见；**命名规则（`EPascalCase`）与「一义一码」原则**对两种表示法都适用。
+
 ## Move 中的错误机制
 
 当执行遇到 `abort` 时，交易失败并返回中止码（abort code）。Move VM 会返回中止交易的模块名称和中止码。但这种行为对调用者来说不够透明，特别是当一个函数包含多个可能中止的调用时。
@@ -237,11 +239,12 @@ public fun try_equip_weapon(
 
 ## 测试错误处理
 
+对 **`#[error]`** 常量，测试中优先使用 **`#[test, expected_failure]`**（省略 `abort_code`），避免 clever 编码随源码行变化导致脆弱测试。仅当错误为**稳定 `u64` 常量**时，可使用 `expected_failure(abort_code = E...)`。
+
 ```move
-#[test, expected_failure(abort_code = ENotAuthorized)]
+#[test, expected_failure]
 fun unauthorized_access_fails() {
     let ctx = &mut tx_context::dummy();
-    // 设置无权限场景
     unauthorized_action(ctx);
     abort 0xFF // 如果执行到这里说明测试失败
 }
@@ -262,4 +265,4 @@ fun error_returns_correct_code() {
 - 在前端维护错误码到用户友好消息的映射
 - 提供 `is_*` 检查函数让调用者在中止前验证条件
 - 对非关键操作考虑优雅降级（返回结果而非中止）
-- 使用 `#[expected_failure(abort_code = ...)]` 测试错误路径
+- 用 `expected_failure` 覆盖错误路径：优先无 `abort_code`（配合 `#[error]`）；稳定 `u64` 码可填 `abort_code`

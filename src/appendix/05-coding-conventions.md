@@ -79,9 +79,14 @@ use my_package::my_module::{Self, OtherMember};
 ### 常量命名
 
 ```move
-// 错误常量：EPascalCase
-const ENotAuthorized: u64 = 0;
-const EInsufficientBalance: u64 = 1;
+// 可中止错误（推荐）：EPascalCase + #[error] + 可读消息（Clever Errors）
+#[error]
+const ENotAuthorized: vector<u8> = b"Caller is not authorized";
+#[error]
+const EInsufficientBalance: vector<u8> = b"Insufficient balance";
+
+// 历史写法：u64 数值码（存量代码仍常见；新代码优先用上一段）
+const ELegacyCode: u64 = 0;
 
 // 普通常量：ALL_CAPS
 const MAX_SUPPLY: u64 = 10000;
