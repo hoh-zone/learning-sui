@@ -1,0 +1,6 @@
+[package]
+name = "ch06_08_macros"
+edition = "2024.beta"
+
+[addresses]
+ch06_08_macros = "0x0"

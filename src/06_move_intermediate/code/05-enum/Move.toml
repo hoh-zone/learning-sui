@@ -1,0 +1,6 @@
+[package]
+name = "ch06_05_enum"
+edition = "2024.beta"
+
+[addresses]
+ch06_05_enum = "0x0"

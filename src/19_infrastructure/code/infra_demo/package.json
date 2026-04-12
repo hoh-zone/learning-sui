@@ -1,0 +1,17 @@
+{
+  "name": "learning-sui-infra-demo",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "check": "tsc --noEmit",
+    "demo": "tsx src/infra.ts"
+  },
+  "dependencies": {
+    "@mysten/sui": "^2.15.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2"
+  }
+}

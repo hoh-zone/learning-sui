@@ -1,0 +1,6 @@
+[package]
+name = "ch07_02_constraints"
+edition = "2024.beta"
+
+[addresses]
+ch07_02_constraints = "0x0"

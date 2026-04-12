@@ -1,0 +1,19 @@
+{
+  "name": "learning-sui-ptb-demo",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "check": "tsc --noEmit",
+    "demo": "tsx src/ptb-demo.ts",
+    "owned": "tsx src/owned-objects.ts",
+    "dynamic": "tsx src/dynamic-fields.ts"
+  },
+  "dependencies": {
+    "@mysten/sui": "^2.15.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2"
+  }
+}

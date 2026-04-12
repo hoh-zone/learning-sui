@@ -1,0 +1,6 @@
+[package]
+name = "ch05_08_expression"
+edition = "2024.beta"
+
+[addresses]
+ch05_08_expression = "0x0"

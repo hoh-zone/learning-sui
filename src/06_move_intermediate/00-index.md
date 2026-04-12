@@ -17,6 +17,21 @@
 | 6.9 | 所有权与作用域 | 所有权转移、变量生命周期 |
 | 6.10 | 引用（& 与 &mut） | &T / &mut T、借用规则与使用场景 |
 
+## 节与正文、示例代码
+
+| 节 | 正文 | 配套 `code/`（可 `sui move build`） |
+|----|------|--------------------------------------|
+| 6.1 | [标准库概览](01-standard-library.md) | `code/01-standard-library/` |
+| 6.2 | [Vector](02-vector.md) | `code/02-vector/` |
+| 6.3 | [Option](03-option.md) | `code/03-option/` |
+| 6.4 | [String](04-string.md) | `code/04-string/` |
+| 6.5 | [枚举](05-enum.md) | `code/05-enum/` |
+| 6.6 | [模式匹配](06-pattern-matching.md) | `code/06-pattern-matching/` |
+| 6.7 | [结构体方法](07-struct-methods.md) | `code/07-struct-methods/` |
+| 6.8 | [宏函数](08-macros.md) | `code/08-macros/` |
+| 6.9 | [所有权与作用域](09-ownership-and-scope.md) | `code/09-ownership-and-scope/` |
+| 6.10 | [引用](10-references.md) | `code/10-references/` |
+
 ## 学习目标
 
 读完本章后，你将能够：
@@ -25,3 +40,7 @@
 - 用枚举与模式匹配表达多分支逻辑与错误处理
 - 用结构体方法和宏函数组织与复用代码
 - 理解所有权与引用，写出正确且高效的 Move 代码
+
+## 本章实战练习
+
+每章 **1～3 个**动手任务见 **[hands-on.md](hands-on.md)**（目录中亦列为「本章实战练习」）。

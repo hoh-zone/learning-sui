@@ -25,6 +25,7 @@
 |------|------|------|
 | 能力凭证 | Capability (Cap) | 代表特权的对象，持有者可执行受保护操作 |
 | Checkpoint | Checkpoint | Sui 网络确认的一批交易 |
+| Clever Errors | Clever Errors | Sui 对中止信息的呈现方式：推荐用 `#[error]` 标注错误常量（通常为 `vector<u8>` 消息），CLI/GraphQL 等可解码为人类可读说明 |
 | 时钟 | Clock | Sui 的系统时钟对象（地址 `0x6`），提供链上时间 |
 | 币 | Coin | Sui 上的同质化代币类型 `Coin<T>` |
 | 兼容性 | Compatibility | 包升级必须遵守的向后兼容规则 |

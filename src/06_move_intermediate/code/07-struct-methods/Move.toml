@@ -1,0 +1,6 @@
+[package]
+name = "ch06_07_methods"
+edition = "2024.beta"
+
+[addresses]
+ch06_07_methods = "0x0"

@@ -1,0 +1,6 @@
+[package]
+name = "ch05_12_abilities_intro"
+edition = "2024.beta"
+
+[addresses]
+ch05_12_abilities_intro = "0x0"

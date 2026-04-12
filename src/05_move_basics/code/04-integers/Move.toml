@@ -1,0 +1,6 @@
+[package]
+name = "ch05_04_integers"
+edition = "2024.beta"
+
+[addresses]
+ch05_04_integers = "0x0"

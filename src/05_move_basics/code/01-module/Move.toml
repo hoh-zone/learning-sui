@@ -1,0 +1,6 @@
+[package]
+name = "ch05_01_module"
+edition = "2024.beta"
+
+[addresses]
+ch05_01_module = "0x0"
