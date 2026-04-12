@@ -1,0 +1,6 @@
+[package]
+name = "ch05_03_importing"
+edition = "2024.beta"
+
+[addresses]
+ch05_03_importing = "0x0"

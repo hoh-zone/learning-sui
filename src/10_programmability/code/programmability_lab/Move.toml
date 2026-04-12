@@ -1,0 +1,6 @@
+[package]
+name = "programmability_lab"
+edition = "2024.beta"
+
+[addresses]
+programmability_lab = "0x0"

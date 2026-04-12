@@ -1,0 +1,6 @@
+[package]
+name = "ch06_10_refs"
+edition = "2024.beta"
+
+[addresses]
+ch06_10_refs = "0x0"

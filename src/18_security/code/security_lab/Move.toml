@@ -1,0 +1,6 @@
+[package]
+name = "ch18_security_lab"
+edition = "2024.beta"
+
+[addresses]
+ch18_security_lab = "0x0"

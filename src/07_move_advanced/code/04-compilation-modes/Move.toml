@@ -1,0 +1,6 @@
+[package]
+name = "ch07_04_modes"
+edition = "2024.beta"
+
+[addresses]
+ch07_04_modes = "0x0"

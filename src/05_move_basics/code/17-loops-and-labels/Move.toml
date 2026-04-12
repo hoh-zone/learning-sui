@@ -1,0 +1,6 @@
+[package]
+name = "ch05_17_loops"
+edition = "2024.beta"
+
+[addresses]
+ch05_17_loops = "0x0"

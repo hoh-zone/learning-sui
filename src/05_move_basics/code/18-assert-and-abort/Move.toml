@@ -1,0 +1,6 @@
+[package]
+name = "ch05_18_assert"
+edition = "2024.beta"
+
+[addresses]
+ch05_18_assert = "0x0"

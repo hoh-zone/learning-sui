@@ -1,0 +1,6 @@
+[package]
+name = "ch05_21_visibility"
+edition = "2024.beta"
+
+[addresses]
+ch05_21_visibility = "0x0"

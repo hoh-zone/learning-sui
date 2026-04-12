@@ -1,0 +1,6 @@
+[package]
+name = "ch05_19_functions"
+edition = "2024.beta"
+
+[addresses]
+ch05_19_functions = "0x0"

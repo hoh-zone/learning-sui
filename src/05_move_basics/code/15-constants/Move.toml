@@ -1,0 +1,6 @@
+[package]
+name = "ch05_15_constants"
+edition = "2024.beta"
+
+[addresses]
+ch05_15_constants = "0x0"

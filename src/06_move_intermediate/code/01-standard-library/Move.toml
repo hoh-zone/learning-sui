@@ -1,0 +1,6 @@
+[package]
+name = "ch06_01_stdlib"
+edition = "2024.beta"
+
+[addresses]
+ch06_01_stdlib = "0x0"
