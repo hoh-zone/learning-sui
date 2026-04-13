@@ -1,6 +1,6 @@
 # Sui Gas Pool — 赞助交易服务
 
-Sui Gas Pool 是 Mysten Labs 开源的**赞助交易（Sponsored Transaction）**基础设施服务。它管理一个由赞助者地址持有的 Gas Coin 池，通过 API 为用户交易提供 Gas 代付，让用户无需持有 SUI 即可与 DApp 交互。
+Sui Gas Pool 是 Mysten Labs 开源的<b>赞助交易（Sponsored Transaction）</b>基础设施服务。它管理一个由赞助者地址持有的 Gas Coin 池，通过 API 为用户交易提供 Gas 代付，让用户无需持有 SUI 即可与 DApp 交互。
 
 ## 为什么需要 Gas Pool
 

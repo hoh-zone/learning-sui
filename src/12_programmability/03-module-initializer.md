@@ -262,7 +262,7 @@ fun init(otw: NFT_INIT, ctx: &mut TxContext) {
 
 ### init 不是万能的安全保障
 
-虽然 `init` 只执行一次，但仅依靠 `init` 函数本身并不能提供强安全保证。如果你需要证明某段逻辑确实只在模块发布时执行过一次，应该使用**一次性见证（OTW）**机制。
+虽然 `init` 只执行一次，但仅依靠 `init` 函数本身并不能提供强安全保证。如果你需要证明某段逻辑确实只在模块发布时执行过一次，应该使用<b>一次性见证（OTW）</b>机制。
 
 ```move
 module examples::secure_init;
