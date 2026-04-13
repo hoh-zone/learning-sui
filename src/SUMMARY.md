@@ -1,7 +1,5 @@
 # Move on Sui: 从零到精通
 
-[前言](00-foreword.md)
-
 [导读 — 本书结构与阅读方式](01-introduction.md)
 
 ---
