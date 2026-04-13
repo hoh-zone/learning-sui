@@ -182,7 +182,7 @@ public fun create_registry(ctx: &mut TxContext) {
 }
 
 public fun register(registry: &mut UserRegistry, profile: vector<u8>, ctx: &TxContext) {
-    table::add(&mut registry.profiles, ctx.sender(), profile);
+    registry.profiles.add(ctx.sender(), profile);
 }
 ```
 
