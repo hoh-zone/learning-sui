@@ -18,8 +18,16 @@ jobs:
         with:
           mdbook-version: "latest"
 
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+
+      - name: npm ci (highlight.js for Move highlight test)
+        run: npm ci
+
       - name: mdbook build
         run: mdbook build
 
       - name: Move syntax highlight (hljs 10)
-        run: node scripts/test-move-highlight.js
+        run: npm run test:move-highlight

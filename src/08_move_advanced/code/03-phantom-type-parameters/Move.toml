@@ -1,0 +1,6 @@
+[package]
+name = "ch07_03_phantom"
+edition = "2024"
+
+[addresses]
+ch07_03_phantom = "0x0"

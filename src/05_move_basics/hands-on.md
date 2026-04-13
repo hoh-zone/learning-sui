@@ -2,7 +2,7 @@
 
 ## 实战一：跟踪一节一包 — 从编译到改代码
 
-1. 任选一节目录，例如 `src/05_move_basics/code/04-integers/`。
+1. 任选一节目录，例如 `src/05_move_basics/code/04-integers/`（对应 §5.5）。
 2. 在对应 `sources/*.move` 中**新增**一个 `public fun`，做简单整数运算（注意溢出与类型）。
 3. 执行 `sui move build`。
 4. **验收**：编译通过；你能在模块中定位到自己的新函数。

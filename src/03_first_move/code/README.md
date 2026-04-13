@@ -1,6 +1,6 @@
 # 第三章 · 示例代码
 
-与正文 **3.1 Hello World** 对应。
+与正文 **3.1 Hello World** 对应：模块内定义 **`Hello` 对象**，**`entry fun mint_hello`** 将其转移给交易发送者。
 
 ## `hello_world/`
 
@@ -10,5 +10,5 @@ sui move build
 sui move test
 ```
 
-- **Move 2024**：`edition = "2024.beta"`，依赖使用当前 Sui CLI 自带的隐式 Framework（与本书第二章约定一致）。
-- 可在此基础上继续完成 **3.2 / 3.3** 的部署与交互练习。
+- **Move 2024**：`edition = "2024"`，Framework 为隐式依赖（Sui 1.45+）。
+- 发布后可调用 `mint_hello` 在链上创建属于自己的 `Hello` 对象；**3.2 / 3.3** 仍使用正文中的 TodoList 示例深入部署与 PTB。
