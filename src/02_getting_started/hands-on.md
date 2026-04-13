@@ -12,8 +12,8 @@
 2. 配置 `sui client` 指向 **testnet**，从水龙头领取测试 SUI。
 3. **验收**：`sui client balance`（或等价命令）显示非零余额。
 
-## 实战三：Move 2024 Edition 对齐
+## 实战三：确认示例包可构建
 
-1. 打开任意本书配套包（如 `src/03_first_move/code/hello_world/Move.toml`），确认 `edition = "2024.beta"`（或本书约定版本）。
-2. 在该目录执行 `sui move build`。
-3. **验收**：构建成功且无 edition 相关报错。
+1. 克隆或进入仓库后，打开 `src/03_first_move/code/hello_world/`。
+2. 执行 `sui move build`（无需先理解 `Move.toml` 中每一项含义）。
+3. **验收**：构建成功。若对 `edition` / `rev` 有疑问，读完第五～六章后再看[第六章 §6.11](../06_move_intermediate/11-move-2024.md)。

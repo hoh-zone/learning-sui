@@ -28,6 +28,8 @@
 | Clever Errors | Clever Errors | Sui 对中止信息的呈现方式：推荐用 `#[error]` 标注错误常量（通常为 `vector<u8>` 消息），CLI/GraphQL 等可解码为人类可读说明 |
 | 时钟 | Clock | Sui 的系统时钟对象（地址 `0x6`），提供链上时间 |
 | 币 | Coin | Sui 上的同质化代币类型 `Coin<T>` |
+| 币种注册表 | CoinRegistry | 系统共享对象，集中登记各类 `Currency<T>` 与类型级元数据；见[第十五章 §15.6](../15_tokens/06-shared-currency.md) |
+| 币种档案 | Currency | `coin_registry` 中与类型 `T` 一一对应的链上元数据对象 `Currency<T>`（名称、精度、监管状态等）；见[第十五章](../15_tokens/00-index.md) |
 | 兼容性 | Compatibility | 包升级必须遵守的向后兼容规则 |
 | 可组合性 | Composability | 函数设计为可在 PTB 中与其他函数组合调用 |
 | 共识 | Consensus | 验证者就交易顺序和结果达成一致的过程 |
@@ -38,7 +40,7 @@
 | 术语 | 英文 | 解释 |
 |------|------|------|
 | DeepBook | DeepBook | Sui 上的去中心化链上订单簿 |
-| 拒绝列表 | DenyList | 系统对象（`0x403`），用于代币冻结 |
+| 拒绝列表 | DenyList | 全局共享对象，按类型与地址配置合规限制（如 `Coin` 输入限制）；与 `DenyCapV2` 配合；见[第十五章 §15.8](../15_tokens/08-regulated-denylist.md) |
 | 动态字段 | Dynamic Field | 运行时添加到对象的键值对，不计入对象大小限制 |
 | 动态对象字段 | Dynamic Object Field | 值是对象的动态字段，保留独立的对象 ID |
 | drop 能力 | drop Ability | 允许值被丢弃/忽略的能力，与 `key` 互斥 |
@@ -58,7 +60,7 @@
 
 | 术语 | 英文 | 解释 |
 |------|------|------|
-| 快速路径 | Fast Path | 不涉及共享对象的交易可以跳过共识，快速执行 |
+| （旧称）快速路径 | Fast Path（deprecated） | 教材不再使用该机制名；见第 8 章 §8.4 与[官方架构说明](https://docs.sui.io/concepts/sui-architecture) |
 | 闪电贷 | Flash Loan | 在同一笔交易内借入和归还的即时贷款，利用 Hot Potato 保证归还 |
 | 冻结对象 | Frozen Object | 不可变对象，只能通过不可变引用访问 |
 | 全节点 | Full Node | 存储完整链状态、提供 RPC 服务但不参与共识的节点 |
@@ -131,7 +133,7 @@
 | 并行执行 | Parallel Execution | Sui 运行时并行执行交易的能力 |
 | PCR | Platform Configuration Register | 标识 enclave 代码和配置的 SHA-384 哈希值 |
 | PTB | Programmable Transaction Block | 可编程交易块，一笔交易中组合多个操作 |
-| 幻影类型参数 | Phantom Type Parameter | 不在结构体字段中使用的类型参数，用于类型标记 |
+| 幻影类型参数（`phantom`） | Phantom Type Parameter | 未出现在结构体字段中的类型参数，须写 `phantom T`；见[第八章 §8.3](../08_move_advanced/03-phantom-type-parameters.md) |
 | Publisher | Publisher | 证明包发布权的对象，通过 OTW 创建 |
 
 ## R
@@ -158,6 +160,8 @@
 | 术语 | 英文 | 解释 |
 |------|------|------|
 | Table | Table | 同构动态键值集合，条目存储为动态字段 |
+| TokenPolicy | TokenPolicy | 闭环代币 `Token<T>` 的策略对象（共享），声明允许的动作与 Rule；见[第十五章 §15.10](../15_tokens/10-token-policy.md) |
+| TreasuryCap | TreasuryCap | 铸币权对象，内含 `Supply<T>`，是 `mint`/`burn` 的正规入口；见[第十二章 §12.11](../12_programmability/11-balance-and-coin.md)、[第十五章](../15_tokens/00-index.md) |
 | TEE | Trusted Execution Environment | 可信执行环境，提供硬件级代码隔离 |
 | 测试网 | Testnet | Sui 的测试网络 |
 | Transfer | Transfer | 将对象所有权转移到指定地址的操作 |

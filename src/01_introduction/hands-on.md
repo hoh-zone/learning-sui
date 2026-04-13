@@ -2,7 +2,7 @@
 
 ## 实战一：确认本机工具链
 
-1. 安装或更新 [Sui CLI](https://docs.sui.io/guides/developer/getting-started/sui-install)（若使用 `suiup`，按正文 1.5 节切换版本）。
+1. 安装或更新 [Sui CLI](https://docs.sui.io/guides/developer/getting-started/sui-install)（若使用 `suiup`，按[第二章 §2.1](../02_getting_started/01-install-sui.md)切换版本）。
 2. 执行 `sui --version`，记下主版本号，与[官方发布说明](https://github.com/MystenLabs/sui/releases)对照。
 3. **验收**：终端能输出 `sui` 版本，无报错。
 

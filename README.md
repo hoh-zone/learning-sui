@@ -43,8 +43,8 @@ learning-sui/
 ├── book.toml          # mdBook 配置
 ├── src/
 │   ├── SUMMARY.md     # 目录（侧边栏结构）
-│   ├── 00-foreword.md # 前言
-│   ├── 01_introduction/ … 07_move_advanced/  # 章文件夹名与书中章号对齐（如第 8 章为 08_object_model/）
+│   ├── 01-introduction.md  # 全书导读（阅读方式与各章概述）
+│   ├── 01_introduction/ … 23_pas/  # 章文件夹名与书中篇目对齐（如宏函数为 11_move_macros/、对象模型为 09_object_model/）
 │   │   └── code/       # 部分章含可运行 Move 示例（见各章 code/README.md）
 │   └── …
 ├── book/              # 构建输出（已加入 .gitignore）

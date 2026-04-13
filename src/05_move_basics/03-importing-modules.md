@@ -163,7 +163,7 @@ Sui = { git = "https://github.com/MystenLabs/sui.git", subdir = "crates/sui-fram
 book = "0x0"
 ```
 
-与[第二章 · Move 2024](../02_getting_started/04-move-2024.md)一致，本书示例统一使用 `edition = "2024"` 与 `rev = "framework/mainnet"`。若在 **testnet** 上开发，可将 `rev` 改为 `framework/testnet`。若本地 CLI 仍生成 `2024.beta`，可改为 `"2024"`（与迁移期别名等价，见第二章说明）。
+与[第六章 §6.11 · Move 2024 Edition](../06_move_intermediate/11-move-2024.md)一致，本书示例统一使用 `edition = "2024"` 与 `rev = "framework/mainnet"`。若在 **testnet** 上开发，可将 `rev` 改为 `framework/testnet`。若本地 CLI 仍生成 `2024.beta`，可改为 `"2024"`（与迁移期别名等价，见 §6.11 说明）。
 
 定义好依赖后，就可以在代码中导入该依赖包提供的模块。
 
@@ -231,5 +231,5 @@ public fun create_token(name: String, ctx: &mut TxContext): MyToken {
 - **分组导入**：`use package::module::{Self, Type1, Type2};` 一次导入多个成员
 - **别名**：`use package::module::Type as Alias;` 解决命名冲突
 - **Self 关键字**：在分组导入中代表模块本身
-- **自动导入**：`vector`、`option`、`Option` 无需手动导入
+- **预导入（Prelude）**：`object`、`transfer`、`TxContext` 及常用 `vector` / `option` 等往往**无需**再 `use`，详见 **[§5.4 默认导入的包与预置名称](04-default-imports.md)**
 - **外部依赖**：通过 `Move.toml` 配置，CLI v1.45+ 自动包含系统包
