@@ -144,7 +144,7 @@ Zed 编辑器通过其扩展系统提供 Move 支持：
 
 ### 安装（推荐：suiup）
 
-与[第一章 §1.5 · Suiup — 工具链管理器](../01_introduction/05-suiup.md)一致，**推荐用 suiup 安装** `move-analyzer`，便于与 `sui`、`mvr` 等统一版本管理：
+与[第二章 §2.1 · 安装 Sui CLI 与 Suiup](01-install-sui.md)一致，**推荐用 suiup 安装** `move-analyzer`，便于与 `sui`、`mvr` 等统一版本管理：
 
 ```bash
 suiup install move-analyzer

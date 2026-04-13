@@ -49,8 +49,8 @@ use sui::tx_context::TxContext;
 
 | 对象 | 典型地址（各环境一致） | 说明 |
 |------|------------------------|------|
-| **Clock** | `0x6` | 链上时间，见[第十一章 · Epoch 与时间](../11_programmability/05-epoch-and-time.md) |
-| **Random** | `0x8` | 随机数，见[第十一章 · 链上随机数](../11_programmability/14-randomness.md) |
+| **Clock** | `0x6` | 链上时间，见[第十二章 · Epoch 与时间](../12_programmability/05-epoch-and-time.md) |
+| **Random** | `0x8` | 随机数，见[第十二章 · 链上随机数](../12_programmability/14-randomness.md) |
 
 调用这些函数时，通常通过 **`sui::clock::Clock`** 等类型与 **`entry`** / **`public`** 函数参数由运行时注入，**不是** Prelude 替你导入「整个对象」，而是**类型定义**仍来自 `sui::clock` 等模块——多数情况需要 **`use sui::clock::Clock`**。
 

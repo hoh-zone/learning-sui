@@ -61,4 +61,4 @@ public struct TagForKeyType<phantom T: key> has copy, drop {}
 
 - **`phantom`**：类型参数**仅用于类型区分**，**不**出现在任何字段类型中。
 - **非 phantom**：类型参数在字段中出现，参与值的布局与存储。
-- 与 **`Coin<phantom T>`、`TreasuryCap<phantom T>`** 等框架类型读法一致；Witness / Display 等模式中会频繁见到（参见[第十一章 · Witness](../12_patterns/02-witness.md)等）。
+- 与 **`Coin<phantom T>`、`TreasuryCap<phantom T>`** 等框架类型读法一致；Witness / Display 等模式中会频繁见到（参见[第十三章 · Witness](../13_patterns/02-witness.md)等）。
