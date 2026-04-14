@@ -115,7 +115,9 @@ public fun draw_winner(random: &Random, ctx: &mut TxContext) { ... }
 ```move
 module examples::lottery;
 
-use sui::random::{Self, Random, RandomGenerator};
+use sui::random::Random;
+
+const EWithoutParticipant: u64 = 0;
 
 public struct Lottery has key {
     id: UID,
@@ -133,7 +135,7 @@ public fun create(ctx: &mut TxContext) {
 }
 
 public fun join(lottery: &mut Lottery, ctx: &TxContext) {
-    vector::push_back(&mut lottery.participants, ctx.sender());
+    lottery.participants.push_back(ctx.sender());
 }
 
 /// Must be `entry` not `public` for randomness security
@@ -142,11 +144,11 @@ entry fun draw_winner(
     random: &Random,
     ctx: &mut TxContext,
 ) {
-    assert!(vector::length(&lottery.participants) > 0, 0);
-    let mut generator = random::new_generator(random, ctx);
-    let len = vector::length(&lottery.participants);
-    let idx = random::generate_u64_in_range(&mut generator, 0, len - 1);
-    let winner = *vector::borrow(&lottery.participants, idx);
+    assert!(lottery.participants.length() > 0, EWithoutParticipant);
+    let mut generator = random.new_generator(ctx);
+    let len = lottery.participants.length();
+    let idx = generator.generate_u64_in_range(0, len - 1);
+    let winner = lottery.participants[idx];
     lottery.winner = option::some(winner);
 }
 ```
@@ -163,7 +165,7 @@ entry fun draw_winner(
 ```move
 module examples::dice;
 
-use sui::random::{Self, Random};
+use sui::random::Random;
 use sui::event;
 
 public struct DiceRolled has copy, drop {
@@ -172,8 +174,8 @@ public struct DiceRolled has copy, drop {
 }
 
 entry fun roll_dice(random: &Random, ctx: &mut TxContext) {
-    let mut generator = random::new_generator(random, ctx);
-    let value = random::generate_u8_in_range(&mut generator, 1, 6);
+    let mut generator = random.new_generator(ctx);
+    let value = generator.generate_u8_in_range(1, 6);
     event::emit(DiceRolled {
         value,
         player: ctx.sender(),
@@ -192,7 +194,7 @@ entry fun roll_dice(random: &Random, ctx: &mut TxContext) {
 ```move
 module examples::random_nft;
 
-use sui::random::{Self, Random};
+use sui::random::Random;
 use std::string::String;
 
 public struct Monster has key, store {
@@ -209,14 +211,14 @@ entry fun mint_random_monster(
     random: &Random,
     ctx: &mut TxContext,
 ) {
-    let mut gen = random::new_generator(random, ctx);
+    let mut gen = random.new_generator(ctx);
 
-    let attack = random::generate_u64_in_range(&mut gen, 10, 100);
-    let defense = random::generate_u64_in_range(&mut gen, 10, 100);
-    let speed = random::generate_u64_in_range(&mut gen, 10, 100);
+    let attack = gen.generate_u64_in_range(10, 100);
+    let defense = gen.generate_u64_in_range(10, 100);
+    let speed = gen.generate_u64_in_range(10, 100);
 
     // 稀有度：1-100 的随机数，越高越稀有
-    let rarity_roll = random::generate_u8_in_range(&mut gen, 1, 100);
+    let rarity_roll = gen.generate_u8_in_range(1, 100);
     let rarity = if (rarity_roll <= 50) {
         1 // 普通 (50%)
     } else if (rarity_roll <= 80) {
@@ -250,8 +252,8 @@ entry fun mint_random_monster(
 ```move
 // 危险模式
 entry fun bad_pattern(random: &Random, ctx: &mut TxContext) {
-    let mut gen = random::new_generator(random, ctx);
-    let result = random::generate_u64(&mut gen);
+    let mut gen = random.new_generator(ctx);
+    let result = gen.generate_u64();
     // 不要在获取随机数后执行可能失败的外部调用
     // 因为这可能被利用来选择性中止交易
 }

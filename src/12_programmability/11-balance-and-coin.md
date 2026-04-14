@@ -5,7 +5,7 @@
 本节对应 [§12.1](01-sui-framework.md) 中的 **`sui::balance`、`sui::coin`** 与原生 **`SUI`**：描述余额如何在对象间拆分、封装与销毁，是 [§12.12](12-bcs.md)（链下构造参数）、[第十五章 · 代币](../15_tokens/00-index.md)（**注册、合规、Token**）的**共同基础**。
 
 - **前置**：[§12.1](01-sui-framework.md)、[第十章 · 存储函数](../10_using_objects/04-storage-functions.md)（对象与 `store` 语境）  
-- **后续**：[第十五章](15_tokens/00-index.md)（**`coin_registry`、元数据、DenyList、闭环 Token**；本章「创建新代币」仅保留与 §15 的分工说明，**完整示例见第十五章**）  
+- **后续**：[第十五章](../15_tokens/00-index.md)（**`coin_registry`、元数据、DenyList、闭环 Token**；本章「创建新代币」仅保留与 §15 的分工说明，**完整示例见第十五章**）  
 
 ---
 
@@ -186,7 +186,7 @@ coin::join(&mut main_coin, other_coin);
 module examples::vault;
 
 use sui::balance::{Self, Balance};
-use sui::coin::{Self, Coin};
+use sui::coin::Coin;
 use sui::sui::SUI;
 
 public struct Vault has key {
@@ -203,8 +203,8 @@ public fun create(ctx: &mut TxContext) {
 }
 
 public fun deposit(vault: &mut Vault, coin: Coin<SUI>) {
-    let coin_balance = coin::into_balance(coin);
-    balance::join(&mut vault.balance, coin_balance);
+    let coin_balance = coin.into_balance();
+    vault.balance.join(coin_balance);
 }
 
 public fun withdraw(
@@ -212,12 +212,12 @@ public fun withdraw(
     amount: u64,
     ctx: &mut TxContext,
 ): Coin<SUI> {
-    let withdrawn = balance::split(&mut vault.balance, amount);
-    coin::from_balance(withdrawn, ctx)
+    let withdrawn = vault.balance.split(amount);
+    withdrawn.into_coin(ctx)
 }
 
 public fun balance(vault: &Vault): u64 {
-    balance::value(&vault.balance)
+    vault.balance.value()
 }
 ```
 

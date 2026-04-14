@@ -168,11 +168,11 @@ linked_table::is_empty<K, V>(table: &LinkedTable<K, V>): bool
 ```move
 public fun sum_all_values(table: &LinkedTable<u64, u64>): u64 {
     let mut sum = 0u64;
-    let mut current = *linked_table::front(table);
-    while (option::is_some(&current)) {
-        let key = *option::borrow(&current);
-        sum = sum + *linked_table::borrow(table, key);
-        current = *linked_table::next(table, key);
+    let mut current = *table.front();
+    while (current.is_some()) {
+        let key = current.extract();
+        sum = sum + table[key];
+        current = *table.next(key);
     };
     sum
 }
@@ -209,7 +209,7 @@ public fun create_registry(ctx: &mut TxContext): UserRegistry {
 
 public fun register(registry: &mut UserRegistry, name: vector<u8>, ctx: &TxContext) {
     let sender = ctx.sender();
-    table::add(&mut registry.users, sender, name);
+    registry.users.add(sender, name);
     registry.count = registry.count + 1;
 }
 
@@ -225,11 +225,11 @@ public fun create_inventory(ctx: &mut TxContext): GameInventory {
 }
 
 public fun add_item<V: store>(inventory: &mut GameInventory, key: vector<u8>, item: V) {
-    bag::add(&mut inventory.items, key, item);
+    inventory.items.add(key, item);
 }
 
 public fun item<V: store>(inventory: &GameInventory, key: vector<u8>): &V {
-    bag::borrow(&inventory.items, key)
+    &inventory.items[key]
 }
 ```
 
@@ -255,28 +255,28 @@ public fun create(ctx: &mut TxContext) {
 
 public fun submit_score(board: &mut Leaderboard, score: u64, ctx: &TxContext) {
     let player = ctx.sender();
-    if (linked_table::contains(&board.scores, player)) {
-        let current = linked_table::borrow_mut(&mut board.scores, player);
+    if (board.scores.contains(player)) {
+        let current = &mut board.scores[player];
         if (score > *current) {
             *current = score;
         };
     } else {
-        linked_table::push_back(&mut board.scores, player, score);
+        board.scores.push_back(player, score);
     };
 }
 
 public fun get_top_player(board: &Leaderboard): (address, u64) {
     let mut best_addr = @0x0;
     let mut best_score = 0u64;
-    let mut current = *linked_table::front(&board.scores);
-    while (option::is_some(&current)) {
-        let addr = *option::borrow(&current);
-        let score = *linked_table::borrow(&board.scores, addr);
-        if (score > best_score) {
+    let mut current = *board.scores.front();
+    while (current.is_some()) {
+        let addr = current.extract();
+        let score = board.scores[addr];
+        if (score > best_score || best_addr == @0x0) {
             best_score = score;
             best_addr = addr;
         };
-        current = *linked_table::next(&board.scores, addr);
+        current = *board.scores.next(addr);
     };
     (best_addr, best_score)
 }

@@ -165,7 +165,6 @@ let obj = MyRecord { id: uid, data: ... };
 module examples::type_registry;
 
 use sui::derived_object;
-use sui::transfer;
 use std::string::String;
 
 public struct Registry has key {
@@ -191,16 +190,15 @@ public fun register<T: key + store>(
     registry: &mut Registry,
     name: String,
     value: T,
-    ctx: &mut TxContext,
+    // ctx: &TxContext,
 ) {
-    assert!(!derived_object::exists(&registry.id, TypeKey<T>()), 0);
-    let uid = derived_object::claim(&mut registry.id, TypeKey<T>());
+    let uid = derived_object::claim(&mut registry.id, TypeKey<T>{});
     let record = Record<T> { id: uid, name, value };
     transfer::share_object(record); // 或 transfer::transfer(record, ctx.sender())
 }
 
 public fun is_registered<T: key>(registry: &Registry): bool {
-    derived_object::exists(&registry.id, TypeKey<T>())
+    derived_object::exists(&registry.id, TypeKey<T>{})
 }
 ```
 
