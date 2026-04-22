@@ -107,6 +107,8 @@ module examples::token_factory;
 
 use std::string::String;
 
+const ENotEnough: u64 = 0;
+
 /// 泛型代币 - 由 Witness 决定类型
 public struct Token<phantom T> has key, store {
     id: UID,
@@ -141,7 +143,7 @@ public fun split<T>(
     amount: u64,
     ctx: &mut TxContext,
 ): Token<T> {
-    assert!(token.value >= amount, 0);
+    assert!(token.value >= amount, ENotEnough);
     token.value = token.value - amount;
     Token {
         id: object::new(ctx),

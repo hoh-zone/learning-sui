@@ -97,9 +97,8 @@ public fun create_minter(
     );
 }
 
-/// 任何持有 MinterCap 的人都可以铸造 NFT
-public fun mint(
-    _: &MinterCap,
+/// 私有的铸造函数，仅可在该模块内被调用
+fun inner_mint(
     name: String,
     recipient: address,
     ctx: &mut TxContext,
@@ -112,6 +111,16 @@ public fun mint(
     transfer::public_transfer(nft, recipient);
 }
 
+/// 任何持有 MinterCap 的人都可以铸造 NFT
+public fun mint(
+    _: &MinterCap,
+    name: String,
+    recipient: address,
+    ctx: &mut TxContext,
+) {
+    inner_mint(name, recipient, ctx);
+}
+
 /// 管理员也可以直接铸造
 public fun admin_mint(
     _: &AdminCap,
@@ -119,12 +128,7 @@ public fun admin_mint(
     recipient: address,
     ctx: &mut TxContext,
 ) {
-    let nft = NFT {
-        id: object::new(ctx),
-        name,
-        creator: ctx.sender(),
-    };
-    transfer::public_transfer(nft, recipient);
+    inner_mint(name, recipient, ctx);
 }
 ```
 
