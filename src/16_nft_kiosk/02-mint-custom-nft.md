@@ -207,8 +207,7 @@ public fun uid_mut_for_testing(self: &mut Hero): &mut UID {
 
 #[test]
 fun mint_and_equip() {
-    use std::unit_test::assert_eq;
-    use sui::test_utils::destroy;
+    use std::unit_test::{assert_eq, destroy};
 
     let mut ctx = tx_context::dummy();
 

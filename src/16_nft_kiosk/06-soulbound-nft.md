@@ -37,7 +37,7 @@ public struct Achievement has key {
 }
 
 /// 只有游戏合约可以铸造成就
-public fun mint_achievement(
+public(package) fun mint_achievement(
     name: String,
     description: String,
     recipient: address,
