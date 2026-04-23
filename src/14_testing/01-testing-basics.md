@@ -9,6 +9,9 @@ Move 编译器内置了测试框架——测试用 Move 编写，与源代码并
 ```move
 module book::my_module;
 
+#[test_only]
+use std::unit_test::assert_eq;
+
 #[test]
 fun addition() {
     assert_eq!(2 + 2, 4);

@@ -9,7 +9,6 @@
 ```move
 use std::unit_test::assert_eq;
 use sui::clock;
-use sui::test_utils::destroy;
 
 #[test]
 fun clock() {
@@ -28,7 +27,7 @@ fun clock() {
     assert_eq!(clock.timestamp_ms(), 5000);
 
     // 清理——Clock 没有 drop ability
-    destroy(clock);
+    clock.destroy_for_testing();
 }
 ```
 
@@ -68,12 +67,12 @@ public(package) fun inner_function(gen: &mut RandomGenerator): Option<u64> {
 fun simple_random() {
     // 确定性结果，总是相同的值
     let mut gen = random::new_generator_for_testing();
-    assert!(inner_function(&mut gen).is_none());
+    assert!(inner_function(&mut gen).is_some());
 
     // 确定性结果（相同种子可复现）
     let seed = b"Arbitrary seed bytes";
     let mut gen = random::new_generator_from_seed_for_testing(seed);
-    assert!(inner_function(&mut gen).is_some());
+    assert!(inner_function(&mut gen).is_none());
 }
 ```
 
@@ -113,7 +112,7 @@ fun random_shared() {
 ```move
 use sui::deny_list;
 use sui::test_scenario;
-use sui::test_utils::destroy;
+use std::unit_test::destroy;
 
 #[test]
 fun deny_list() {

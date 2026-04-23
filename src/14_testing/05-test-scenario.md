@@ -255,7 +255,7 @@ fun transaction_effects() {
     let effects = scenario.next_tx(alice);
 
     assert_eq!(effects.created().length(), 2);
-    assert_eq!(effects.transferred_to_account().size(), 2);
+    assert_eq!(effects.transferred_to_account().length(), 2);
     assert_eq!(effects.num_user_events(), 0);
 
     scenario.end();
