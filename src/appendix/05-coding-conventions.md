@@ -342,8 +342,8 @@ assert_eq!(result, expected_value);
 // 不推荐：自定义 destroy_for_testing
 nft.destroy_for_testing();
 
-// 推荐：使用框架 test_utils::destroy
-use sui::test_utils::destroy;
+// 推荐：使用框架 unit_test::destroy
+use std::unit_test::destroy;
 destroy(nft);
 ```
 

@@ -192,8 +192,7 @@ public(package) fun init_for_testing(ctx: &mut TxContext) {
 
 #[test]
 fun new_hero() {
-    use std::unit_test::assert_eq;
-    use sui::test_utils::destroy;
+    use std::unit_test::{assert_eq, destroy};
 
     let mut ctx = tx_context::dummy();
     let mut registry = HeroRegistry {
@@ -211,8 +210,7 @@ fun new_hero() {
 
 #[test]
 fun equip_unequip_weapon() {
-    use std::unit_test::assert_eq;
-    use sui::test_utils::destroy;
+    use std::unit_test::{assert_eq, destroy};
 
     let mut ctx = tx_context::dummy();
     let mut hero = Hero {
