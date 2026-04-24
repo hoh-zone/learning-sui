@@ -206,16 +206,18 @@ module examples::bcs_params;
 
 use sui::bcs;
 
+const EMismatchCount: u64 = 0;
+
 public fun process_batch_transfer(data: vector<u8>) {
     let mut bcs = bcs::new(data);
     let recipients = bcs.peel_vec!(|bcs| bcs.peel_address());
     let amounts = bcs.peel_vec!(|bcs| bcs.peel_u64());
-    let count = vector::length(&recipients);
-    assert_eq!(count, vector::length(&amounts));
+    let count = recipients.length();
+    assert!(count == amounts.length(), EMismatchCount);
     let mut i = 0;
     while (i < count) {
-        let _recipient = *vector::borrow(&recipients, i);
-        let _amount = *vector::borrow(&amounts, i);
+        let _recipient = recipients[i];
+        let _amount = amounts[i];
         // 执行转账逻辑...
         i = i + 1;
     };

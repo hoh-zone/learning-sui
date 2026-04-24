@@ -131,6 +131,9 @@ public struct Container has drop {
     label: Option<u64>,
 }
 
+#[test_only]
+use std::unit_test::assert_eq;
+
 #[test]
 fun auto_import() {
     let items = vector[1u64, 2, 3];

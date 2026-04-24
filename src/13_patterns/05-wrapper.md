@@ -44,28 +44,28 @@ public struct Stack<T> has store {
 }
 
 public fun new<T>(): Stack<T> {
-    Stack { inner: vector::empty() }
+    Stack { inner: vector[] }
 }
 
 public fun push<T>(stack: &mut Stack<T>, item: T) {
-    vector::push_back(&mut stack.inner, item);
+    stack.inner.push_back(item);
 }
 
 public fun pop<T>(stack: &mut Stack<T>): T {
-    vector::pop_back(&mut stack.inner)
+    stack.inner.pop_back()
 }
 
 public fun peek<T>(stack: &Stack<T>): &T {
-    let len = vector::length(&stack.inner);
-    vector::borrow(&stack.inner, len - 1)
+    let len = stack.inner.length();
+    &stack.inner[len - 1]
 }
 
 public fun is_empty<T>(stack: &Stack<T>): bool {
-    vector::is_empty(&stack.inner)
+    stack.inner.is_empty()
 }
 
 public fun size<T>(stack: &Stack<T>): u64 {
-    vector::length(&stack.inner)
+    stack.inner.length()
 }
 
 /// 只读访问底层 vector
@@ -100,26 +100,28 @@ public struct BoundedVec<T> has store {
 
 public fun new<T>(max_size: u64): BoundedVec<T> {
     BoundedVec {
-        inner: vector::empty(),
+        inner: vector[],
         max_size,
     }
 }
 
+const EReachedBound: u64 = 0;
+
 public fun push<T>(bv: &mut BoundedVec<T>, item: T) {
-    assert!(vector::length(&bv.inner) < bv.max_size, 0);
-    vector::push_back(&mut bv.inner, item);
+    assert!(bv.inner.length() < bv.max_size, EReachedBound);
+    bv.inner.push_back(item);
 }
 
 public fun pop<T>(bv: &mut BoundedVec<T>): T {
-    vector::pop_back(&mut bv.inner)
+    bv.inner.pop_back()
 }
 
 public fun get<T>(bv: &BoundedVec<T>, index: u64): &T {
-    vector::borrow(&bv.inner, index)
+    &bv.inner[index]
 }
 
 public fun length<T>(bv: &BoundedVec<T>): u64 {
-    vector::length(&bv.inner)
+    bv.inner.length()
 }
 
 public fun max_size<T>(bv: &BoundedVec<T>): u64 {
@@ -127,7 +129,7 @@ public fun max_size<T>(bv: &BoundedVec<T>): u64 {
 }
 
 public fun is_full<T>(bv: &BoundedVec<T>): bool {
-    vector::length(&bv.inner) >= bv.max_size
+    bv.inner.length() >= bv.max_size
 }
 ```
 
@@ -152,16 +154,15 @@ public fun from_vec<T: store>(v: vector<T>): ImmutableVec<T> {
 
 /// 只读访问
 public fun get<T: store>(iv: &ImmutableVec<T>, index: u64): &T {
-    vector::borrow(&iv.inner, index)
+    &iv.inner[index]
 }
 
 public fun length<T: store>(iv: &ImmutableVec<T>): u64 {
-    vector::length(&iv.inner)
+    iv.inner.length()
 }
 
-public fun contains<T: store>(iv: &ImmutableVec<T>, item: &T): bool
-where T: copy {
-    vector::contains(&iv.inner, item)
+public fun contains<T: store>(iv: &ImmutableVec<T>, item: &T): bool {
+    iv.inner.contains(item)
 }
 
 /// 解包获取底层 vector（消耗 ImmutableVec）
@@ -182,7 +183,7 @@ Wrapper 模式在对象层面同样强大。通过将一个对象包装在另一
 ```move
 module examples::guarded;
 
-use std::string::String;
+const ECannotUnlock: u64 = 0;
 
 /// 将任意可存储类型包装为带时间锁的对象
 public struct Locked<T: store> has key {
@@ -208,7 +209,7 @@ public fun unlock<T: store>(
     locked: Locked<T>,
     ctx: &TxContext,
 ): T {
-    assert!(ctx.epoch() >= locked.unlock_epoch, 0);
+    assert!(ctx.epoch() >= locked.unlock_epoch, ECannotUnlock);
     let Locked { id, content, unlock_epoch: _ } = locked;
     id.delete();
     content
@@ -221,8 +222,6 @@ public fun unlock<T: store>(
 
 ```move
 module examples::permission_wrapper;
-
-use std::string::String;
 
 /// 包装对象，添加权限控制
 public struct Protected<T: store> has key {
@@ -246,15 +245,17 @@ public fun protect<T: store>(
 
 const ENotAuthorized: u64 = 0;
 
+/// 判断是否为授权用户
+fun check_auth(authorized_users: &vector<address>, user: address) {
+    assert!(authorized_users.contains(&user), ENotAuthorized);
+}
+
 /// 只有授权用户才能访问
 public fun access<T: store>(
     protected: &Protected<T>,
     ctx: &TxContext,
 ): &T {
-    assert!(
-        vector::contains(&protected.authorized_users, &ctx.sender()),
-        ENotAuthorized,
-    );
+    check_auth(&protected.authorized_users, ctx.sender());
     &protected.content
 }
 
@@ -263,10 +264,7 @@ public fun access_mut<T: store>(
     protected: &mut Protected<T>,
     ctx: &TxContext,
 ): &mut T {
-    assert!(
-        vector::contains(&protected.authorized_users, &ctx.sender()),
-        ENotAuthorized,
-    );
+    check_auth(&protected.authorized_users, ctx.sender());
     &mut protected.content
 }
 
@@ -276,11 +274,8 @@ public fun add_user<T: store>(
     new_user: address,
     ctx: &TxContext,
 ) {
-    assert!(
-        vector::contains(&protected.authorized_users, &ctx.sender()),
-        ENotAuthorized,
-    );
-    vector::push_back(&mut protected.authorized_users, new_user);
+    check_auth(&protected.authorized_users, ctx.sender());
+    protected.authorized_users.push_back(new_user);
 }
 ```
 
@@ -323,13 +318,9 @@ public fun unbundle(
     bundle: Bundle,
     ctx: &TxContext,
 ) {
-    let Bundle { id, mut nfts, label: _ } = bundle;
+    let Bundle { id, nfts, label: _ } = bundle;
     id.delete();
-    while (!vector::is_empty(&nfts)) {
-        let nft = vector::pop_back(&mut nfts);
-        transfer::public_transfer(nft, ctx.sender());
-    };
-    vector::destroy_empty(nfts);
+    nfts.destroy!(|nft| transfer::public_transfer(nft, ctx.sender()));
 }
 ```
 

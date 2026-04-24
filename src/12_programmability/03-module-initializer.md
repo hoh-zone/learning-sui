@@ -61,7 +61,7 @@ fun init(ctx: &mut TxContext) {
     // 创建并共享商店对象
     let shop = Shop {
         id: object::new(ctx),
-        name: std::string::utf8(b"My Shop"),
+        name: b"My Shop".to_string(),
         item_count: 0,
     };
     transfer::share_object(shop);
@@ -206,8 +206,8 @@ fun init(ctx: &mut TxContext) {
 
 public fun register(registry: &mut Registry, data: vector<u8>, ctx: &TxContext) {
     let sender = ctx.sender();
-    assert!(!table::contains(&registry.entries, sender), EAlreadyRegistered);
-    table::add(&mut registry.entries, sender, data);
+    assert!(!registry.entries.contains(sender), EAlreadyRegistered);
+    registry.entries.add(sender, data);
     registry.total_count = registry.total_count + 1;
 }
 ```

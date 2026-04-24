@@ -28,7 +28,7 @@ Sui Framework 提供了一组轻量级的集合数据结构——`VecSet` 和 `V
 | `insert()` | `fun insert<K>(set: &mut VecSet<K>, key: K)` | 插入元素，已存在则 abort |
 | `remove()` | `fun remove<K>(set: &mut VecSet<K>, key: &K)` | 移除元素，不存在则 abort |
 | `contains()` | `fun contains<K>(set: &VecSet<K>, key: &K): bool` | 检查元素是否存在 |
-| `size()` | `fun size<K>(set: &VecSet<K>): u64` | 返回元素数量 |
+| `length()` | `fun length<K>(set: &VecSet<K>): u64` | 返回元素数量 |
 | `is_empty()` | `fun is_empty<K>(set: &VecSet<K>): bool` | 是否为空 |
 | `into_keys()` | `fun into_keys<K>(set: VecSet<K>): vector<K>` | 解构为 vector |
 
@@ -39,7 +39,6 @@ module examples::collections_demo;
 
 use sui::vec_map::{Self, VecMap};
 use sui::vec_set::{Self, VecSet};
-use std::string::String;
 
 public struct Whitelist has key {
     id: UID,
@@ -59,11 +58,11 @@ public fun create_whitelist(ctx: &mut TxContext): Whitelist {
 }
 
 public fun add_to_whitelist(wl: &mut Whitelist, addr: address) {
-    vec_set::insert(&mut wl.addresses, addr);
+    wl.addresses.insert(addr);
 }
 
 public fun is_whitelisted(wl: &Whitelist, addr: &address): bool {
-    vec_set::contains(&wl.addresses, addr)
+    wl.addresses.contains(addr)
 }
 
 public fun create_scores(ctx: &mut TxContext): Scores {
@@ -74,11 +73,11 @@ public fun create_scores(ctx: &mut TxContext): Scores {
 }
 
 public fun set_score(scores: &mut Scores, player: address, score: u64) {
-    if (vec_map::contains(&scores.player_scores, &player)) {
-        let s = vec_map::get_mut(&mut scores.player_scores, &player);
+    if (scores.player_scores.contains(&player)) {
+        let s = &mut scores.player_scores[&player];
         *s = score;
     } else {
-        vec_map::insert(&mut scores.player_scores, player, score);
+        scores.player_scores.insert(player, score);
     };
 }
 ```
@@ -90,6 +89,10 @@ module examples::whitelist;
 
 use sui::vec_set::{Self, VecSet};
 use sui::event;
+
+const EOverMaxSize: u64 = 0;
+const EAlreadyContains: u64 = 1;
+const ENotContains: u64 = 2;
 
 public struct WhitelistUpdated has copy, drop {
     added: bool,
@@ -117,30 +120,30 @@ fun init(ctx: &mut TxContext) {
 }
 
 public fun add_address(_: &AdminCap, wl: &mut MintWhitelist, addr: address) {
-    assert!(vec_set::size(&wl.allowed) < wl.max_size, 0);
-    assert!(!vec_set::contains(&wl.allowed, &addr), 1);
-    vec_set::insert(&mut wl.allowed, addr);
+    assert!(wl.allowed.length() < wl.max_size, EOverMaxSize);
+    assert!(!wl.allowed.contains(&addr), EAlreadyContains);
+    wl.allowed.insert(addr);
 
     event::emit(WhitelistUpdated {
         added: true,
         addr,
-        new_size: vec_set::size(&wl.allowed),
+        new_size: wl.allowed.length(),
     });
 }
 
 public fun remove_address(_: &AdminCap, wl: &mut MintWhitelist, addr: address) {
-    assert!(vec_set::contains(&wl.allowed, &addr), 0);
-    vec_set::remove(&mut wl.allowed, &addr);
+    assert!(wl.allowed.contains(&addr), ENotContains);
+    wl.allowed.remove(&addr);
 
     event::emit(WhitelistUpdated {
         added: false,
         addr,
-        new_size: vec_set::size(&wl.allowed),
+        new_size: wl.allowed.length(),
     });
 }
 
 public fun can_mint(wl: &MintWhitelist, addr: &address): bool {
-    vec_set::contains(&wl.allowed, addr)
+    wl.allowed.contains(addr)
 }
 ```
 
@@ -162,7 +165,7 @@ public fun can_mint(wl: &MintWhitelist, addr: &address): bool {
 | `contains(map, key)` | 检查键是否存在 |
 | `get(map, key)` | 获取值的不可变引用 |
 | `get_mut(map, key)` | 获取值的可变引用 |
-| `size(map)` | 返回键值对数量 |
+| `length(map)` | 返回键值对数量 |
 | `is_empty(map)` | 是否为空 |
 | `keys(map)` | 获取所有键的引用 |
 | `into_keys_values(map)` | 解构为两个 vector |
@@ -176,7 +179,7 @@ public fun can_mint(wl: &MintWhitelist, addr: &address): bool {
 module examples::config_map;
 
 use sui::vec_map::{Self, VecMap};
-use std::string::{Self, String};
+use std::string::String;
 
 const ENotAdmin: u64 = 0;
 
@@ -189,20 +192,17 @@ public struct AppConfig has key {
 public fun create_config(ctx: &mut TxContext) {
     let mut settings = vec_map::empty<String, String>();
 
-    vec_map::insert(
-        &mut settings,
-        string::utf8(b"app_name"),
-        string::utf8(b"MyDApp"),
+    settings.insert(
+        b"app_name".to_string(),
+        b"MyDApp".to_string(),
     );
-    vec_map::insert(
-        &mut settings,
-        string::utf8(b"version"),
-        string::utf8(b"1.0.0"),
+    settings.insert(
+        b"version".to_string(),
+        b"1.0.0".to_string(),
     );
-    vec_map::insert(
-        &mut settings,
-        string::utf8(b"max_users"),
-        string::utf8(b"10000"),
+    settings.insert(
+        b"max_users".to_string(),
+        b"10000".to_string(),
     );
 
     let config = AppConfig {
@@ -221,25 +221,25 @@ public fun update_setting(
 ) {
     assert!(config.admin == ctx.sender(), ENotAdmin);
 
-    if (vec_map::contains(&config.settings, &key)) {
-        let v = vec_map::get_mut(&mut config.settings, &key);
+    if (config.settings.contains(&key)) {
+        let v = &mut config.settings[&key];
         *v = value;
     } else {
-        vec_map::insert(&mut config.settings, key, value);
+        config.settings.insert(key, value);
     };
 }
 
 public fun setting(config: &AppConfig, key: &String): &String {
-    vec_map::get(&config.settings, key)
+    &config.settings[key]
 }
 
 public fun remove_setting(config: &mut AppConfig, key: &String, ctx: &TxContext) {
     assert!(config.admin == ctx.sender(), ENotAdmin);
-    vec_map::remove(&mut config.settings, key);
+    config.settings.remove(key);
 }
 
 public fun setting_count(config: &AppConfig): u64 {
-    vec_map::size(&config.settings)
+    config.settings.length()
 }
 ```
 
@@ -263,29 +263,29 @@ public fun create(ctx: &mut TxContext) {
 }
 
 public fun add_score(board: &mut Leaderboard, player: address, points: u64) {
-    if (vec_map::contains(&board.scores, &player)) {
-        let current = vec_map::get_mut(&mut board.scores, &player);
+    if (board.scores.contains(&player)) {
+        let current = &mut board.scores[&player];
         *current = *current + points;
     } else {
-        vec_map::insert(&mut board.scores, player, points);
+        board.scores.insert(player, points);
     };
 }
 
 public fun score(board: &Leaderboard, player: &address): u64 {
-    if (vec_map::contains(&board.scores, player)) {
-        *vec_map::get(&board.scores, player)
+    if (board.scores.contains(player)) {
+        board.scores[player]
     } else {
         0
     }
 }
 
 public fun player_count(board: &Leaderboard): u64 {
-    vec_map::size(&board.scores)
+    board.scores.length()
 }
 
 public fun reset_player(board: &mut Leaderboard, player: &address) {
-    if (vec_map::contains(& board.scores, player)) {
-        vec_map::remove(&mut board.scores, player);
+    if (board.scores.contains(player)) {
+        board.scores.remove(player);
     };
 }
 ```
@@ -338,12 +338,9 @@ public struct AccessControl has key {
 }
 
 public fun create(creator: address, ctx: &mut TxContext) {
-    let mut admins = vec_set::empty<address>();
-    vec_set::insert(&mut admins, creator);
-
     transfer::share_object(AccessControl {
         id: object::new(ctx),
-        admins,
+        admins: vec_set::singleton(creator),
         role_permissions: vec_map::empty(),
     });
 }
@@ -351,8 +348,8 @@ public fun create(creator: address, ctx: &mut TxContext) {
 const ENotAdmin: u64 = 0;
 
 public fun add_admin(ac: &mut AccessControl, new_admin: address, ctx: &TxContext) {
-    assert!(vec_set::contains(&ac.admins, &ctx.sender()), ENotAdmin);
-    vec_set::insert(&mut ac.admins, new_admin);
+    assert!(ac.admins.contains(&ctx.sender()), ENotAdmin);
+    ac.admins.insert(new_admin);
 }
 
 public fun add_role_permission(
@@ -361,17 +358,15 @@ public fun add_role_permission(
     permission: vector<u8>,
     ctx: &TxContext,
 ) {
-    assert!(vec_set::contains(&ac.admins, &ctx.sender()), ENotAdmin);
+    assert!(ac.admins.contains(&ctx.sender()), ENotAdmin);
 
-    if (vec_map::contains(&ac.role_permissions, &role)) {
-        let perms = vec_map::get_mut(&mut ac.role_permissions, &role);
-        if (!vec_set::contains(perms, &permission)) {
-            vec_set::insert(perms, permission);
+    if (ac.role_permissions.contains(&role)) {
+        let perms = &mut ac.role_permissions[&role];
+        if (!perms.contains(&permission)) {
+            perms.insert(permission);
         };
     } else {
-        let mut perms = vec_set::empty<vector<u8>>();
-        vec_set::insert(&mut perms, permission);
-        vec_map::insert(&mut ac.role_permissions, role, perms);
+        ac.role_permissions.insert(role, vec_set::singleton(permission));
     };
 }
 
@@ -380,11 +375,7 @@ public fun has_permission(
     role: &vector<u8>,
     permission: &vector<u8>,
 ): bool {
-    if (!vec_map::contains(&ac.role_permissions, role)) {
-        return false
-    };
-    let perms = vec_map::get(&ac.role_permissions, role);
-    vec_set::contains(perms, permission)
+    ac.role_permissions.contains(role) && ac.role_permissions[role].contains(permission)
 }
 ```
 

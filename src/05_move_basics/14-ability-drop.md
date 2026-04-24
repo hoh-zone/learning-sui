@@ -39,6 +39,9 @@ public struct Droppable has drop {
     value: u64,
 }
 
+#[test_only]
+use std::unit_test::assert_eq;
+
 #[test]
 fun auto_drop() {
     let _item = Droppable { value: 42 };

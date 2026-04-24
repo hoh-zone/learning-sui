@@ -33,7 +33,6 @@
 
 ```move
 use sui::coin::{Self, TreasuryCap};
-use sui::transfer;
 
 public fun mint_reward<T>(
     cap: &mut TreasuryCap<T>,

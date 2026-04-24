@@ -19,12 +19,14 @@ public struct Matrix<T> has drop {
 
 #[syntax(index)]
 public fun borrow<T>(s: &Matrix<T>, i: u64, j: u64): &T {
-    vector::borrow(vector::borrow(&s.v, i), j)
+    // vector::borrow(vector::borrow(&s.v, i), j)
+    &s.v[i][j]
 }
 
 #[syntax(index)]
 public fun borrow_mut<T>(s: &mut Matrix<T>, i: u64, j: u64): &mut T {
-    vector::borrow_mut(vector::borrow_mut(&mut s.v, i), j)
+    // vector::borrow_mut(vector::borrow_mut(&mut s.v, i), j)
+    &mut s.v[i][j]
 }
 
 public fun make_matrix<T>(v: vector<vector<T>>): Matrix<T> {
@@ -35,7 +37,7 @@ public fun make_matrix<T>(v: vector<vector<T>>): Matrix<T> {
 使用方式：
 
 ```move
-let mut m = matrix::make_matrix(vector[
+let mut m = matrix::matrix::make_matrix(vector[
     vector[1, 0, 0],
     vector[0, 1, 0],
     vector[0, 0, 1],

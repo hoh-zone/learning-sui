@@ -15,6 +15,9 @@ public fun make_pair<T, U>(first: T, second: U): (T, U) {
     (first, second)
 }
 
+#[test_only]
+use std::unit_test::assert_eq;
+
 #[test]
 fun generic_fun() {
     let x = identity(42u64);

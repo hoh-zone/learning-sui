@@ -91,11 +91,11 @@ public fun create_hero(
 }
 
 public fun equip_sword(hero: &mut Hero, sword: Sword) {
-    option::fill(&mut hero.sword, sword);
+    hero.sword.fill(sword);
 }
 
 public fun unequip_sword(hero: &mut Hero): Sword {
-    option::extract(&mut hero.sword)
+    hero.sword.extract()
 }
 
 public fun create_sword(
@@ -138,7 +138,7 @@ public fun create_character(name: String, ctx: &mut TxContext): Character {
     Character {
         id: object::new(ctx),
         name,
-        accessories: vector::empty(),
+        accessories: vector[],
     }
 }
 
@@ -153,7 +153,7 @@ public fun create_accessory(
 
 /// 包装：将饰品添加到角色身上
 public fun add_accessory(character: &mut Character, acc: Accessory) {
-    vector::push_back(&mut character.accessories, acc);
+    character.accessories.push_back(acc);
 }
 
 /// 解包装：从角色身上移除饰品（按索引）
@@ -161,23 +161,23 @@ public fun remove_accessory(
     character: &mut Character,
     index: u64,
 ): Accessory {
-    vector::remove(&mut character.accessories, index)
+    character.accessories.remove(index)
 }
 
 /// 读取角色的饰品数量
 public fun accessory_count(character: &Character): u64 {
-    vector::length(&character.accessories)
+    character.accessories.length()
 }
 
 /// 销毁角色和所有饰品
 public fun destroy_character(character: Character) {
     let Character { id, name: _, mut accessories } = character;
-    while (!vector::is_empty(&accessories)) {
-        let acc = vector::pop_back(&mut accessories);
+    while (!accessories.is_empty()) {
+        let acc = accessories.pop_back();
         let Accessory { id: acc_id, name: _, bonus: _ } = acc;
         acc_id.delete();
     };
-    vector::destroy_empty(accessories);
+    accessories.destroy_empty();
     id.delete();
 }
 ```
@@ -191,7 +191,7 @@ public fun destroy_character(character: Character) {
 
 上面的 `destroy_character` 函数展示了逐一销毁所有饰品的过程。
 
-## 包装 vs `transfer::transfer_to_object`
+## 包装 vs `transfer::transfer/public_transfer` to object
 
 Sui 提供了两种方式让一个对象"拥有"另一个对象：
 
@@ -211,7 +211,7 @@ Sui 提供了两种方式让一个对象"拥有"另一个对象：
 
 ### 方式二：对象转移到对象
 
-使用 `transfer::transfer` 将子对象转移给父对象的 UID 地址。子对象仍然存在于全局存储中，但其所有者是另一个对象。
+使用 `transfer::transfer/public_transfer` 将子对象转移给父对象的 UID 地址。子对象仍然存在于全局存储中，但其所有者是另一个对象。
 
 **优点**：
 - 子对象仍然可以被查询（通过 ID）
@@ -254,7 +254,7 @@ public fun create_backpack(
     Backpack {
         id: object::new(ctx),
         max_capacity,
-        items: vector::empty(),
+        items: vector[],
     }
 }
 
@@ -269,30 +269,30 @@ public fun create_item(
 /// 将物品放入背包（包装）
 public fun put_item(backpack: &mut Backpack, item: Item) {
     assert!(
-        vector::length(&backpack.items) < backpack.max_capacity,
+        backpack.items.length() < backpack.max_capacity,
         EBackpackFull,
     );
-    vector::push_back(&mut backpack.items, item);
+    backpack.items.push_back(item);
 }
 
 /// 从背包取出物品（解包装）
 public fun take_item(backpack: &mut Backpack, index: u64): Item {
-    assert!(index < vector::length(&backpack.items), EItemNotFound);
-    vector::remove(&mut backpack.items, index)
+    assert!(index < backpack.items.length(), EItemNotFound);
+    backpack.items.remove(index)
 }
 
 /// 查看背包中的物品数量
 public fun item_count(backpack: &Backpack): u64 {
-    vector::length(&backpack.items)
+    backpack.items.length()
 }
 
 /// 计算背包中所有物品的总重量
 public fun total_weight(backpack: &Backpack): u64 {
     let mut total = 0u64;
     let mut i = 0u64;
-    let len = vector::length(&backpack.items);
+    let len = backpack.items.length();
     while (i < len) {
-        total = total + vector::borrow(&backpack.items, i).weight;
+        total = total + backpack.items[i].weight;
         i = i + 1;
     };
     total
@@ -300,7 +300,7 @@ public fun total_weight(backpack: &Backpack): u64 {
 
 /// 丢弃背包中的物品（销毁）
 public fun discard_item(backpack: &mut Backpack, index: u64) {
-    let item = vector::remove(&mut backpack.items, index);
+    let item = backpack.items.remove(index);
     let Item { id, name: _, weight: _ } = item;
     id.delete();
 }

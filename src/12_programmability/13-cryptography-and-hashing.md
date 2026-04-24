@@ -22,9 +22,9 @@
 - **雪崩效应**：输入的微小变化会导致输出的巨大变化
 - **抗碰撞性**：极难找到两个不同的输入产生相同的输出
 
-### sui::hash 模块
+### std::hash 和 sui::hash 模块
 
-`sui::hash` 模块提供了四种主流哈希函数，全部返回 256 位（32 字节）的哈希值：
+`std::hash` 和 `sui::hash` 模块共提供了四种主流哈希函数，全部返回 256 位（32 字节）的哈希值：
 
 | 函数 | 算法 | 输出长度 | 典型用途 |
 |------|------|---------|---------|
@@ -38,21 +38,24 @@
 ```move
 module examples::crypto_demo;
 
-use sui::hash;
-
 /// Hash data using SHA2-256
 public fun hash_sha2(data: &vector<u8>): vector<u8> {
-    hash::sha2_256(*data)
+    std::hash::sha2_256(*data)
 }
 
 /// Hash data using SHA3-256
 public fun hash_sha3(data: &vector<u8>): vector<u8> {
-    hash::sha3_256(*data)
+    std::hash::sha3_256(*data)
 }
 
 /// Hash data using Blake2b-256
 public fun hash_blake2b(data: &vector<u8>): vector<u8> {
-    hash::blake2b256(*data)
+    sui::hash::blake2b256(data)
+}
+
+/// Hash data using Keccak-256
+public fun hash_keccak(data: &vector<u8>): vector<u8> {
+    sui::hash::keccak256(data)
 }
 
 /// Verify content integrity
@@ -60,7 +63,7 @@ public fun verify_content(
     content: vector<u8>,
     expected_hash: vector<u8>,
 ): bool {
-    let actual_hash = hash::sha3_256(content);
+    let actual_hash = std::hash::sha3_256(content);
     actual_hash == expected_hash
 }
 ```
@@ -82,7 +85,9 @@ public fun verify_content(
 ```move
 module examples::commit_reveal;
 
-use sui::hash;
+use std::hash;
+
+const EIncorrectData: u64 = 0;
 
 public struct Commitment has key {
     id: UID,
@@ -101,7 +106,7 @@ public fun commit(data_hash: vector<u8>, ctx: &mut TxContext) {
 
 public fun reveal(commitment: &mut Commitment, data: vector<u8>) {
     let hash = hash::sha3_256(data);
-    assert!(hash == commitment.hash, 0);
+    assert!(hash == commitment.hash, EIncorrectData);
     commitment.revealed = true;
 }
 ```
@@ -113,7 +118,9 @@ public fun reveal(commitment: &mut Commitment, data: vector<u8>) {
 ```move
 module examples::salted_commit;
 
-use sui::hash;
+use std::hash;
+
+const EIncorrectData: u64 = 0;
 
 public struct SaltedCommitment has key {
     id: UID,
@@ -139,9 +146,9 @@ public fun reveal_with_salt(
     salt: vector<u8>,
 ) {
     let mut combined = data;
-    vector::append(&mut combined, salt);
+    combined.append(salt);
     let hash = hash::sha3_256(combined);
-    assert!(hash == commitment.hash, 0);
+    assert!(hash == commitment.hash, EIncorrectData);
     commitment.revealed = true;
 }
 ```
@@ -226,8 +233,8 @@ public fun secp256r1_verify(
 module examples::auth;
 
 use sui::ed25519;
-use sui::hash;
-use sui::bcs;
+
+const EInvalidAuth: u64 = 0;
 
 public struct AuthConfig has key {
     id: UID,
@@ -255,7 +262,7 @@ public fun execute_with_auth(
         &config.authorized_signer,
         &action,
     );
-    assert!(is_valid, 0);
+    assert!(is_valid, EInvalidAuth);
     // 签名有效，执行授权操作...
 }
 ```
@@ -267,8 +274,10 @@ public fun execute_with_auth(
 ```move
 module examples::content_registry;
 
-use sui::hash;
+use std::hash;
 use sui::table::{Self, Table};
+
+const EAlreadyRegistered: u64 = 0;
 
 public struct Registry has key {
     id: UID,
@@ -289,8 +298,8 @@ public fun register_content(
     ctx: &TxContext,
 ) {
     let hash = hash::sha3_256(content);
-    assert!(!table::contains(&registry.entries, hash), 0);
-    table::add(&mut registry.entries, hash, ctx.sender());
+    assert!(!registry.entries.contains(hash), EAlreadyRegistered);
+    registry.entries.add(hash, ctx.sender());
 }
 
 public fun verify_ownership(
@@ -299,10 +308,7 @@ public fun verify_ownership(
     claimed_owner: address,
 ): bool {
     let hash = hash::sha3_256(content);
-    if (!table::contains(&registry.entries, hash)) {
-        return false
-    };
-    *table::borrow(&registry.entries, hash) == claimed_owner
+    registry.entries.contains(hash) && registry.entries[hash] == claimed_owner
 }
 ```
 
@@ -317,7 +323,7 @@ public fun verify_ownership(
 
 Sui 提供了全面的密码学工具链，核心要点包括：
 
-- **哈希函数**：`sui::hash` 模块支持 SHA2-256、SHA3-256、BLAKE2b-256 和 Keccak-256 四种算法，均返回 32 字节摘要
+- **哈希函数**：`std::hash` 和 `sui::hash` 模块支持 SHA2-256、SHA3-256、BLAKE2b-256 和 Keccak-256 四种算法，均返回 32 字节摘要
 - **常见应用**：内容完整性校验、承诺-揭示方案、数据指纹生成
 - **Ed25519 签名验证**：通过 `sui::ed25519` 模块进行高性能签名验证
 - **ECDSA 签名验证**：支持 secp256k1（比特币/以太坊兼容）和 secp256r1（WebAuthn 兼容）两种曲线

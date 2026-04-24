@@ -94,7 +94,7 @@ Sui 中的每个对象都处于以下五种所有权状态之一：
 ### 核心特征
 
 - 一个对象被另一个对象"持有"
-- 被持有的对象通过 `transfer::transfer_to_object` 或直接嵌入父对象的字段中（包装，wrapping）
+- 被持有的对象通过 `transfer::transfer/public_transfer` 转移给父对象或直接嵌入父对象的字段中（包装，wrapping）
 - 访问被持有的对象需要先访问父对象
 
 ### 适用场景

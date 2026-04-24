@@ -156,7 +156,7 @@ public fun issue(
         title,
         description,
         issued_to: recipient,
-        issued_at: tx_context::epoch(ctx),
+        issued_at: ctx.epoch(),
     };
     transfer::transfer(badge, recipient);
 }
@@ -239,7 +239,7 @@ public fun controlled_transfer(
 module examples::policy_transfer;
 
 use std::string::String;
-use sui::coin::{Self, Coin};
+use sui::coin::Coin;
 use sui::sui::SUI;
 
 public struct PremiumAsset has key {
@@ -277,7 +277,7 @@ public fun transfer_with_fee(
     ctx: &mut TxContext,
 ) {
     let fee_amount = (asset.value * policy.fee_bps) / 10000;
-    let fee = coin::split(&mut payment, fee_amount, ctx);
+    let fee = payment.split(fee_amount, ctx);
 
     transfer::public_transfer(fee, policy.fee_recipient);
     transfer::public_transfer(payment, ctx.sender());

@@ -37,6 +37,9 @@ fun address_literal() {
 ```move
 module book::address_u256;
 
+#[test_only]
+use std::unit_test::assert_eq;
+
 #[test]
 fun address_u256() {
     let addr = @0x1;
@@ -46,7 +49,7 @@ fun address_u256() {
     assert_eq!(addr_as_u256, 1u256);
 
     // u256 -> address
-    let addr_from_u256 = address::from_u256(addr_as_u256);
+    let addr_from_u256 = sui::address::from_u256(addr_as_u256);
     assert_eq!(addr, addr_from_u256);
 }
 ```
@@ -58,6 +61,9 @@ fun address_u256() {
 ```move
 module book::address_bytes;
 
+#[test_only]
+use std::unit_test::assert_eq;
+
 #[test]
 fun address_bytes() {
     let addr = @0x1;
@@ -67,7 +73,7 @@ fun address_bytes() {
     assert_eq!(bytes.length(), 32);
 
     // vector<u8> -> address
-    let addr_from_bytes = address::from_bytes(bytes);
+    let addr_from_bytes = sui::address::from_bytes(bytes);
     assert_eq!(addr, addr_from_bytes);
 }
 ```
@@ -81,25 +87,16 @@ fun address_bytes() {
 ```move
 module book::address_examples;
 
-use std::string::String;
+#[test_only]
+use std::unit_test::assert_eq;
 
 #[test]
-fun address() {
+fun address_string() {
     let addr = @0x1;
-    let named_addr = @std;
 
-    // Convert to u256
-    let addr_as_u256: u256 = addr.to_u256();
-    let addr_from_u256 = address::from_u256(addr_as_u256);
-    assert_eq!(addr, addr_from_u256);
-
-    // Convert to bytes
-    let bytes: vector<u8> = addr.to_bytes();
-    let addr_from_bytes = address::from_bytes(bytes);
-    assert_eq!(addr, addr_from_bytes);
-
-    // Convert to string
-    let addr_str: String = addr.to_string();
+    // address -> string
+    let addr_str = addr.to_string();
+    assert_eq!(addr_str, b"0000000000000000000000000000000000000000000000000000000000000001".to_string());
 }
 ```
 
@@ -110,14 +107,14 @@ fun address() {
 ```move
 module book::address_and_id;
 
-use sui::object;
-
 public fun id_to_address(id: &object::ID): address {
-    object::id_to_address(id)
+    // object::id_to_address(id)
+    id.to_address()
 }
 
 public fun address_to_id(addr: address): object::ID {
-    object::id_from_address(addr)
+    // object::id_from_address(addr)
+    addr.to_id()
 }
 ```
 
@@ -139,8 +136,8 @@ public fun address_to_id(addr: address): object::ID {
 | `addr.to_bytes()` | 地址转字节数组 | address → vector\<u8\> |
 | `address::from_bytes(bytes)` | 字节数组转地址 | vector\<u8\> → address |
 | `addr.to_string()` | 地址转十六进制字符串 | address → String |
-| `object::id_to_address(id)` | 对象 ID 转地址 | ID → address |
-| `object::id_from_address(addr)` | 地址转对象 ID | address → ID |
+| `id.to_address()` | 对象 ID 转地址 | ID → address |
+| `addr.to_id()` | 地址转对象 ID | address → ID |
 
 ## 小结
 

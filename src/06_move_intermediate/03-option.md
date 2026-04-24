@@ -86,6 +86,9 @@ fun check() {
 ```move
 module book::option_borrow;
 
+#[test_only]
+use std::unit_test::assert_eq;
+
 #[test]
 fun borrow() {
     let opt = option::some(42u64);
@@ -100,6 +103,9 @@ fun borrow() {
 
 ```move
 module book::option_borrow_mut;
+
+#[test_only]
+use std::unit_test::assert_eq;
 
 #[test]
 fun borrow_mut() {
@@ -118,6 +124,9 @@ fun borrow_mut() {
 ```move
 module book::option_extract;
 
+#[test_only]
+use std::unit_test::assert_eq;
+
 #[test]
 fun extract() {
     let mut opt = option::some(42u64);
@@ -135,6 +144,9 @@ fun extract() {
 ```move
 module book::option_destroy_some;
 
+#[test_only]
+use std::unit_test::assert_eq;
+
 #[test]
 fun destroy_some() {
     let opt = option::some(42u64);
@@ -150,6 +162,9 @@ fun destroy_some() {
 
 ```move
 module book::option_default;
+
+#[test_only]
+use std::unit_test::assert_eq;
 
 #[test]
 fun default() {
@@ -186,6 +201,9 @@ fun destroy_none() {
 
 ```move
 module book::option_modify;
+
+#[test_only]
+use std::unit_test::assert_eq;
 
 #[test]
 fun fill_swap() {
@@ -227,6 +245,9 @@ public fun new_profile(name: String): UserProfile {
     }
 }
 
+#[test_only]
+use std::unit_test::assert_eq;
+
 #[test]
 fun option_profile() {
     let mut profile = new_profile(b"Alice".to_string());
@@ -264,6 +285,9 @@ public fun find_index(v: &vector<u64>, target: u64): Option<u64> {
     };
     option::none()
 }
+
+#[test_only]
+use std::unit_test::assert_eq;
 
 #[test]
 fun find() {

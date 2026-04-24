@@ -36,13 +36,17 @@ public fun balance(wallet: &Wallet): u64 {
     wallet.balance
 }
 
+#[test_only]
+use std::unit_test::assert_eq;
+
 #[test]
 fun immutable_ref() {
     let wallet = new(100);
     let b = balance(&wallet);   // 创建不可变引用
     assert_eq!(b, 100);
     // wallet 仍然有效，所有权没有转移
-    assert_eq!(balance(&wallet), 100);
+    // balance(&wallet) 在新语法下可直接写为：wallet.balance()
+    assert_eq!(wallet.balance(), 100);
 }
 ```
 
@@ -70,13 +74,17 @@ public fun balance(wallet: &Wallet): u64 {
     wallet.balance
 }
 
+#[test_only]
+use std::unit_test::assert_eq;
+
 #[test]
 fun mutable_ref() {
     let mut wallet = new(100);
     deposit(&mut wallet, 50);      // 创建可变引用
     assert_eq!(balance(&wallet), 150);
-    deposit(&mut wallet, 30);
-    assert_eq!(balance(&wallet), 180);
+    // deposit(&mut wallet, 30) 在新语法下可直接写为：wallet.deposit(30)
+    wallet.deposit(30);
+    assert_eq!(wallet.balance(), 180);
 }
 ```
 
@@ -114,6 +122,9 @@ public fun recycle(card: Card) {
     let Card { rides: _ } = card;
 }
 
+#[test_only]
+use std::unit_test::assert_eq;
+
 #[test]
 fun references() {
     let mut card = purchase();
@@ -141,6 +152,9 @@ fun references() {
 ```move
 module book::deref_example;
 
+#[test_only]
+use std::unit_test::assert_eq;
+
 #[test]
 fun deref() {
     let value = 42u64;
@@ -159,6 +173,9 @@ fun deref() {
 
 ```move
 module book::deref_mut;
+
+#[test_only]
+use std::unit_test::assert_eq;
 
 #[test]
 fun deref_mut() {
@@ -197,6 +214,9 @@ module book::borrow_rules;
 public struct Data has drop, copy {
     value: u64,
 }
+
+#[test_only]
+use std::unit_test::assert_eq;
 
 #[test]
 fun multiple_immutable() {
@@ -240,6 +260,9 @@ public fun value(container: &Container): &u64 {
 //     &local  // 错误！local 在函数结束时被丢弃
 // }
 
+#[test_only]
+use std::unit_test::assert_eq;
+
 #[test]
 fun ref_to_field() {
     let container = Container { value: 99 };
@@ -280,6 +303,9 @@ public fun balance(account: &Account): u64 {
 public fun deposit(account: &mut Account, amount: u64) {
     account.balance = account.balance + amount;
 }
+
+#[test_only]
+use std::unit_test::assert_eq;
 
 #[test]
 fun ref_choice() {

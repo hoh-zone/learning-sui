@@ -177,6 +177,8 @@ module examples::admin_ops;
 use sui::package;
 use std::string::String;
 
+const ENotSameModule: u64 = 0;
+
 public struct Config has key {
     id: UID,
     name: String,
@@ -190,7 +192,7 @@ public fun update_config(
     new_value: u64,
 ) {
     // 验证 Publisher 确实属于定义 Config 的模块
-    assert!(package::from_module<Config>(publisher), 0);
+    assert!(package::from_module<Config>(publisher), ENotSameModule);
     config.value = new_value;
 }
 ```
@@ -212,6 +214,8 @@ module examples::combined_auth;
 
 use sui::package;
 
+const ENotSameModule: u64 = 0;
+
 public struct COMBINED_AUTH has drop {}
 
 /// 自定义管理员能力
@@ -231,7 +235,7 @@ fun init(otw: COMBINED_AUTH, ctx: &mut TxContext) {
 
 /// Display 相关操作用 Publisher
 public fun setup_display(publisher: &package::Publisher) {
-    assert!(package::from_module<AdminCap>(publisher), 0);
+    assert!(package::from_module<AdminCap>(publisher), ENotSameModule);
     // 设置 Display...
 }
 

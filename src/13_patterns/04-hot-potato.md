@@ -55,7 +55,7 @@ public fun consume_receipt(receipt: Receipt): u64 {
 module examples::flash_loan;
 
 use sui::balance::{Self, Balance};
-use sui::coin::{Self, Coin};
+use sui::coin::Coin;
 use sui::sui::SUI;
 
 /// Hot Potato! 没有任何能力 - 必须被消耗
@@ -80,7 +80,7 @@ public fun create_pool(ctx: &mut TxContext) {
 }
 
 public fun deposit(pool: &mut LendingPool, coin: Coin<SUI>) {
-    balance::join(&mut pool.balance, coin::into_balance(coin));
+    pool.balance.join(coin.into_balance());
 }
 
 /// 借款 - 返回资金和一个 Hot Potato 收据
@@ -89,10 +89,7 @@ public fun borrow(
     amount: u64,
     ctx: &mut TxContext,
 ): (Coin<SUI>, FlashLoanReceipt) {
-    let coins = coin::from_balance(
-        balance::split(&mut pool.balance, amount),
-        ctx,
-    );
+    let coins = pool.balance.split(amount).into_coin(ctx);
     let receipt = FlashLoanReceipt {
         amount,
         fee: amount * pool.fee_percent / 100,
@@ -100,9 +97,9 @@ public fun borrow(
     (coins, receipt)
 }
 
-/// 还款 - 消耗 Hot Potato
 const EInsufficientRepay: u64 = 0;
 
+/// 还款 - 消耗 Hot Potato
 public fun repay(
     pool: &mut LendingPool,
     payment: Coin<SUI>,
@@ -110,8 +107,8 @@ public fun repay(
 ) {
     let FlashLoanReceipt { amount, fee } = receipt;
     let repay_amount = amount + fee;
-    assert!(coin::value(&payment) >= repay_amount, EInsufficientRepay);
-    balance::join(&mut pool.balance, coin::into_balance(payment));
+    assert!(payment.value() >= repay_amount, EInsufficientRepay);
+    pool.balance.join(payment.into_balance());
 }
 ```
 
@@ -154,7 +151,7 @@ public fun borrow_item(
     index: u64,
     ctx: &TxContext,
 ): (Item, BorrowReceipt) {
-    let item = vector::remove(&mut vault.items, index);
+    let item = vault.items.remove(index);
     let receipt = BorrowReceipt {
         item_id: object::id(&item),
         borrower: ctx.sender(),
@@ -172,7 +169,7 @@ public fun return_item(
 ) {
     let BorrowReceipt { item_id, borrower: _ } = receipt;
     assert!(object::id(&item) == item_id, EItemMismatch);
-    vector::push_back(&mut vault.items, item);
+    vault.items.push_back(item);
 }
 ```
 
@@ -183,7 +180,7 @@ Hot Potato 可以用来强制执行多步骤的工作流程，确保每一步都
 ```move
 module examples::phone_shop;
 
-use sui::coin::{Self, Coin};
+use sui::coin::Coin;
 use sui::sui::SUI;
 
 /// 手机
@@ -233,7 +230,7 @@ public fun pay_and_collect(
     let InspectionSlip { customer, phone_id } = slip;
     assert!(object::id(&phone) == phone_id, EPhoneMismatch);
 
-    let price = coin::split(&mut payment, 1000, ctx);
+    let price = payment.split(1000, ctx);
     transfer::public_transfer(price, shop_owner);
     transfer::public_transfer(payment, customer);
     transfer::public_transfer(phone, customer);
@@ -268,9 +265,9 @@ public fun fulfill_full(obligation: Obligation) {
     let Obligation { value: _ } = obligation;
 }
 
-/// 路径 B：部分偿还 + 新义务
 const EInvalidPartial: u64 = 0;
 
+/// 路径 B：部分偿还 + 新义务
 public fun fulfill_partial(
     obligation: Obligation,
     partial_amount: u64,
@@ -318,7 +315,7 @@ fun consume_trap(trap: Trap) {
 public fun repay(receipt: Receipt, payment: Coin<SUI>) {
     let Receipt { amount } = receipt;
     // ✅ 验证还款金额
-    assert!(coin::value(&payment) >= amount, 0);
+    assert!(payment.value() >= amount, 0);
 }
 ```
 

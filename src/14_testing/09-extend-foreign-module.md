@@ -66,8 +66,7 @@ module app::trading_tests;
 
 use app::trading;
 use pyth::price_info;
-use std::unit_test::assert_eq;
-use sui::test_utils::destroy;
+use std::unit_test::{assert_eq, destroy};
 
 #[test]
 fun execute_trade_with_price() {

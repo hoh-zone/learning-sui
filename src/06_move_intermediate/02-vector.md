@@ -11,6 +11,9 @@ Move 提供了简洁的字面量语法来创建向量：
 ```move
 module book::vector_create;
 
+#[test_only]
+use std::unit_test::assert_eq;
+
 #[test]
 fun create() {
     let empty: vector<u64> = vector[];     // 空向量，需要类型标注
@@ -57,6 +60,9 @@ fun vector_types() {
 ```move
 module book::vector_ops;
 
+#[test_only]
+use std::unit_test::assert_eq;
+
 #[test]
 fun push_pop() {
     let mut v = vector<u64>[];
@@ -84,6 +90,9 @@ fun push_pop() {
 ```move
 module book::vector_access;
 
+#[test_only]
+use std::unit_test::assert_eq;
+
 #[test]
 fun access() {
     let v = vector[10u64, 20, 30, 40];
@@ -103,18 +112,17 @@ fun access() {
 ```move
 module book::vector_modify;
 
+#[test_only]
+use std::unit_test::assert_eq;
+
 #[test]
 fun modify() {
     let mut v = vector[10u64, 20, 30];
 
-    // 通过索引修改元素
-    v[1] = 200;
-    assert_eq!(v[1], 200);
-
     // 通过 borrow_mut 获取可变引用
-    let second = &mut v[1];
-    *second = 999;
-    assert_eq!(v[1], 999);
+    let first = &mut v[1];
+    *first = 200;
+    assert_eq!(v[1], 200);
 }
 ```
 
@@ -128,6 +136,9 @@ fun modify() {
 
 ```move
 module book::vector_query;
+
+#[test_only]
+use std::unit_test::assert_eq;
 
 #[test]
 fun query() {
@@ -150,6 +161,9 @@ fun query() {
 
 ```move
 module book::vector_arrange;
+
+#[test_only]
+use std::unit_test::assert_eq;
 
 #[test]
 fun arrange() {
@@ -183,6 +197,9 @@ Move 中遍历向量最常见的方式是使用 `while` 循环配合索引：
 ```move
 module book::vector_iterate;
 
+#[test_only]
+use std::unit_test::assert_eq;
+
 #[test]
 fun while_loop() {
     let v = vector[10u64, 20, 30, 40, 50];
@@ -204,6 +221,9 @@ fun while_loop() {
 
 ```move
 module book::vector_consume;
+
+#[test_only]
+use std::unit_test::assert_eq;
 
 #[test]
 fun consume() {
@@ -257,6 +277,9 @@ Move 支持嵌套向量，即向量的元素本身也是向量：
 ```move
 module book::nested_vector;
 
+#[test_only]
+use std::unit_test::assert_eq;
+
 #[test]
 fun nested() {
     let mut matrix: vector<vector<u64>> = vector[];
@@ -301,6 +324,9 @@ public fun top_scorer(players: &vector<Player>): String {
     players[best_idx].name
 }
 
+#[test_only]
+use std::unit_test::assert_eq;
+
 #[test]
 fun struct_vector() {
     let players = vector[
@@ -320,6 +346,9 @@ fun struct_vector() {
 
 ```move
 module book::vector_example;
+
+#[test_only]
+use std::unit_test::assert_eq;
 
 #[test]
 fun vector_example() {

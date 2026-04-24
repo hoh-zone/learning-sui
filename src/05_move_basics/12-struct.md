@@ -46,7 +46,6 @@ public struct Profile has key, store {
 module book::struct_examples;
 
 use std::string::String;
-use std::option::Option;
 
 public struct Artist has copy, drop {
     name: String,
@@ -102,6 +101,9 @@ public struct Pair has copy, drop {
     second: u64,
 }
 
+#[test_only]
+use std::unit_test::assert_eq;
+
 #[test]
 fun shorthand() {
     let first = 10u64;
@@ -119,7 +121,6 @@ fun shorthand() {
 module book::struct_access;
 
 use std::string::String;
-use std::option::Option;
 
 public struct Artist has copy, drop {
     name: String,
@@ -164,7 +165,6 @@ public fun record_year(record: &Record): u16 {
 module book::struct_unpack;
 
 use std::string::String;
-use std::option::Option;
 
 public struct Artist has copy, drop {
     name: String,
@@ -177,6 +177,9 @@ public struct Record has copy, drop {
     is_debut: bool,
     edition: Option<u16>,
 }
+
+#[test_only]
+use std::unit_test::assert_eq;
 
 #[test]
 fun struct_unpack() {
@@ -200,7 +203,7 @@ fun struct_unpack() {
 
 ### 忽略不需要的字段
 
-解构时，对于不需要的字段，使用 `_` 前缀或直接用 `_` 来忽略：
+解构时，对于不需要的字段，使用 `_` 前缀或直接用 `_` 来忽略，也可以用 `..` 来一次性忽略多个值：
 
 ```move
 module book::struct_ignore;
@@ -212,14 +215,22 @@ public struct Config has copy, drop {
     color: u8,
 }
 
+#[test_only]
+use std::unit_test::assert_eq;
+
 #[test]
 fun ignore_fields() {
     let config = Config { width: 100, height: 200, depth: 50, color: 3 };
 
     // 只关心 width 和 height
-    let Config { width, height, depth: _, color: _ } = config;
+    // let Config { width, height, depth: _, color: _ } = config; // 使用 _ 逐个忽略
+    let Config { width, height, .. } = config; // 使用 .. 一次性忽略多个值
     assert_eq!(width, 100);
     assert_eq!(height, 200);
+    
+    // 使用 .. 忽略时，.. 可以出现在任意位置，如：
+    // let Config { .., width, height } = config;
+    // let Config { width, .., height } = config;
 }
 ```
 
@@ -266,6 +277,9 @@ public fun decrease(balance: &mut Balance, amount: u64) {
     balance.value = balance.value - amount;
 }
 
+#[test_only]
+use std::unit_test::assert_eq;
+
 #[test]
 fun mut_fields() {
     let mut bal = Balance { value: 100 };
@@ -284,5 +298,5 @@ fun mut_fields() {
 - 结构体类型默认私有，`public struct` 使类型可见，但 **字段始终私有**
 - 创建实例需要提供所有字段值，支持变量名与字段名相同时的简写语法
 - 字段访问（`.`运算符）仅限于定义该结构体的模块内部
-- 解构（unpacking）可以提取字段值，不需要的字段用 `_` 忽略
+- 解构（unpacking）可以提取字段值，不需要的字段用 `_` 或 `..` 忽略
 - 没有能力的结构体不能被丢弃，必须显式解构——这是 Move 资源安全性的基石

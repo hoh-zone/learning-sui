@@ -74,7 +74,7 @@ public fun create_receipt(ctx: &mut TxContext): Receipt {
 
 /// 生成唯一的订单 ID
 public fun generate_order_id(ctx: &mut TxContext): address {
-    tx_context::fresh_object_address(ctx)
+    ctx.fresh_object_address()
 }
 ```
 
@@ -155,7 +155,7 @@ public fun batch_create(count: u64, recipient: address, ctx: &mut TxContext) {
 
 ## fresh_object_address()
 
-`tx_context::fresh_object_address()` 使用与 `object::new()` 相同的算法生成一个唯一地址，但不会创建 `UID`。它适用于需要唯一标识符但不需要完整对象的场景。
+`ctx.fresh_object_address()` 使用与 `object::new()` 相同的算法生成一个唯一地址，但不会创建 `UID`。它适用于需要唯一标识符但不需要完整对象的场景。
 
 ```move
 module examples::unique_id;
@@ -176,7 +176,7 @@ public fun place_order(
 ) {
     let order = Order {
         id: object::new(ctx),
-        order_ref: tx_context::fresh_object_address(ctx),
+        order_ref: ctx.fresh_object_address(),
         item,
         quantity,
     };

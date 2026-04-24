@@ -10,7 +10,7 @@
 #[test]
 fun addition() {
     let sum = 2 + 2;
-    assert_eq!(sum, 4);
+    assert!(sum == 4);
 }
 ```
 
@@ -72,7 +72,7 @@ public fun new(event_id: u64, seat: u64, ctx: &mut TxContext): Ticket {
 在测试中使用 `destroy` 清理不可 drop 的值：
 
 ```move
-use sui::test_utils::destroy;
+use std::unit_test::destroy;
 
 #[test]
 fun ticket_creation() {

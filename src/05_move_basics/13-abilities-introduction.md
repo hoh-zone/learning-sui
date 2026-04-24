@@ -38,6 +38,9 @@ public struct NonCopyable has drop {
     value: u64,
 }
 
+#[test_only]
+use std::unit_test::assert_eq;
+
 #[test]
 fun copy_vs_move() {
     let a = Copyable { value: 42 };

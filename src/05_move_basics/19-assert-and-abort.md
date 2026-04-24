@@ -47,10 +47,18 @@ public fun describe(choice: u8): vector<u8> {
     }
 }
 
+#[test_only]
+use std::unit_test::assert_eq;
+
 #[test]
 fun describe_ok() {
     assert_eq!(describe(1), b"Option A");
     assert_eq!(describe(2), b"Option B");
+}
+
+#[test, expected_failure(abort_code = EInvalidChoice)]
+fun describe_fail() {
+    assert_eq!(describe(3), b"Option C");
 }
 ```
 
@@ -212,6 +220,9 @@ public fun must_be_positive(value: u64): u64 {
     };
     value
 }
+
+#[test_only]
+use std::unit_test::assert_eq;
 
 #[test]
 fun assert_ok() {

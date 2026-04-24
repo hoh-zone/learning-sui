@@ -18,7 +18,7 @@ public enum Direction has copy, drop {
 
 #[test]
 fun direction() {
-    let d = Direction::North;
+    let _d = Direction::North;
     let _e = Direction::East;
 }
 ```

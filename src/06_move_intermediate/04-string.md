@@ -13,6 +13,9 @@ module book::string_create;
 
 use std::string::{Self, String};
 
+#[test_only]
+use std::unit_test::assert_eq;
+
 #[test]
 fun create() {
     // 最常用的方式：字节字面量转换
@@ -53,7 +56,8 @@ fun try_utf8() {
 ```move
 module book::string_ops;
 
-use std::string::String;
+#[test_only]
+use std::unit_test::assert_eq;
 
 #[test]
 fun ops() {
@@ -66,10 +70,10 @@ fun ops() {
     assert_eq!(str.length(), 13);
 
     // 提取子串（按字节索引）
-    let hello = str.sub_string(0, 5);
+    let hello = str.substring(0, 5);
     assert_eq!(hello, b"Hello".to_string());
 
-    let world_part = str.sub_string(7, 13);
+    let world_part = str.substring(7, 13);
     assert_eq!(world_part, b"World!".to_string());
 }
 ```
@@ -80,6 +84,9 @@ fun ops() {
 module book::string_check;
 
 use std::string::String;
+
+#[test_only]
+use std::unit_test::assert_eq;
 
 #[test]
 fun length() {
@@ -102,10 +109,13 @@ module book::string_bytes;
 
 use std::string::String;
 
+#[test_only]
+use std::unit_test::assert_eq;
+
 #[test]
 fun bytes() {
     let s: String = b"ABC".to_string();
-    let bytes: &vector<u8> = s.bytes();
+    let bytes: &vector<u8> = s.as_bytes();
 
     assert_eq!(bytes.length(), 3);
     assert_eq!(bytes[0], 65);  // 'A' 的 ASCII 值
@@ -119,7 +129,8 @@ fun bytes() {
 ```move
 module book::string_insert;
 
-use std::string::String;
+#[test_only]
+use std::unit_test::assert_eq;
 
 #[test]
 fun insert() {
@@ -145,7 +156,7 @@ fun utf8_length() {
     let ascii_str: String = b"Hello".to_string();
     assert!(ascii_str.length() == 5);  // 5 个 ASCII 字符 = 5 字节
 
-    // 注意：sub_string 按字节索引操作
+    // 注意：substring 按字节索引操作
     // 如果在多字节字符的中间截断，会导致非法 UTF-8
     // 因此在处理非 ASCII 字符时需格外小心
 }
@@ -168,7 +179,7 @@ use std::ascii;
 fun ascii() {
     // 使用 to_ascii_string 创建
     let s = b"Hello, ASCII!".to_ascii_string();
-    assert!(ascii::length(&s) == 13);
+    assert!(s.length() == 13);
 
     // 安全创建：返回 Option
     let valid = ascii::try_string(b"valid");
@@ -199,16 +210,16 @@ fun ascii() {
 ```move
 module book::string_conversion;
 
-use std::string::{Self, String};
+use std::string::String;
 
 #[test]
 fun conversion() {
     // 字节向量 -> 字符串
     let bytes = b"Hello";
-    let s: String = string::utf8(bytes);
+    let s: String = bytes.to_string();
 
     // 字符串 -> 字节向量引用
-    let bytes_ref: &vector<u8> = s.bytes();
+    let bytes_ref: &vector<u8> = s.as_bytes();
     assert!(bytes_ref == &b"Hello");
 
     // 字符串 -> 字节向量（消耗字符串）
@@ -222,7 +233,8 @@ fun conversion() {
 ```move
 module book::string_example;
 
-use std::string::String;
+#[test_only]
+use std::unit_test::assert_eq;
 
 #[test]
 fun string_example() {
@@ -234,7 +246,7 @@ fun string_example() {
     assert_eq!(str.length(), 13);
 
     // 子串
-    let hello = str.sub_string(0, 5);
+    let hello = str.substring(0, 5);
     assert_eq!(hello, b"Hello".to_string());
 
     // 空值检查
@@ -245,7 +257,7 @@ fun string_example() {
     assert!(valid.is_some());
 
     // 获取字节
-    let bytes: &vector<u8> = str.bytes();
+    let bytes: &vector<u8> = str.as_bytes();
     assert_eq!(bytes.length(), 13);
 }
 ```

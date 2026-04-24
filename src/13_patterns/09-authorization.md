@@ -98,7 +98,7 @@ fun init(otw: MY_MODULE, ctx: &mut TxContext) {
 ```move
 module examples::auth_combined;
 
-use std::string::String;
+const ENotOneTimeWitness: u64 = 0;
 
 /// Capability：管理员权限
 public struct AdminCap has key { id: UID }
@@ -117,7 +117,7 @@ public struct Registry has key {
 
 fun init(otw: AUTH_COMBINED, ctx: &mut TxContext) {
     // OTW 确保只初始化一次
-    assert!(sui::types::is_one_time_witness(&otw), 0);
+    assert!(sui::types::is_one_time_witness(&otw), ENotOneTimeWitness);
 
     // 创建管理员能力
     transfer::transfer(
@@ -159,6 +159,9 @@ module examples::nft_project;
 use sui::package;
 use sui::display;
 use std::string::String;
+
+const EInactive: u64 = 0;
+const EMaxSupply: u64 = 1;
 
 /// OTW - 用于初始化
 public struct NFT_PROJECT has drop {}
@@ -252,8 +255,8 @@ public fun mint(
     recipient: address,
     ctx: &mut TxContext,
 ) {
-    assert!(config.is_minting_active, 0);
-    assert!(config.current_supply < config.max_supply, 1);
+    assert!(config.is_minting_active, EInactive);
+    assert!(config.current_supply < config.max_supply, EMaxSupply);
 
     config.current_supply = config.current_supply + 1;
 

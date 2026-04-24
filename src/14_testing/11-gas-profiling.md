@@ -70,6 +70,7 @@ sui move test -i 50
 ```move
 module book::comparison;
 
+#[test_only]
 use std::unit_test::assert_eq;
 
 public fun sum_loop(n: u64): u64 {

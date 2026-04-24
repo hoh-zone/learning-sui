@@ -20,6 +20,9 @@ Move 提供六种无符号整数类型，没有有符号整数。所有整数类
 ```move
 module book::int_literals;
 
+#[test_only]
+use std::unit_test::assert_eq;
+
 #[test]
 fun literals() {
     let a: u8 = 255;
@@ -107,6 +110,9 @@ Move 编译器通常可以根据上下文推断变量类型，但在某些情况
 
 ```move
 module book::type_inference;
+
+#[test_only]
+use std::unit_test::assert_eq;
 
 #[test]
 fun inference() {

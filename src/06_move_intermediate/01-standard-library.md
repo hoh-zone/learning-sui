@@ -40,6 +40,9 @@ module book::std_string_demo;
 
 use std::string::{Self, String};
 
+#[test_only]
+use std::unit_test::assert_eq;
+
 #[test]
 fun string_demo() {
     let s: String = b"Hello, Move!".to_string();
@@ -64,6 +67,9 @@ module book::std_ascii_demo;
 
 use std::ascii;
 
+#[test_only]
+use std::unit_test::assert_eq;
+
 #[test]
 fun ascii_demo() {
     let s = b"Hello".to_ascii_string();
@@ -79,6 +85,9 @@ fun ascii_demo() {
 
 ```move
 module book::std_vector_demo;
+
+#[test_only]
+use std::unit_test::assert_eq;
 
 #[test]
 fun vector_demo() {
@@ -99,6 +108,9 @@ fun vector_demo() {
 
 ```move
 module book::std_option_demo;
+
+#[test_only]
+use std::unit_test::assert_eq;
 
 #[test]
 fun option_demo() {
@@ -124,6 +136,9 @@ module book::std_bcs_demo;
 
 use std::bcs;
 
+#[test_only]
+use std::unit_test::assert_eq;
+
 #[test]
 fun bcs_demo() {
     let value: u64 = 1234;
@@ -144,6 +159,9 @@ fun bcs_demo() {
 module book::std_hash_demo;
 
 use std::hash;
+
+#[test_only]
+use std::unit_test::assert_eq;
 
 #[test]
 fun hash_demo() {
@@ -169,9 +187,12 @@ module book::std_type_name_demo;
 use std::type_name;
 use std::ascii::String;
 
+#[test_only]
+use std::unit_test::assert_eq;
+
 #[test]
 fun type_name_demo() {
-    let name = type_name::get<u64>();
+    let name = type_name::with_defining_ids<u64>();
     let name_str: String = name.into_string();
     assert_eq!(name_str, b"u64".to_ascii_string());
 }
@@ -194,6 +215,9 @@ fun type_name_demo() {
 module book::std_integer_demo;
 
 use std::u64;
+
+#[test_only]
+use std::unit_test::assert_eq;
 
 #[test]
 fun integer_utils() {

@@ -19,6 +19,9 @@ public fun sum_to_n(n: u64): u64 {
     sum
 }
 
+#[test_only]
+use std::unit_test::assert_eq;
+
 #[test]
 fun while_sum() {
     assert_eq!(sum_to_n(10), 55);
@@ -55,6 +58,9 @@ public fun find_first_divisible(v: &vector<u64>, divisor: u64): Option<u64> {
 ```move
 module book::break_continue;
 
+#[test_only]
+use std::unit_test::assert_eq;
+
 #[test]
 fun break_early() {
     let mut sum = 0u64;
@@ -64,6 +70,7 @@ fun break_early() {
         sum = sum + i;
         i = i + 1;
     };
+    assert_eq!(sum, 55);
 }
 
 #[test]
